@@ -1,23 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>门店进销存系统原型</title>
-    <style>
-        body { margin: 0; padding: 0; }
-        iframe { width: 100vw; height: 100vh; border: none; }
-        .loading { display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; color: #666; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>门店进销存系统 - 可交互原型</title>
+<script>window.location.replace('./inventory-prototype.html');</script>
 </head>
-<body>
-    <div class="loading" id="loading">加载中...</div>
-    <iframe id="frame" style="display:none" onload="document.getElementById('loading').style.display='none';this.style.display='block'"></iframe>
-    <script>
-        document.getElementById('frame').src = './inventory-prototype.html';
-    </script>
-    <noscript>
-        <meta http-equiv="refresh" content="0; url=./inventory-prototype.html">
-    </noscript>
-</body>
+<body>Redirecting to prototype...</body>
 </html>
