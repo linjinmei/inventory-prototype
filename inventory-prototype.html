@@ -2536,9 +2536,9 @@ body.text-mode .text-mode-doc { display: block; }
               <p>面向总部运营、采购专员、财务专员等管理角色，提供商品管理、销售/采购管理、多状态库存台账、调拨管理、残次品管理、财务结算、报表分析等全功能。</p>
             </div>
             <div class="feature-section" id="feature-overview-app">
-              <h3>用户端APP</h3>
-              <p>底部导航固定三Tab（首页/分类/我的），根据登录账号权限自动识别角色：消费者展示订单与取货码；店员/店长展示工作台（待入库收货、待核销自提、异常处理、调拨申请）。</p>
-            </div>
+      <h3>用户端APP</h3>
+      <p>底部导航固定三Tab（首页/分类/我的），根据登录账号权限自动识别角色：消费者展示订单与取货码；店员/店长展示工作台（待入库收货、待核销自提、异常处理、店铺订单、发起调拨及全流程跟踪）。首页门店信息固定展示（名称、联系人、电话），分类页支持商品名称实时搜索，待入库收货采用按钮直接操作入库（取消扫码），所有二级页面返回逻辑统一为返回上一级。</p>
+    </div>
           </div>
           <div class="doc-section">
             <h2>角色权限矩阵</h2>
@@ -2548,8 +2548,8 @@ body.text-mode .text-mode-doc { display: block; }
               <tr><td>总部运营</td><td>商品管理、前端配置、全门店只读</td><td>消费者全部功能</td></tr>
               <tr><td>采购专员</td><td>供应商/采购/采购退货管理</td><td>消费者功能（无工作台）</td></tr>
               <tr><td>财务专员</td><td>财务结算、对账管理</td><td>消费者功能（无工作台）</td></tr>
-              <tr><td>门店店长</td><td>仅本门店库存/销售/异常只读</td><td>消费者 + 工作台（全量）</td></tr>
-              <tr><td>门店店员</td><td>无PC权限</td><td>消费者 + 工作台（核销/入库）</td></tr>
+              <tr><td>门店店长</td><td>仅本门店库存/销售/异常只读</td><td>消费者 + 工作台（全量）+ 店铺订单（本店全部会员）</td></tr>
+      <tr><td>门店店员</td><td>无PC权限</td><td>消费者 + 工作台（核销/入库）+ 店铺订单（仅归属自己的会员）</td></tr>
               <tr><td>普通消费者</td><td>无</td><td>消费者全部功能</td></tr>
             </table>
           </div>
@@ -2572,6 +2572,42 @@ body.text-mode .text-mode-doc { display: block; }
               </div></div>
               <div class="flow-step"><div class="flow-step-num">5</div><div class="flow-step-content"><div class="flow-step-title">用户到店自提核销</div><div class="flow-step-desc">用户出示动态取货码（60秒刷新）→ 店员扫码核销 → 库存扣减 → 订单完成</div></div></div>
             </div>
+            <div style="margin-top:16px;padding:16px;background:#fff;border:1px solid var(--border);border-radius:10px">
+              <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-bottom:8px;font-weight:600">流程图</div>
+              <svg viewBox="0 0 520 470" style="width:100%;max-width:520px;margin:0 auto;display:block;font-family:inherit">
+                <defs>
+                  <marker id="ar1" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/></marker>
+                  <marker id="ar1g" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#22c55e"/></marker>
+                  <marker id="ar1a" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#f59e0b"/></marker>
+                </defs>
+                <rect x="150" y="10" width="220" height="40" rx="8" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.5"/>
+                <text x="260" y="35" text-anchor="middle" font-size="13" fill="#0d9488" font-weight="600">1. 用户APP下单</text>
+                <line x1="260" y1="50" x2="260" y2="68" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar1)"/>
+                <rect x="150" y="70" width="220" height="40" rx="8" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.5"/>
+                <text x="260" y="95" text-anchor="middle" font-size="13" fill="#0d9488" font-weight="600">2. 自动生成采购订单</text>
+                <line x1="260" y1="110" x2="260" y2="128" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar1)"/>
+                <rect x="150" y="130" width="220" height="40" rx="8" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.5"/>
+                <text x="260" y="155" text-anchor="middle" font-size="13" fill="#0d9488" font-weight="600">3. 供应商整批发货</text>
+                <line x1="260" y1="170" x2="260" y2="188" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar1)"/>
+                <rect x="150" y="190" width="220" height="40" rx="8" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.5"/>
+                <text x="260" y="215" text-anchor="middle" font-size="13" fill="#0d9488" font-weight="600">4. 门店批量收货验收</text>
+                <path d="M 200 230 Q 120 250 80 270" stroke="#22c55e" stroke-width="1.5" fill="none" marker-end="url(#ar1g)"/>
+                <path d="M 320 230 Q 400 250 440 270" stroke="#f59e0b" stroke-width="1.5" fill="none" marker-end="url(#ar1a)"/>
+                <rect x="10" y="272" width="170" height="50" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+                <text x="95" y="292" text-anchor="middle" font-size="12" fill="#22c55e" font-weight="600">正常件</text>
+                <text x="95" y="308" text-anchor="middle" font-size="10" fill="#64748b">→ 可用库存 → 通知自提</text>
+                <rect x="340" y="272" width="170" height="50" rx="8" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+                <text x="425" y="292" text-anchor="middle" font-size="12" fill="#f59e0b" font-weight="600">退款对冲件</text>
+                <text x="425" y="308" text-anchor="middle" font-size="10" fill="#64748b">→ 异常冻结 → 归集退供</text>
+                <path d="M 95 322 Q 160 350 200 370" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#ar1)"/>
+                <path d="M 425 322 Q 360 350 320 370" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#ar1)"/>
+                <rect x="150" y="372" width="220" height="40" rx="8" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.5"/>
+                <text x="260" y="397" text-anchor="middle" font-size="13" fill="#0d9488" font-weight="600">5. 用户到店自提核销</text>
+                <line x1="260" y1="412" x2="260" y2="430" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar1)"/>
+                <rect x="170" y="432" width="180" height="30" rx="15" fill="#22c55e" stroke="none"/>
+                <text x="260" y="452" text-anchor="middle" font-size="12" fill="#fff" font-weight="600">✓ 订单完成</text>
+              </svg>
+            </div>
           </div>
           <div class="doc-section">
             <h2>逆向流程：在途仅退款（核心场景）</h2>
@@ -2583,6 +2619,35 @@ body.text-mode .text-mode-doc { display: block; }
               <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-content"><div class="flow-step-title">自动拆解入库</div><div class="flow-step-desc">异常件数 = 已退款未处理订单数；异常件入冻结池，自动触发退款</div></div></div>
               <div class="flow-step"><div class="flow-step-num">5</div><div class="flow-step-content"><div class="flow-step-title">异常件归集退供</div><div class="flow-step-desc">异常冻结件随残次品批次统一退回供应商，财务冲销</div></div></div>
             </div>
+            <div style="margin-top:16px;padding:16px;background:#fff;border:1px solid var(--border);border-radius:10px">
+              <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-bottom:8px;font-weight:600">流程图</div>
+              <svg viewBox="0 0 520 370" style="width:100%;max-width:520px;margin:0 auto;display:block;font-family:inherit">
+                <defs>
+                  <marker id="ar2" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/></marker>
+                </defs>
+                <rect x="130" y="10" width="260" height="40" rx="8" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+                <text x="260" y="35" text-anchor="middle" font-size="13" fill="#f59e0b" font-weight="600">1. 用户在备货中申请仅退款</text>
+                <line x1="260" y1="50" x2="260" y2="68" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar2)"/>
+                <rect x="130" y="70" width="260" height="40" rx="8" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+                <text x="260" y="95" text-anchor="middle" font-size="13" fill="#f59e0b" font-weight="600">2. 系统记录退款状态</text>
+                <text x="260" y="106" text-anchor="middle" font-size="10" fill="#64748b">不拦截物流，等待批次到货</text>
+                <line x1="260" y1="110" x2="260" y2="128" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar2)"/>
+                <rect x="130" y="130" width="260" height="40" rx="8" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+                <text x="260" y="155" text-anchor="middle" font-size="13" fill="#f59e0b" font-weight="600">3. 门店收货时自动检索</text>
+                <text x="260" y="166" text-anchor="middle" font-size="10" fill="#64748b">检索批次下已申请仅退款的订单</text>
+                <line x1="260" y1="170" x2="260" y2="188" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar2)"/>
+                <rect x="130" y="190" width="260" height="40" rx="8" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+                <text x="260" y="215" text-anchor="middle" font-size="13" fill="#f59e0b" font-weight="600">4. 自动拆解入库</text>
+                <text x="260" y="226" text-anchor="middle" font-size="10" fill="#64748b">异常件入冻结池，自动触发退款</text>
+                <line x1="260" y1="230" x2="260" y2="248" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar2)"/>
+                <rect x="130" y="250" width="260" height="40" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="1.5"/>
+                <text x="260" y="275" text-anchor="middle" font-size="13" fill="#ef4444" font-weight="600">5. 异常件归集退供</text>
+                <text x="260" y="286" text-anchor="middle" font-size="10" fill="#64748b">统一退回供应商，财务冲销</text>
+                <line x1="260" y1="290" x2="260" y2="308" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar2)"/>
+                <rect x="150" y="310" width="220" height="30" rx="15" fill="#ef4444" stroke="none"/>
+                <text x="260" y="330" text-anchor="middle" font-size="12" fill="#fff" font-weight="600">✓ 退款完成 + 退供完成</text>
+              </svg>
+            </div>
           </div>
           <div class="doc-section">
             <h2>门店调拨流程</h2>
@@ -2591,6 +2656,42 @@ body.text-mode .text-mode-doc { display: block; }
               <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-content"><div class="flow-step-title">匹配可用库存</div><div class="flow-step-desc">系统匹配门店B的可用库存，门店B确认调拨出库</div></div></div>
               <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-content"><div class="flow-step-title">调拨在途</div><div class="flow-step-desc">扣减门店B库存，生成调拨在途库存，物流发往门店A</div></div></div>
               <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-content"><div class="flow-step-title">门店A收货验收</div><div class="flow-step-desc">合格品转可用库存（通知自提）；残次品入残次品池，责任判定</div></div></div>
+            </div>
+            <div style="margin-top:16px;padding:16px;background:#fff;border:1px solid var(--border);border-radius:10px">
+              <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-bottom:8px;font-weight:600">流程图</div>
+              <svg viewBox="0 0 520 430" style="width:100%;max-width:520px;margin:0 auto;display:block;font-family:inherit">
+                <defs>
+                  <marker id="ar3" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#94a3b8"/></marker>
+                  <marker id="ar3g" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#22c55e"/></marker>
+                  <marker id="ar3a" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#f59e0b"/></marker>
+                </defs>
+                <rect x="140" y="10" width="240" height="40" rx="8" fill="#faf5ff" stroke="#8b5cf6" stroke-width="1.5"/>
+                <text x="260" y="35" text-anchor="middle" font-size="13" fill="#8b5cf6" font-weight="600">1. 发起调拨需求</text>
+                <text x="260" y="46" text-anchor="middle" font-size="10" fill="#64748b">门店缺货或总部判断调拨更快</text>
+                <line x1="260" y1="50" x2="260" y2="68" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar3)"/>
+                <rect x="140" y="70" width="240" height="40" rx="8" fill="#faf5ff" stroke="#8b5cf6" stroke-width="1.5"/>
+                <text x="260" y="95" text-anchor="middle" font-size="13" fill="#8b5cf6" font-weight="600">2. 匹配可用库存 · 确认出库</text>
+                <text x="260" y="106" text-anchor="middle" font-size="10" fill="#64748b">门店B确认调拨出库，扣减库存</text>
+                <line x1="260" y1="110" x2="260" y2="128" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar3)"/>
+                <rect x="140" y="130" width="240" height="40" rx="8" fill="#faf5ff" stroke="#8b5cf6" stroke-width="1.5"/>
+                <text x="260" y="155" text-anchor="middle" font-size="13" fill="#8b5cf6" font-weight="600">3. 调拨在途</text>
+                <text x="260" y="166" text-anchor="middle" font-size="10" fill="#64748b">生成调拨在途库存，物流发往门店A</text>
+                <line x1="260" y1="170" x2="260" y2="188" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar3)"/>
+                <rect x="140" y="190" width="240" height="40" rx="8" fill="#faf5ff" stroke="#8b5cf6" stroke-width="1.5"/>
+                <text x="260" y="215" text-anchor="middle" font-size="13" fill="#8b5cf6" font-weight="600">4. 门店A收货验收</text>
+                <path d="M 200 230 Q 120 250 80 270" stroke="#22c55e" stroke-width="1.5" fill="none" marker-end="url(#ar3g)"/>
+                <path d="M 320 230 Q 400 250 440 270" stroke="#f59e0b" stroke-width="1.5" fill="none" marker-end="url(#ar3a)"/>
+                <rect x="10" y="272" width="170" height="50" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+                <text x="95" y="292" text-anchor="middle" font-size="12" fill="#22c55e" font-weight="600">合格品</text>
+                <text x="95" y="308" text-anchor="middle" font-size="10" fill="#64748b">→ 可用库存 → 通知自提</text>
+                <rect x="340" y="272" width="170" height="50" rx="8" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+                <text x="425" y="292" text-anchor="middle" font-size="12" fill="#f59e0b" font-weight="600">残次品</text>
+                <text x="425" y="308" text-anchor="middle" font-size="10" fill="#64748b">→ 残次品池 → 责任判定</text>
+                <path d="M 95 322 Q 160 350 200 370" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#ar3)"/>
+                <path d="M 425 322 Q 360 350 320 370" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#ar3)"/>
+                <rect x="160" y="372" width="200" height="34" rx="17" fill="#8b5cf6" stroke="none"/>
+                <text x="260" y="394" text-anchor="middle" font-size="12" fill="#fff" font-weight="600">✓ 调拨完成 · 内部结算</text>
+              </svg>
             </div>
           </div>
           <div class="doc-section">
@@ -2685,31 +2786,44 @@ body.text-mode .text-mode-doc { display: block; }
           <div class="doc-section">
             <h2>APP端功能详情</h2>
             <div class="feature-section" id="feature-home">
-              <h3>APP首页 <span class="priority-tag priority-p0">P0</span></h3>
-              <table class="feature-table">
-                <tr><th>功能点</th><th>描述</th><th>优先级</th></tr>
-                <tr><td>门店切换</td><td>顶部展示当前门店，支持手动切换或LBS自动推荐</td><td>P0</td></tr>
-                <tr><td>商品搜索</td><td>按名称/关键词搜索门店在售商品</td><td>P0</td></tr>
-                <tr><td>时效提示</td><td>首页顶部固定卡片提示"预计下单后X天到店自提"</td><td>P0</td></tr>
-                <tr><td>商品列表</td><td>显示商品图、名称、价格、预计到货天数</td><td>P0</td></tr>
-                <tr><td>下单购买</td><td>生成销售订单，触发采购流程</td><td>P0</td></tr>
-              </table>
-            </div>
+      <h3>APP首页 <span class="priority-tag priority-p0">P0</span></h3>
+      <table class="feature-table">
+        <tr><th>功能点</th><th>描述</th><th>优先级</th></tr>
+        <tr><td>固定门店信息展示</td><td>顶部搜索框下方固定展示当前门店名称、联系人姓名、联系电话，不可切换</td><td>P0</td></tr>
+        <tr><td>商品搜索</td><td>按名称/关键词搜索门店在售商品</td><td>P0</td></tr>
+        <tr><td>时效提示</td><td>首页顶部固定卡片提示"预计下单后X天到店自提"</td><td>P0</td></tr>
+        <tr><td>商品列表</td><td>显示商品图、名称、价格、预计到货天数</td><td>P0</td></tr>
+        <tr><td>下单购买</td><td>生成销售订单，触发采购流程</td><td>P0</td></tr>
+      </table>
+    </div>
+    <div class="feature-section" id="feature-category">
+      <h3>APP分类页 <span class="priority-tag priority-p0">P0</span></h3>
+      <table class="feature-table">
+        <tr><th>功能点</th><th>描述</th><th>优先级</th></tr>
+        <tr><td>商品名称搜索</td><td>分类页顶部新增搜索框，支持输入商品名称实时搜索筛选</td><td>P0</td></tr>
+        <tr><td>分类浏览</td><td>按商品分类浏览，左侧分类导航+右侧商品列表</td><td>P0</td></tr>
+        <tr><td>搜索无结果提示</td><td>无匹配商品时展示空状态提示</td><td>P1</td></tr>
+      </table>
+    </div>
             <div class="feature-section" id="feature-pickup">
               <h3>取货码（动态活码） <span class="priority-tag priority-p0">P0</span></h3>
               <p>待自提订单生成动态取货二维码，<strong>60秒刷新一次</strong>，防止截图冒领。到店出示给店员扫码核销，核销时校验订单状态和异常冻结状态。</p>
             </div>
             <div class="feature-section" id="feature-workbench">
-              <h3>店员工作台 <span class="priority-tag priority-p0">P0</span></h3>
-              <table class="feature-table">
-                <tr><th>功能点</th><th>描述</th><th>优先级</th></tr>
-                <tr><td>待入库收货</td><td>扫码供应商发货单，批量确认收货+自动拆解异常</td><td>P0</td></tr>
-                <tr><td>待核发自提</td><td>扫码用户取货码，核销完成自提</td><td>P0</td></tr>
-                <tr><td>异常包裹处理</td><td>查看异常冻结库存，打包退供</td><td>P0</td></tr>
-                <tr><td>发起调拨申请</td><td>门店间调拨申请发起</td><td>P0</td></tr>
-                <tr><td>数据概览</td><td>当日待办任务数、门店库存概况</td><td>P1</td></tr>
-              </table>
-            </div>
+      <h3>店员工作台 <span class="priority-tag priority-p0">P0</span></h3>
+      <table class="feature-table">
+        <tr><th>功能点</th><th>描述</th><th>优先级</th></tr>
+        <tr><td>待入库收货</td><td>取消扫码操作，改为直接点击"确认入库"按钮完成收货，展示入库商品名称明细，自动拆解正常入库与异常冻结</td><td>P0</td></tr>
+        <tr><td>待核销自提</td><td>扫码用户取货码，核销完成自提</td><td>P0</td></tr>
+        <tr><td>异常包裹处理</td><td>查看异常冻结库存，打包退供</td><td>P0</td></tr>
+        <tr><td>店铺订单</td><td>店长可查看本门店全部会员订单（含会员昵称和ID），店员仅可查看归属自己的会员订单，支持角色切换</td><td>P0</td></tr>
+        <tr><td>发起调拨申请</td><td>门店间调拨申请发起，选择调入门店、商品（展示可用库存）、数量，提交后生成调拨单（待确认出库）</td><td>P0</td></tr>
+        <tr><td>调拨列表管理</td><td>查看本门店相关调拨单列表，按状态筛选（待出库/调拨在途/待验收/已完成），支持确认出库、物流追踪操作</td><td>P0</td></tr>
+        <tr><td>调拨物流追踪</td><td>查看调拨单详情、4步进度时间线（发起→出库→在途→收货）、物流轨迹</td><td>P0</td></tr>
+        <tr><td>调拨收货验收</td><td>调入门店确认收货，支持调整实收数量、质量检查（合格品→可用库存+通知自提；残次品→残次品池+责任判定）</td><td>P0</td></tr>
+        <tr><td>数据概览</td><td>当日待办任务数、门店库存概况</td><td>P1</td></tr>
+      </table>
+    </div>
           </div>
         </div>
 
@@ -2742,13 +2856,33 @@ body.text-mode .text-mode-doc { display: block; }
               <p>收货残次、退货残次、异常冻结件<strong>统一归集</strong>后批量退供应商。残次品池按门店维度独立管理。</p>
             </div>
             <div class="feature-section">
-              <h3>规则7：备货中不可退款</h3>
-              <p>APP端"备货中"状态<strong>不显示"申请退款"按钮</strong>，折叠至"联系客服"中，避免用户误操作。退款需联系客服处理。</p>
-            </div>
-            <div class="feature-section">
-              <h3>规则8：入库事务一致性</h3>
-              <p>采购入库时必须采用事务处理（ACID），保证<strong>可用库存 + 异常冻结库存之和 = 实收总数</strong>，杜绝超卖/重复扣减。</p>
-            </div>
+      <h3>规则7：备货中不可退款</h3>
+      <p>APP端"备货中"状态<strong>不显示"申请退款"按钮</strong>，折叠至"联系客服"中，避免用户误操作。退款需联系客服处理。</p>
+    </div>
+    <div class="feature-section">
+      <h3>规则8：入库事务一致性</h3>
+      <p>采购入库时必须采用事务处理（ACID），保证<strong>可用库存 + 异常冻结库存之和 = 实收总数</strong>，杜绝超卖/重复扣减。</p>
+    </div>
+    <div class="feature-section">
+      <h3>规则9：首页门店信息固定展示</h3>
+      <p>APP端首页门店信息<strong>不可切换</strong>，直接在顶部搜索框下方固定展示门店名称、联系人姓名、联系电话。门店归属由账号角色决定，无需用户手动选择。</p>
+    </div>
+    <div class="feature-section">
+      <h3>规则10：店铺订单权限分级</h3>
+      <p>店铺订单功能按角色分级展示：<strong>店长</strong>可查看当前门店下所有会员的订单信息（含会员昵称和ID），<strong>店员</strong>仅可查看归属自己的会员订单。每条订单需展示对应会员的昵称和ID，便于查询。</p>
+    </div>
+    <div class="feature-section">
+      <h3>规则11：待入库收货按钮操作</h3>
+      <p>待入库收货功能<strong>取消扫码入库动作</strong>，改为直接点击"确认入库"按钮完成收货操作。入库页面需明确展示当前入库商品的名称明细，收货后自动拆解正常入库与异常冻结。</p>
+    </div>
+    <div class="feature-section">
+      <h3>规则12：二级页面返回逻辑</h3>
+      <p>APP端所有二级页面操作返回时，<strong>必须返回上一级页面</strong>而非首页。通过导航历史栈实现页面返回逻辑，整个移动端交互操作统一按此逻辑执行。</p>
+    </div>
+    <div class="feature-section">
+      <h3>规则13：调拨全流程闭环</h3>
+      <p>APP端调拨功能覆盖<strong>发起→确认出库→物流追踪→收货验收</strong>全流程闭环。调拨出库商品须从门店可用库存扣减；收货验收时合格品转入可用库存并通知自提，残次品转入残次品池并进行责任判定。</p>
+    </div>
           </div>
           <div class="doc-section">
             <h2>订单状态流转及按钮规则</h2>
@@ -2808,6 +2942,7 @@ body.text-mode .text-mode-doc { display: block; }
     'feature-defective': '残次品池',
     'feature-finance': '财务结算',
     'feature-home': 'APP首页',
+    'feature-category': 'APP分类页',
     'feature-pickup': '取货码',
     'feature-workbench': '店员工作台',
     'feature-overview-pc': '运营PC后台',
