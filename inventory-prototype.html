@@ -593,10 +593,11 @@ body {
   padding: 10px 16px;
   background: var(--primary);
   color: #fff;
-  cursor: pointer;
 }
-.store-banner svg { width: 16px; height: 16px; }
-.store-banner .store-name { font-size: var(--font-size-base); font-weight: 600; flex: 1; }
+.store-banner svg { width: 16px; height: 16px; flex-shrink: 0; }
+.store-info-fixed { display: flex; flex-direction: column; gap: 2px; }
+.store-banner .store-name { font-size: var(--font-size-base); font-weight: 600; }
+.store-contact { font-size: var(--font-size-xs); opacity: 0.85; }
 
 .arrival-notice {
   margin: 12px 16px;
@@ -1467,10 +1468,12 @@ body.text-mode .text-mode-doc { display: block; }
         <!-- Home -->
         <div class="app-page active" id="page-app-home">
           <div class="app-status-bar"><span>9:41</span><span>5G ●●●●</span></div>
-          <div class="store-banner" onclick="navigateAPP('page-app-store')" data-link="feature-home">
+          <div class="store-banner" data-link="feature-home">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <span class="store-name">北京朝阳店</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            <div class="store-info-fixed">
+              <span class="store-name">北京朝阳店</span>
+              <span class="store-contact">联系人：王店长 · 电话：138-0000-8888</span>
+            </div>
           </div>
           <div class="app-body">
             <div class="arrival-notice" data-link="feature-home">
@@ -1538,6 +1541,10 @@ body.text-mode .text-mode-doc { display: block; }
         <div class="app-page" id="page-app-category">
           <div class="app-status-bar"><span>9:41</span><span>5G ●●●●</span></div>
           <div class="app-header"><div class="app-header-title">分类</div></div>
+          <div class="search-bar-app" style="margin:8px 16px;cursor:text">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="categorySearch" placeholder="搜索商品名称" oninput="filterCategoryProducts(this.value)" style="border:none;background:none;outline:none;flex:1;font-size:var(--font-size-sm);color:var(--text-main)" />
+          </div>
           <div class="app-body" style="display:flex">
             <div style="width:90px;background:var(--bg-tertiary);flex-shrink:0">
               <div style="padding:14px 8px;text-align:center;font-size:var(--font-size-sm);font-weight:600;color:var(--primary);background:#fff;border-left:3px solid var(--primary)">生鲜水果</div>
@@ -1545,18 +1552,39 @@ body.text-mode .text-mode-doc { display: block; }
               <div style="padding:14px 8px;text-align:center;font-size:var(--font-size-sm);color:var(--text-muted)">零食坚果</div>
               <div style="padding:14px 8px;text-align:center;font-size:var(--font-size-sm);color:var(--text-muted)">日用百货</div>
             </div>
-            <div style="flex:1;padding:8px" data-link="feature-home">
-              <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin:8px 0">按销量排序</div>
-              <div class="product-card-app" style="margin:0 0 8px" onclick="navigateAPP('page-app-detail')">
+            <div style="flex:1;padding:8px" data-link="feature-home" id="categoryProductList">
+              <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin:8px 0" id="categorySortLabel">按销量排序</div>
+              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="有机红富士苹果" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">🍎</div>
                 <div class="product-info"><div class="product-name">有机红富士苹果</div><div class="product-eta">预计2天到货</div><div class="product-price">¥12.90</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
-              <div class="product-card-app" style="margin:0 0 8px" onclick="navigateAPP('page-app-detail')">
+              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="新疆和田大枣" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">🌰</div>
                 <div class="product-info"><div class="product-name">新疆和田大枣</div><div class="product-eta">预计2天到货</div><div class="product-price">¥25.90</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
+              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="农夫山泉天然水" onclick="navigateAPP('page-app-detail')">
+                <div class="product-img">💧</div>
+                <div class="product-info"><div class="product-name">农夫山泉天然水 550ml</div><div class="product-eta">预计1天到货</div><div class="product-price">¥2.00</div></div>
+                <button class="buy-btn" type="button">购买</button>
+              </div>
+              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="三只松鼠坚果礼盒" onclick="navigateAPP('page-app-detail')">
+                <div class="product-img">🥜</div>
+                <div class="product-info"><div class="product-name">三只松鼠坚果礼盒</div><div class="product-eta">预计3天到货</div><div class="product-price">¥89.90</div></div>
+                <button class="buy-btn" type="button">购买</button>
+              </div>
+              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="蓝月亮洗衣液" onclick="navigateAPP('page-app-detail')">
+                <div class="product-img">🧴</div>
+                <div class="product-info"><div class="product-name">蓝月亮洗衣液 2kg</div><div class="product-eta">预计2天到货</div><div class="product-price">¥39.90</div></div>
+                <button class="buy-btn" type="button">购买</button>
+              </div>
+              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="伊利纯牛奶" onclick="navigateAPP('page-app-detail')">
+                <div class="product-img">🥛</div>
+                <div class="product-info"><div class="product-name">伊利纯牛奶 250ml×12</div><div class="product-eta">预计1天到货</div><div class="product-price">¥49.90</div></div>
+                <button class="buy-btn" type="button">购买</button>
+              </div>
+              <div id="categoryNoResult" style="display:none;text-align:center;padding:40px 16px;color:var(--text-muted);font-size:var(--font-size-sm)">未找到匹配的商品</div>
             </div>
           </div>
           <nav class="app-tabbar">
@@ -1570,7 +1598,7 @@ body.text-mode .text-mode-doc { display: block; }
         <div class="app-page" id="page-app-detail">
           <div class="app-status-bar"><span>9:41</span><span>5G ●●●●</span></div>
           <div class="app-header">
-            <button type="button" onclick="navigateAPP('page-app-home')" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
+            <button type="button" onclick="goBackAPP()" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
             <div class="app-header-title">商品详情</div>
             <div style="width:20px"></div>
           </div>
@@ -1662,6 +1690,11 @@ body.text-mode .text-mode-doc { display: block; }
                 <div class="wb-title">异常件处理</div>
                 <div class="wb-count">3件冻结</div>
               </div>
+              <div class="workbench-card" onclick="navigateAPP('page-app-store-orders')" data-link="feature-workbench">
+                <div class="wb-icon" style="background:var(--info-light)">📋</div>
+                <div class="wb-title">店铺订单</div>
+                <div class="wb-count">门店会员订单</div>
+              </div>
               <div class="workbench-card">
                 <div class="wb-icon" style="background:var(--purple-light)">🔄</div>
                 <div class="wb-title">发起调拨</div>
@@ -1680,7 +1713,7 @@ body.text-mode .text-mode-doc { display: block; }
         <div class="app-page" id="page-app-orders">
           <div class="app-status-bar"><span>9:41</span><span>5G ●●●●</span></div>
           <div class="app-header">
-            <button type="button" onclick="navigateAPP('page-app-profile')" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
+            <button type="button" onclick="goBackAPP()" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
             <div class="app-header-title">我的订单</div>
             <div style="width:20px"></div>
           </div>
@@ -1738,7 +1771,7 @@ body.text-mode .text-mode-doc { display: block; }
         <div class="app-page" id="page-app-pickup">
           <div class="app-status-bar"><span>9:41</span><span>5G ●●●●</span></div>
           <div class="app-header">
-            <button type="button" onclick="navigateAPP('page-app-orders')" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
+            <button type="button" onclick="goBackAPP()" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
             <div class="app-header-title">取货码</div>
             <div style="width:20px"></div>
           </div>
@@ -1787,16 +1820,33 @@ body.text-mode .text-mode-doc { display: block; }
         <div class="app-page" id="page-app-receiving">
           <div class="app-status-bar"><span>9:41</span><span>5G ●●●●</span></div>
           <div class="app-header">
-            <button type="button" onclick="navigateAPP('page-app-profile')" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
+            <button type="button" onclick="goBackAPP()" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
             <div class="app-header-title">待入库收货</div>
             <div style="width:20px"></div>
           </div>
           <div class="app-body" data-link="feature-workbench">
-            <div class="scan-area">
-              <div class="scan-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg></div>
-              <div style="font-size:var(--font-size-base);font-weight:600;margin-bottom:4px">扫描发货单/批次号</div>
-              <div style="font-size:var(--font-size-xs);color:var(--text-muted)">扫描或手动输入供应商发货单号</div>
-              <button class="btn btn-primary" type="button" style="margin-top:12px" onclick="showDecomposeResult()">模拟扫码</button>
+            <div style="padding:12px 16px;background:var(--info-light);font-size:var(--font-size-xs);color:var(--info);display:flex;align-items:center;gap:6px">
+              <span>📦</span><span>到货批次请直接点击"确认入库"按钮完成收货</span>
+            </div>
+            <div style="margin:12px 16px;padding:14px;background:#fff;border-radius:10px;border:1px solid var(--border)">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+                <div>
+                  <div style="font-size:var(--font-size-sm);font-weight:600">批次 PO20260812005</div>
+                  <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:4px">供应商：品质优选 · 100件</div>
+                </div>
+                <span class="badge badge-warning">含异常拆解</span>
+              </div>
+              <div style="background:var(--bg-tertiary);border-radius:8px;padding:10px 12px;margin:8px 0">
+                <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-bottom:6px">入库商品明细</div>
+                <div style="font-size:var(--font-size-sm);color:var(--text-main);line-height:1.8">
+                  · 有机红富士苹果 ×30<br>
+                  · 伊利纯牛奶 ×20<br>
+                  · 三只松鼠坚果礼盒 ×15<br>
+                  · 蓝月亮洗衣液 ×20<br>
+                  · 农夫山泉天然水 ×15
+                </div>
+              </div>
+              <button class="btn btn-primary" type="button" style="width:100%;margin-top:4px" onclick="showDecomposeResult()">确认入库</button>
             </div>
             <div class="batch-info" id="batchResult" style="display:none">
               <div class="batch-info-header">批次 PO20260812005 到货拆解结果</div>
@@ -1807,7 +1857,7 @@ body.text-mode .text-mode-doc { display: block; }
               <div class="batch-info-row" style="background:var(--accent-2-light)"><span style="color:var(--accent-2);font-weight:600">异常冻结件</span><span style="color:var(--accent-2);font-weight:700">5件 → 自动退款</span></div>
               <div class="batch-info-row"><span style="color:var(--text-muted)">退款订单</span><span style="color:var(--danger)">5单已自动触发退款</span></div>
               <div style="padding:12px 16px">
-                <button class="btn btn-primary" type="button" style="width:100%" onclick="navigateAPP('page-app-profile')">确认入库</button>
+                <button class="btn btn-primary" type="button" style="width:100%" onclick="goBackAPP()">完成入库</button>
               </div>
             </div>
             <div style="margin:0 16px 16px;padding:12px 14px;background:#fff;border-radius:10px;border:1px solid var(--border)">
@@ -1828,7 +1878,7 @@ body.text-mode .text-mode-doc { display: block; }
         <div class="app-page" id="page-app-scan">
           <div class="app-status-bar"><span>9:41</span><span>5G ●●●●</span></div>
           <div class="app-header">
-            <button type="button" onclick="navigateAPP('page-app-profile')" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
+            <button type="button" onclick="goBackAPP()" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
             <div class="app-header-title">扫码核销自提</div>
             <div style="width:20px"></div>
           </div>
@@ -1868,7 +1918,7 @@ body.text-mode .text-mode-doc { display: block; }
         <div class="app-page" id="page-app-exception">
           <div class="app-status-bar"><span>9:41</span><span>5G ●●●●</span></div>
           <div class="app-header">
-            <button type="button" onclick="navigateAPP('page-app-profile')" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
+            <button type="button" onclick="goBackAPP()" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
             <div class="app-header-title">异常件处理</div>
             <div style="width:20px"></div>
           </div>
@@ -1900,11 +1950,152 @@ body.text-mode .text-mode-doc { display: block; }
           </div>
         </div>
 
+        <!-- Store Orders (Staff) -->
+        <div class="app-page" id="page-app-store-orders">
+          <div class="app-status-bar"><span>9:41</span><span>5G ●●●●</span></div>
+          <div class="app-header">
+            <button type="button" onclick="goBackAPP()" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
+            <div class="app-header-title">店铺订单</div>
+            <button type="button" onclick="toggleStoreOrdersRole()" id="storeOrdersRoleBtn" style="border:1px solid var(--border);background:#fff;padding:4px 10px;border-radius:6px;font-size:var(--font-size-xs);color:var(--primary);cursor:pointer">切换店长</button>
+          </div>
+          <div class="app-body" data-link="feature-workbench">
+            <div id="storeOrdersManager" style="display:none">
+              <div style="padding:12px 16px;background:var(--info-light);font-size:var(--font-size-xs);color:var(--info);display:flex;align-items:center;gap:6px">
+                <span>👤</span><span>店长视图 · 可查看本门店全部会员订单</span>
+              </div>
+              <div class="order-card-app" style="margin:10px 16px">
+                <div class="order-card-header">
+                  <span class="order-no">SO20260814001</span>
+                  <span class="badge badge-success">待自提</span>
+                </div>
+                <div style="padding:6px 12px;background:var(--bg-tertiary);border-radius:6px;margin:6px 0;font-size:var(--font-size-xs);color:var(--text-muted)">
+                  会员：小花花 (ID: M10086) · 归属店员：李店员
+                </div>
+                <div class="order-card-body">
+                  <div class="product-img">🍎</div>
+                  <div style="flex:1">
+                    <div style="font-size:var(--font-size-base);font-weight:600">有机红富士苹果 ×2</div>
+                    <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin-top:4px">北京朝阳店</div>
+                  </div>
+                  <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥25.80</div>
+                </div>
+              </div>
+              <div class="order-card-app" style="margin:10px 16px">
+                <div class="order-card-header">
+                  <span class="order-no">SO20260814002</span>
+                  <span class="badge badge-info">备货中</span>
+                </div>
+                <div style="padding:6px 12px;background:var(--bg-tertiary);border-radius:6px;margin:6px 0;font-size:var(--font-size-xs);color:var(--text-muted)">
+                  会员：大伟哥 (ID: M10092) · 归属店员：王实习
+                </div>
+                <div class="order-card-body">
+                  <div class="product-img">🥛</div>
+                  <div style="flex:1">
+                    <div style="font-size:var(--font-size-base);font-weight:600">伊利纯牛奶 ×1</div>
+                    <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin-top:4px">北京朝阳店</div>
+                  </div>
+                  <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥49.90</div>
+                </div>
+              </div>
+              <div class="order-card-app" style="margin:10px 16px">
+                <div class="order-card-header">
+                  <span class="order-no">SO20260814003</span>
+                  <span class="badge badge-success">待自提</span>
+                </div>
+                <div style="padding:6px 12px;background:var(--bg-tertiary);border-radius:6px;margin:6px 0;font-size:var(--font-size-xs);color:var(--text-muted)">
+                  会员：小花花 (ID: M10086) · 归属店员：李店员
+                </div>
+                <div class="order-card-body">
+                  <div class="product-img">🥜</div>
+                  <div style="flex:1">
+                    <div style="font-size:var(--font-size-base);font-weight:600">三只松鼠坚果礼盒 ×1</div>
+                    <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin-top:4px">北京朝阳店</div>
+                  </div>
+                  <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥89.90</div>
+                </div>
+              </div>
+              <div class="order-card-app" style="margin:10px 16px">
+                <div class="order-card-header">
+                  <span class="order-no">SO20260813005</span>
+                  <span class="badge badge-muted">已完成</span>
+                </div>
+                <div style="padding:6px 12px;background:var(--bg-tertiary);border-radius:6px;margin:6px 0;font-size:var(--font-size-xs);color:var(--text-muted)">
+                  会员：安静的花 (ID: M10100) · 归属店员：王实习
+                </div>
+                <div class="order-card-body">
+                  <div class="product-img">🧴</div>
+                  <div style="flex:1">
+                    <div style="font-size:var(--font-size-base);font-weight:600">蓝月亮洗衣液 ×1</div>
+                    <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin-top:4px">北京朝阳店</div>
+                  </div>
+                  <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥39.90</div>
+                </div>
+              </div>
+              <div class="order-card-app" style="margin:10px 16px">
+                <div class="order-card-header">
+                  <span class="order-no">SO20260813008</span>
+                  <span class="badge badge-warning">退款中</span>
+                </div>
+                <div style="padding:6px 12px;background:var(--bg-tertiary);border-radius:6px;margin:6px 0;font-size:var(--font-size-xs);color:var(--text-muted)">
+                  会员：大伟哥 (ID: M10092) · 归属店员：王实习
+                </div>
+                <div class="order-card-body">
+                  <div class="product-img">💧</div>
+                  <div style="flex:1">
+                    <div style="font-size:var(--font-size-base);font-weight:600">农夫山泉天然水 ×3</div>
+                    <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin-top:4px">北京朝阳店</div>
+                  </div>
+                  <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥6.00</div>
+                </div>
+              </div>
+            </div>
+            <div id="storeOrdersClerk">
+              <div style="padding:12px 16px;background:var(--info-light);font-size:var(--font-size-xs);color:var(--info);display:flex;align-items:center;gap:6px">
+                <span>👤</span><span>店员视图 · 仅可查看归属自己的会员订单</span>
+              </div>
+              <div class="order-card-app" style="margin:10px 16px">
+                <div class="order-card-header">
+                  <span class="order-no">SO20260814001</span>
+                  <span class="badge badge-success">待自提</span>
+                </div>
+                <div style="padding:6px 12px;background:var(--bg-tertiary);border-radius:6px;margin:6px 0;font-size:var(--font-size-xs);color:var(--text-muted)">
+                  会员：小花花 (ID: M10086)
+                </div>
+                <div class="order-card-body">
+                  <div class="product-img">🍎</div>
+                  <div style="flex:1">
+                    <div style="font-size:var(--font-size-base);font-weight:600">有机红富士苹果 ×2</div>
+                    <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin-top:4px">北京朝阳店</div>
+                  </div>
+                  <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥25.80</div>
+                </div>
+              </div>
+              <div class="order-card-app" style="margin:10px 16px">
+                <div class="order-card-header">
+                  <span class="order-no">SO20260814003</span>
+                  <span class="badge badge-success">待自提</span>
+                </div>
+                <div style="padding:6px 12px;background:var(--bg-tertiary);border-radius:6px;margin:6px 0;font-size:var(--font-size-xs);color:var(--text-muted)">
+                  会员：小花花 (ID: M10086)
+                </div>
+                <div class="order-card-body">
+                  <div class="product-img">🥜</div>
+                  <div style="flex:1">
+                    <div style="font-size:var(--font-size-base);font-weight:600">三只松鼠坚果礼盒 ×1</div>
+                    <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin-top:4px">北京朝阳店</div>
+                  </div>
+                  <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥89.90</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Store Selection -->
         <div class="app-page" id="page-app-store">
           <div class="app-status-bar"><span>9:41</span><span>5G ●●●●</span></div>
           <div class="app-header">
-            <button type="button" onclick="navigateAPP('page-app-home')" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
+            <button type="button" onclick="goBackAPP()" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
             <div class="app-header-title">选择门店</div>
             <div style="width:20px"></div>
           </div>
@@ -2263,7 +2454,12 @@ body.text-mode .text-mode-doc { display: block; }
     if (addr) addr.textContent = routeMap[pageId] || pageId;
   };
 
-  window.navigateAPP = function(pageId) {
+  var appNavHistory = ['page-app-home'];
+  window.navigateAPP = function(pageId, skipHistory) {
+    var currentPage = document.querySelector('#prototypeRootAPP .app-page.active');
+    if (currentPage && !skipHistory) {
+      appNavHistory.push(currentPage.id);
+    }
     document.querySelectorAll('#prototypeRootAPP .app-page').forEach(function(p) { p.classList.remove('active'); });
     var target = document.getElementById(pageId);
     if (target) target.classList.add('active');
@@ -2272,7 +2468,35 @@ body.text-mode .text-mode-doc { display: block; }
       document.querySelectorAll('#prototypeRootAPP .app-tabbar .app-tab-item').forEach(function(t, i) {
         t.classList.toggle('active', i === tabMap[pageId]);
       });
+      appNavHistory = [pageId];
     }
+  };
+  window.goBackAPP = function() {
+    if (appNavHistory.length > 1) {
+      var prevPage = appNavHistory.pop();
+      navigateAPP(prevPage, true);
+    } else {
+      navigateAPP('page-app-home', true);
+    }
+  };
+
+  window.filterCategoryProducts = function(keyword) {
+    var products = document.querySelectorAll('#categoryProductList .cat-product');
+    var noResult = document.getElementById('categoryNoResult');
+    var sortLabel = document.getElementById('categorySortLabel');
+    var found = 0;
+    var kw = keyword.trim().toLowerCase();
+    products.forEach(function(p) {
+      var name = (p.getAttribute('data-name') || '').toLowerCase();
+      if (!kw || name.indexOf(kw) > -1) {
+        p.style.display = '';
+        found++;
+      } else {
+        p.style.display = 'none';
+      }
+    });
+    if (sortLabel) sortLabel.style.display = kw ? 'none' : '';
+    if (noResult) noResult.style.display = found === 0 ? '' : 'none';
   };
 
   window.switchDevice = function(device) {
@@ -2293,7 +2517,22 @@ body.text-mode .text-mode-doc { display: block; }
     var btn = document.getElementById('roleSwitchBtn');
     if (isStaffMode) { consumer.style.display = 'none'; staff.style.display = ''; if (btn) btn.textContent = '切换为消费者'; }
     else { consumer.style.display = ''; staff.style.display = 'none'; if (btn) btn.textContent = '切换为店员'; }
+    updateStoreOrdersView();
   };
+  var storeOrdersRole = 'clerk';
+  window.toggleStoreOrdersRole = function() {
+    storeOrdersRole = storeOrdersRole === 'clerk' ? 'manager' : 'clerk';
+    updateStoreOrdersView();
+    var roleBtn = document.getElementById('storeOrdersRoleBtn');
+    if (roleBtn) roleBtn.textContent = storeOrdersRole === 'manager' ? '切换店员' : '切换店长';
+  };
+  function updateStoreOrdersView() {
+    var mgr = document.getElementById('storeOrdersManager');
+    var clk = document.getElementById('storeOrdersClerk');
+    if (!mgr || !clk) return;
+    if (storeOrdersRole === 'manager') { mgr.style.display = ''; clk.style.display = 'none'; }
+    else { mgr.style.display = 'none'; clk.style.display = ''; }
+  }
 
   window.showDecomposeResult = function() {
     var el = document.getElementById('batchResult');
