@@ -134,9 +134,9 @@ body {
   height: calc(100vh - 56px);
 }
 .left-panel {
-  flex: 0 0 42%;
+  flex: 0 0 66.67%;
   min-width: 300px;
-  max-width: 70%;
+  max-width: 85%;
   position: relative;
   overflow: hidden;
   background: var(--bg-primary);
@@ -1136,6 +1136,13 @@ body.text-mode .text-mode-doc { display: block; }
 .text-mode-doc p { margin-bottom: 14px; text-align: justify; line-height: 1.7; }
 .text-mode-doc table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
 .text-mode-doc th, .text-mode-doc td { border: 1px solid #ddd; padding: 10px 14px; text-align: left; vertical-align: top; }
+.text-mode-doc .pc-table { font-size: 12px !important; }
+.text-mode-doc .pc-table th { background: #f0f0f0 !important; font-size: 12px !important; }
+.text-mode-doc .pc-table td { font-size: 12px !important; }
+.text-mode-doc .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+.text-mode-doc .badge-success { background: #e6ffed; color: #22c55e; }
+.text-mode-doc .badge-gray { background: #f1f5f9; color: #64748b; }
+
 .text-mode-doc th { background: #f5f5f5; font-weight: bold; }
 
 /* Modal */
@@ -1190,6 +1197,23 @@ body.text-mode .text-mode-doc { display: block; }
 }
 .product-sub-tab:hover { color: var(--text-main); }
 .product-sub-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+/* Pagination */
+.pagination-wrap { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; margin-top: 8px; border-top: 1px solid var(--border); }
+.pagination-info { font-size: var(--font-size-sm); color: var(--text-muted); }
+.pagination-btns { display: flex; gap: 4px; align-items: center; }
+.pagination-btn { padding: 5px 10px; border: 1px solid var(--border); border-radius: 4px; background: #fff; font-size: var(--font-size-xs); color: var(--text-main); cursor: pointer; transition: var(--transition-fast); }
+.pagination-btn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+.pagination-btn:disabled { color: var(--text-light); cursor: not-allowed; opacity: 0.5; }
+.pagination-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.pagination-goto { display: flex; align-items: center; gap: 4px; font-size: var(--font-size-xs); color: var(--text-muted); margin-left: 8px; }
+.pagination-goto input { width: 40px; padding: 4px 6px; border: 1px solid var(--border); border-radius: 4px; text-align: center; font-size: var(--font-size-xs); outline: none; }
+.pagination-goto input:focus { border-color: var(--primary); }
+/* Scrollable table container */
+.table-scroll-wrap { max-height: 360px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; }
+.table-scroll-wrap .pc-table { margin-bottom: 0; }
+.table-scroll-wrap .pc-table thead { position: sticky; top: 0; z-index: 1; }
+.table-scroll-wrap .pc-table thead th { background: var(--bg-tertiary); }
+
 
 /* Category Management */
 .cat-list-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; }
@@ -1378,6 +1402,7 @@ body.text-mode .text-mode-doc { display: block; }
                 </div>
                 <!-- Active Products Table -->
                 <div id="activeProductsTable">
+                <div class="table-scroll-wrap">
                 <table class="pc-table">
                   <thead><tr><th>SKU编码</th><th>商品名称</th><th>分类</th><th>规格</th><th>售价</th><th>预计到货天数</th><th>状态</th><th>创建时间</th><th>更新时间</th><th>操作</th></tr></thead>
                   <tbody id="productTableBody">
@@ -1463,9 +1488,27 @@ body.text-mode .text-mode-doc { display: block; }
                     </tr>
                   </tbody>
                 </table>
+                                <!-- Pagination Controls -->
+                <div class="pagination-wrap" id="productPagination">
+                  <div class="pagination-info" id="paginationInfo">共 8 条记录，第 1/1 页</div>
+                  <div style="display:flex;align-items:center">
+                    <div class="pagination-btns">
+                      <button class="pagination-btn" type="button" onclick="goToPage(1)" disabled id="btnFirst">首页</button>
+                      <button class="pagination-btn" type="button" onclick="goToPage(currentPage - 1)" disabled id="btnPrev">上一页</button>
+                      <span id="pageNumbers" style="display:flex;gap:4px"></span>
+                      <button class="pagination-btn" type="button" onclick="goToPage(currentPage + 1)" disabled id="btnNext">下一页</button>
+                      <button class="pagination-btn" type="button" onclick="goToPage(totalPages)" disabled id="btnLast">末页</button>
+                    </div>
+                    <div class="pagination-goto">
+                      跳至 <input type="number" id="gotoPageInput" min="1" value="1" onkeydown="if(event.key==='Enter')goToPage(parseInt(this.value))"> 页
+                    </div>
+                  </div>
+                </div>
+
                 </div>
                 <!-- Deleted Products Table -->
                 <div id="deletedProductsTable" style="display:none">
+                <div class="table-scroll-wrap">
                 <table class="pc-table">
                   <thead><tr><th>SKU编码</th><th>商品名称</th><th>分类</th><th>规格</th><th>售价</th><th>删除时间</th><th>操作</th></tr></thead>
                   <tbody id="deletedTableBody">
@@ -3535,6 +3578,130 @@ body.text-mode .text-mode-doc { display: block; }
       document.getElementById('deletedProductsTable').style.display = '';
     }
   };
+  // --- Pagination ---
+  window.pageSize = 5;
+  window.currentPage = 1;
+  window.totalPages = 1;
+
+  window.initPagination = function() {
+    updatePagination();
+  };
+
+  function getVisibleRows() {
+    var rows = document.querySelectorAll('#productTableBody tr');
+    var visibleRows = [];
+    rows.forEach(function(r) {
+      // A row is "visible" if it's not hidden by pagination itself
+      // We check if it was previously hidden by pagination (has data-page-hidden)
+      var hiddenByPage = r.getAttribute('data-page-hidden') === '1';
+      if (!hiddenByPage) {
+        visibleRows.push(r);
+      }
+    });
+    return visibleRows;
+  }
+
+  function updatePagination() {
+    var allRows = document.querySelectorAll('#productTableBody tr');
+    // Count all rows (not filtered)
+    var total = 0;
+    allRows.forEach(function(r) {
+      // Only count rows that are not filtered out by search/category/status
+      if (r.style.display !== 'none') {
+        total++;
+      }
+    });
+
+    if (total === 0) {
+      // If all are hidden, recount all rows
+      total = allRows.length;
+    }
+
+    window.totalPages = Math.max(1, Math.ceil(total / window.pageSize));
+    if (window.currentPage > window.totalPages) window.currentPage = window.totalPages;
+
+    var infoEl = document.getElementById('paginationInfo');
+    if (infoEl) infoEl.textContent = '共 ' + total + ' 条记录，第 ' + window.currentPage + '/' + window.totalPages + ' 页';
+
+    var btnFirst = document.getElementById('btnFirst');
+    var btnPrev = document.getElementById('btnPrev');
+    var btnNext = document.getElementById('btnNext');
+    var btnLast = document.getElementById('btnLast');
+    if (btnFirst) { btnFirst.disabled = window.currentPage <= 1; }
+    if (btnPrev) { btnPrev.disabled = window.currentPage <= 1; }
+    if (btnNext) { btnNext.disabled = window.currentPage >= window.totalPages; }
+    if (btnLast) { btnLast.disabled = window.currentPage >= window.totalPages; }
+
+    var gotoInput = document.getElementById('gotoPageInput');
+    if (gotoInput) { gotoInput.value = window.currentPage; gotoInput.max = window.totalPages; }
+
+    // Render page numbers
+    var pageNums = document.getElementById('pageNumbers');
+    if (pageNums) {
+      var html = '';
+      var maxShow = 5;
+      var startPage = Math.max(1, window.currentPage - Math.floor(maxShow / 2));
+      var endPage = Math.min(window.totalPages, startPage + maxShow - 1);
+      if (endPage - startPage < maxShow - 1) startPage = Math.max(1, endPage - maxShow + 1);
+      for (var p = startPage; p <= endPage; p++) {
+        html += '<button class="pagination-btn' + (p === window.currentPage ? ' active' : '') + '" type="button" onclick="goToPage(' + p + ')">' + p + '</button>';
+      }
+      pageNums.innerHTML = html;
+    }
+
+    // Show/hide rows based on page: only show rows for current page
+    var start = (window.currentPage - 1) * window.pageSize;
+    var end = window.currentPage * window.pageSize;
+    var idx = 0;
+    allRows.forEach(function(r) {
+      // Check if row is filtered out (by search/category/status)
+      var isFilteredOut = (r.style.display === 'none');
+      if (isFilteredOut) {
+        return; // Don't touch filtered rows
+      }
+      if (idx >= start && idx < end) {
+        r.style.display = '';
+        r.setAttribute('data-page-hidden', '0');
+      } else {
+        r.style.display = 'none';
+        r.setAttribute('data-page-hidden', '1');
+      }
+      idx++;
+    });
+  }
+
+  window.goToPage = function(page) {
+    if (page < 1 || page > window.totalPages) return;
+    window.currentPage = page;
+    updatePagination();
+    // Scroll table to top
+    var scrollWrap = document.querySelector('#activeProductsTable .table-scroll-wrap');
+    if (scrollWrap) scrollWrap.scrollTop = 0;
+  };
+
+  // Override filterProductTable to reset pagination
+  var _origFilterProductTable = window.filterProductTable;
+  window.filterProductTable = function(keyword) {
+    // Reset to page 1
+    window.currentPage = 1;
+    _origFilterProductTable(keyword);
+    // After filtering, update pagination
+    setTimeout(updatePagination, 50);
+  };
+
+  // Override switchProductTab to update pagination
+  var _origSwitchProductTab = window.switchProductTab;
+  window.switchProductTab = function(tab, btn) {
+    _origSwitchProductTab(tab, btn);
+    if (tab === 'active') {
+      window.currentPage = 1;
+      setTimeout(updatePagination, 50);
+    }
+  };
+
+  // Initialize pagination on load
+  setTimeout(initPagination, 200);
+
 
   // --- Filter Product Table ---
   window.filterProductTable = function(keyword) {
@@ -4015,11 +4182,92 @@ body.text-mode .text-mode-doc { display: block; }
     if (mode === 'text') {
       var textDoc = document.getElementById('textModeDoc');
       var html = '<h1>门店进销存系统产品需求文档</h1><p>版本: V2.0 | 2026年8月14日 | 初稿</p>';
+
+      // 1. Sync PRD documentation panes
       var panes = document.querySelectorAll('.tab-content-wrapper > .tab-pane');
       panes.forEach(function(pane, i) {
         if (i > 0) html += '<hr style="border:none;border-top:1px solid #ddd;margin:30px 0">';
         html += pane.innerHTML;
       });
+
+      // 2. Sync PC backend product management table
+      html += '<hr style="border:none;border-top:2px solid #333;margin:40px 0">';
+      html += '<h2>PC后台 — 商品管理（当前数据）</h2>';
+      html += '<p style="color:#666;font-size:13px">以下为预览模式中商品管理页面的实时数据快照：</p>';
+
+      // Active products table
+      var activeTable = document.getElementById('activeProductsTable');
+      if (activeTable) {
+        var tableClone = activeTable.querySelector('table');
+        if (tableClone) {
+          html += '<h3>在售商品列表</h3>';
+          html += '<div style="overflow-x:auto">' + tableClone.outerHTML + '</div>';
+        }
+      }
+
+      // Deleted products table
+      var deletedTable = document.getElementById('deletedProductsTable');
+      if (deletedTable) {
+        var delClone = deletedTable.querySelector('table');
+        if (delClone) {
+          html += '<h3>已删除商品列表</h3>';
+          html += '<div style="overflow-x:auto">' + delClone.outerHTML + '</div>';
+        }
+      }
+
+      // 3. Sync APP category page
+      html += '<hr style="border:none;border-top:2px solid #333;margin:40px 0">';
+      html += '<h2>APP端 — 分类页（当前数据）</h2>';
+      var catList = document.getElementById('categoryProductList');
+      if (catList) {
+        html += '<h3>商品分类列表</h3>';
+        var catClone = catList.cloneNode(true);
+        // Remove onclick handlers for cleaner text mode
+        var buttons = catClone.querySelectorAll('button');
+        buttons.forEach(function(b) { b.remove(); });
+        html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">';
+        var items = catClone.querySelectorAll('.cat-product');
+        items.forEach(function(item) {
+          var name = item.getAttribute('data-name') || '';
+          var cat = item.getAttribute('data-category') || '';
+          var price = (item.querySelector('.product-price') || {}).textContent || '';
+          var eta = (item.querySelector('.product-eta') || {}).textContent || '';
+          html += '<div style="border:1px solid #ddd;padding:12px;border-radius:8px;background:#fafafa">';
+          html += '<div style="font-weight:600;font-size:14px">' + name + '</div>';
+          html += '<div style="font-size:12px;color:#666">分类：' + cat + ' | ' + eta + '</div>';
+          html += '<div style="font-size:14px;color:#e53e3e;font-weight:600;margin-top:4px">' + price + '</div>';
+          html += '</div>';
+        });
+        html += '</div>';
+      }
+
+      // 4. Sync APP home page
+      html += '<hr style="border:none;border-top:2px solid #333;margin:40px 0">';
+      html += '<h2>APP端 — 首页商品列表</h2>';
+      var homeProducts = document.querySelectorAll('#prototypeRootAPP .home-product');
+      if (homeProducts.length > 0) {
+        html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">';
+        homeProducts.forEach(function(item) {
+          var name = item.getAttribute('data-name') || '';
+          var price = (item.querySelector('.product-price') || {}).textContent || '';
+          var eta = (item.querySelector('.product-eta') || {}).textContent || '';
+          html += '<div style="border:1px solid #ddd;padding:12px;border-radius:8px;background:#fafafa">';
+          html += '<div style="font-weight:600;font-size:14px">' + name + '</div>';
+          html += '<div style="font-size:12px;color:#666">' + eta + '</div>';
+          html += '<div style="font-size:14px;color:#e53e3e;font-weight:600;margin-top:4px">' + price + '</div>';
+          html += '</div>';
+        });
+        html += '</div>';
+      }
+
+      // 5. Sync PC Dashboard KPIs
+      html += '<hr style="border:none;border-top:2px solid #333;margin:40px 0">';
+      html += '<h2>PC后台 — 数据概览</h2>';
+      var kpiGrid = document.querySelector('#page-pc-dashboard .kpi-grid, #prototypeRootPC .kpi-grid');
+      if (kpiGrid) {
+        html += '<div style="overflow-x:auto">' + kpiGrid.outerHTML + '</div>';
+      }
+
       textDoc.innerHTML = html;
       document.body.classList.add('text-mode');
       modeBtns[1].classList.add('active');
