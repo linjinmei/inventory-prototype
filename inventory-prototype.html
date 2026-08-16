@@ -143,7 +143,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  order: 3;
 }
 .resize-handle {
   flex: 0 0 6px;
@@ -151,7 +150,6 @@ body {
   background: transparent;
   position: relative;
   z-index: 10;
-  order: 2;
 }
 .resize-handle::after {
   content: '';
@@ -173,7 +171,6 @@ body {
   flex-direction: column;
   background: var(--bg-secondary);
   overflow: hidden;
-  order: 1;
 }
 
 /* ==================== Browser Frame (PC) ==================== */
@@ -1128,8 +1125,8 @@ body {
 body.text-mode { overflow: auto; height: auto; background: #fff; }
 body.text-mode .main-layout { display: none; }
 body.text-mode .link-indicator { display: none !important; }
-body.text-mode .text-mode-doc { display: block; }
-.text-mode-doc { display: none; max-width: 960px; margin: 0 auto; padding: 96px 50px 40px; }
+body.text-mode .text-mode-doc { display: block !important; visibility: visible !important; opacity: 1 !important; }
+.text-mode-doc { display: block; max-width: 960px; margin: 0 auto; padding: 96px 50px 40px; }
 .text-mode-doc h1 { font-size: 28px; margin-bottom: 8px; }
 .text-mode-doc h2 { font-size: 22px; margin-top: 40px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #333; }
 .text-mode-doc h3 { font-size: 18px; margin-top: 28px; margin-bottom: 12px; }
@@ -3913,13 +3910,27 @@ body.text-mode .text-mode-doc { display: block; }
 
   window.switchDevice = function(device) {
     currentDevice = device;
+    // Ensure preview mode is active (remove text-mode class)
+    document.body.classList.remove('text-mode');
     document.querySelectorAll('.device-btn').forEach(function(b) { b.classList.remove('active'); });
-    event.target.classList.add('active');
+    // Find and activate the button by matching device type
+    var btns = document.querySelectorAll('.device-btn');
+    btns.forEach(function(b) {
+      if ((device === 'pc' && b.textContent.trim() === 'PC后台') || (device === 'app' && b.textContent.trim() === 'APP端')) {
+        b.classList.add('active');
+      }
+    });
+    // Also activate preview mode button
+    document.querySelectorAll('.mode-btn').forEach(function(b) { b.classList.remove('active'); });
+    var modeBtns = document.querySelectorAll('.mode-btn');
+    if (modeBtns[0]) modeBtns[0].classList.add('active');
+    
     var bf = document.getElementById('browserFrame');
     var pf = document.getElementById('phoneFrame');
     if (device === 'pc') { bf.style.display = ''; pf.style.display = 'none'; }
-    else { bf.style.display = 'none'; pf.style.display = ''; }
-    setTimeout(scalePrototype, 50);
+    else { bf.style.display = 'block'; pf.style.display = 'block'; }
+    setTimeout(scalePrototype, 100);
+    setTimeout(scalePrototype, 300);
   };
 
   window.switchAppRole = function() {
@@ -4177,106 +4188,144 @@ body.text-mode .text-mode-doc { display: block; }
   }
 
   window.switchMode = function(mode) {
-    var modeBtns = document.querySelectorAll('.mode-toggle .mode-btn');
-    modeBtns.forEach(function(b) { b.classList.remove('active'); });
-    if (mode === 'text') {
-      var textDoc = document.getElementById('textModeDoc');
-      var html = '<h1>门店进销存系统产品需求文档</h1><p>版本: V2.0 | 2026年8月14日 | 初稿</p>';
+    try {
+      var modeBtns = document.querySelectorAll('.mode-toggle .mode-btn');
+      modeBtns.forEach(function(b) { b.classList.remove('active'); });
+      if (mode === 'text') {
+        var textDoc = document.getElementById('textModeDoc');
+        if (!textDoc) return;
+        var html = '<h1>门店进销存系统产品需求文档</h1>';
+        html += '<p>版本: V2.0 | ' + getNow() + ' | 自动同步</p>';
 
-      // 1. Sync PRD documentation panes
-      var panes = document.querySelectorAll('.tab-content-wrapper > .tab-pane');
-      panes.forEach(function(pane, i) {
-        if (i > 0) html += '<hr style="border:none;border-top:1px solid #ddd;margin:30px 0">';
-        html += pane.innerHTML;
-      });
-
-      // 2. Sync PC backend product management table
-      html += '<hr style="border:none;border-top:2px solid #333;margin:40px 0">';
-      html += '<h2>PC后台 — 商品管理（当前数据）</h2>';
-      html += '<p style="color:#666;font-size:13px">以下为预览模式中商品管理页面的实时数据快照：</p>';
-
-      // Active products table
-      var activeTable = document.getElementById('activeProductsTable');
-      if (activeTable) {
-        var tableClone = activeTable.querySelector('table');
-        if (tableClone) {
-          html += '<h3>在售商品列表</h3>';
-          html += '<div style="overflow-x:auto">' + tableClone.outerHTML + '</div>';
+        // 1. Sync PRD documentation panes
+        var panes = document.querySelectorAll('.tab-content-wrapper > .tab-pane');
+        if (panes.length > 0) {
+          panes.forEach(function(pane, i) {
+            if (i > 0) html += '<hr style="border:none;border-top:1px solid #ddd;margin:30px 0">';
+            html += pane.innerHTML;
+          });
+        } else {
+          html += '<p style="color:red">未找到文档内容面板</p>';
         }
-      }
 
-      // Deleted products table
-      var deletedTable = document.getElementById('deletedProductsTable');
-      if (deletedTable) {
-        var delClone = deletedTable.querySelector('table');
-        if (delClone) {
-          html += '<h3>已删除商品列表</h3>';
-          html += '<div style="overflow-x:auto">' + delClone.outerHTML + '</div>';
-        }
-      }
+        // 2. Sync PC backend product management table
+        html += '<hr style="border:none;border-top:2px solid #333;margin:40px 0">';
+        html += '<h2>PC后台 — 商品管理（当前数据快照）</h2>';
 
-      // 3. Sync APP category page
-      html += '<hr style="border:none;border-top:2px solid #333;margin:40px 0">';
-      html += '<h2>APP端 — 分类页（当前数据）</h2>';
-      var catList = document.getElementById('categoryProductList');
-      if (catList) {
-        html += '<h3>商品分类列表</h3>';
-        var catClone = catList.cloneNode(true);
-        // Remove onclick handlers for cleaner text mode
-        var buttons = catClone.querySelectorAll('button');
-        buttons.forEach(function(b) { b.remove(); });
-        html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">';
-        var items = catClone.querySelectorAll('.cat-product');
-        items.forEach(function(item) {
-          var name = item.getAttribute('data-name') || '';
-          var cat = item.getAttribute('data-category') || '';
-          var price = (item.querySelector('.product-price') || {}).textContent || '';
-          var eta = (item.querySelector('.product-eta') || {}).textContent || '';
-          html += '<div style="border:1px solid #ddd;padding:12px;border-radius:8px;background:#fafafa">';
-          html += '<div style="font-weight:600;font-size:14px">' + name + '</div>';
-          html += '<div style="font-size:12px;color:#666">分类：' + cat + ' | ' + eta + '</div>';
-          html += '<div style="font-size:14px;color:#e53e3e;font-weight:600;margin-top:4px">' + price + '</div>';
-          html += '</div>';
-        });
-        html += '</div>';
-      }
+        try {
+          var activeTable = document.getElementById('activeProductsTable');
+          if (activeTable) {
+            var tableClone = activeTable.querySelector('table');
+            if (tableClone) {
+              html += '<h3>在售商品列表</h3>';
+              html += '<div style="overflow-x:auto">' + tableClone.outerHTML + '</div>';
+            }
+          }
+        } catch(e) { html += '<p style="color:red">商品表格渲染失败: ' + e.message + '</p>'; }
 
-      // 4. Sync APP home page
-      html += '<hr style="border:none;border-top:2px solid #333;margin:40px 0">';
-      html += '<h2>APP端 — 首页商品列表</h2>';
-      var homeProducts = document.querySelectorAll('#prototypeRootAPP .home-product');
-      if (homeProducts.length > 0) {
-        html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">';
-        homeProducts.forEach(function(item) {
-          var name = item.getAttribute('data-name') || '';
-          var price = (item.querySelector('.product-price') || {}).textContent || '';
-          var eta = (item.querySelector('.product-eta') || {}).textContent || '';
-          html += '<div style="border:1px solid #ddd;padding:12px;border-radius:8px;background:#fafafa">';
-          html += '<div style="font-weight:600;font-size:14px">' + name + '</div>';
-          html += '<div style="font-size:12px;color:#666">' + eta + '</div>';
-          html += '<div style="font-size:14px;color:#e53e3e;font-weight:600;margin-top:4px">' + price + '</div>';
-          html += '</div>';
-        });
-        html += '</div>';
-      }
+        try {
+          var deletedTable = document.getElementById('deletedProductsTable');
+          if (deletedTable) {
+            var delClone = deletedTable.querySelector('table');
+            if (delClone) {
+              html += '<h3>已删除商品列表</h3>';
+              html += '<div style="overflow-x:auto">' + delClone.outerHTML + '</div>';
+            }
+          }
+        } catch(e) { html += '<p style="color:red">已删除表格渲染失败: ' + e.message + '</p>'; }
 
-      // 5. Sync PC Dashboard KPIs
-      html += '<hr style="border:none;border-top:2px solid #333;margin:40px 0">';
-      html += '<h2>PC后台 — 数据概览</h2>';
-      var kpiGrid = document.querySelector('#page-pc-dashboard .kpi-grid, #prototypeRootPC .kpi-grid');
-      if (kpiGrid) {
-        html += '<div style="overflow-x:auto">' + kpiGrid.outerHTML + '</div>';
-      }
+        // 3. Sync APP category page
+        html += '<hr style="border:none;border-top:2px solid #333;margin:40px 0">';
+        html += '<h2>APP端 — 分类页（当前数据快照）</h2>';
+        try {
+          var catList = document.getElementById('categoryProductList');
+          if (catList) {
+            html += '<h3>商品分类列表</h3>';
+            var items = catList.querySelectorAll('.cat-product');
+            if (items.length > 0) {
+              html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">';
+              items.forEach(function(item) {
+                var name = item.getAttribute('data-name') || '';
+                var cat = item.getAttribute('data-category') || '';
+                var price = (item.querySelector('.product-price') || {}).textContent || '';
+                var eta = (item.querySelector('.product-eta') || {}).textContent || '';
+                html += '<div style="border:1px solid #ddd;padding:12px;border-radius:8px;background:#fafafa">';
+                html += '<div style="font-weight:600;font-size:14px">' + name + '</div>';
+                html += '<div style="font-size:12px;color:#666">分类：' + cat + ' | ' + eta + '</div>';
+                html += '<div style="font-size:14px;color:#e53e3e;font-weight:600;margin-top:4px">' + price + '</div>';
+                html += '</div>';
+              });
+              html += '</div>';
+            } else {
+              html += '<p style="color:#666">分类页暂无商品</p>';
+            }
+          } else {
+            html += '<p style="color:#666">未找到分类页元素</p>';
+          }
+        } catch(e) { html += '<p style="color:red">分类页渲染失败: ' + e.message + '</p>'; }
 
-      textDoc.innerHTML = html;
-      document.body.classList.add('text-mode');
-      modeBtns[1].classList.add('active');
-    } else {
-      document.body.classList.remove('text-mode');
-      window.scrollTo(0, 0);
-      document.body.scrollTop = 0;
-      document.documentElement.scrollTop = 0;
-      modeBtns[0].classList.add('active');
+        // 4. Sync APP home page
+        html += '<hr style="border:none;border-top:2px solid #333;margin:40px 0">';
+        html += '<h2>APP端 — 首页商品列表</h2>';
+        try {
+          var homeProducts = document.querySelectorAll('#prototypeRootAPP .home-product');
+          if (homeProducts.length > 0) {
+            html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">';
+            homeProducts.forEach(function(item) {
+              var name = item.getAttribute('data-name') || '';
+              var price = (item.querySelector('.product-price') || {}).textContent || '';
+              var eta = (item.querySelector('.product-eta') || {}).textContent || '';
+              html += '<div style="border:1px solid #ddd;padding:12px;border-radius:8px;background:#fafafa">';
+              html += '<div style="font-weight:600;font-size:14px">' + name + '</div>';
+              html += '<div style="font-size:12px;color:#666">' + eta + '</div>';
+              html += '<div style="font-size:14px;color:#e53e3e;font-weight:600;margin-top:4px">' + price + '</div>';
+              html += '</div>';
+            });
+            html += '</div>';
+          } else {
+            html += '<p style="color:#666">首页暂无商品</p>';
+          }
+        } catch(e) { html += '<p style="color:red">首页渲染失败: ' + e.message + '</p>'; }
+
+        // 5. Sync PC Dashboard KPIs
+        html += '<hr style="border:none;border-top:2px solid #333;margin:40px 0">';
+        html += '<h2>PC后台 — 数据概览</h2>';
+        try {
+          var kpiGrid = document.querySelector('#page-pc-dashboard .kpi-grid');
+          if (kpiGrid) {
+            html += '<div style="overflow-x:auto">' + kpiGrid.outerHTML + '</div>';
+          } else {
+            html += '<p style="color:#666">未找到数据概览面板</p>';
+          }
+        } catch(e) { html += '<p style="color:red">数据概览渲染失败: ' + e.message + '</p>'; }
+
+        textDoc.innerHTML = html;
+        // Force text-mode-doc to be visible with inline styles
+        textDoc.style.display = 'block';
+        textDoc.style.maxWidth = '960px';
+        textDoc.style.margin = '0 auto';
+        textDoc.style.padding = '96px 50px 40px';
+        textDoc.style.background = '#ffffff';
+        textDoc.style.color = '#333333';
+        console.log('switchMode: textDoc innerHTML length =', html.length);
+        console.log('switchMode: textDoc scrollHeight =', textDoc.scrollHeight);
+        document.body.classList.add('text-mode');
+        document.body.style.overflow = 'auto';
+        document.body.style.height = 'auto';
+        window.scrollTo(0, 0);
+        if (modeBtns[1]) modeBtns[1].classList.add('active');
+      } else {
+        document.body.classList.remove('text-mode');
+        // Hide text-mode-doc when switching back to preview
+        var tdoc = document.getElementById('textModeDoc');
+        if (tdoc) tdoc.style.display = 'none';
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+        if (modeBtns[0]) modeBtns[0].classList.add('active');
+      }
+    } catch(e) {
+      console.error('switchMode error:', e);
     }
   };
 
@@ -4298,23 +4347,39 @@ body.text-mode .text-mode-doc { display: block; }
 
   function scalePrototype() {
     var frame = currentDevice === 'pc' ? document.getElementById('browserFrame') : document.getElementById('phoneFrame');
-    if (!frame || frame.style.display === 'none') return;
+    if (!frame) return;
+    if (frame.style.display === 'none') return;
+    // Ensure frame is visible with display:block
+    if (frame.style.display === '') frame.style.display = 'block';
+    if (!left) { left = document.querySelector('.left-panel'); }
+    if (!left) return;
     var padding = 20;
     var panelW = left.clientWidth - padding * 2;
     var panelH = left.clientHeight - padding * 2;
+    if (panelW <= 0 || panelH <= 0) {
+      // Retry after layout
+      setTimeout(scalePrototype, 200);
+      return;
+    }
     var origW, origH;
     if (frame.classList.contains('phone-frame')) { origW = 375; origH = 720; }
     else { origW = 1200; origH = 760; }
     var scale = Math.min(panelW / origW, panelH / origH, 1.2);
+    if (scale <= 0) return;
     frame.style.transform = 'scale(' + scale + ')';
     frame.style.left = (padding + (panelW - origW * scale) / 2) + 'px';
     frame.style.top = (padding + (panelH - origH * scale) / 2) + 'px';
   }
   window.scalePrototype = scalePrototype;
   window.addEventListener('resize', scalePrototype);
-  window.addEventListener('load', scalePrototype);
+  window.addEventListener('load', function() {
+    scalePrototype();
+    // Second call to handle any layout shifts
+    setTimeout(scalePrototype, 300);
+  });
   setTimeout(scalePrototype, 100);
   setTimeout(scalePrototype, 500);
+  setTimeout(scalePrototype, 1000);
 
   var countdownEl = document.getElementById('countdown');
   if (countdownEl) {
@@ -4328,6 +4393,16 @@ body.text-mode .text-mode-doc { display: block; }
       tab.classList.add('active');
     });
   });
+})();
+</script>
+<script>
+// Fix: Move text-mode-doc to be a direct child of body
+// (HTML parser may incorrectly nest it inside main-layout due to malformed tags)
+(function() {
+  var td = document.getElementById('textModeDoc');
+  if (td && td.parentElement !== document.body) {
+    document.body.appendChild(td);
+  }
 })();
 </script>
 </body>
