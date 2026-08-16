@@ -677,6 +677,45 @@ body {
   cursor: pointer;
 }
 
+/* Category page grid layout */
+.cat-grid-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  align-content: start;
+}
+.cat-grid-layout .cat-product {
+  flex-direction: column;
+  margin: 0;
+  padding: 8px;
+  gap: 6px;
+}
+.cat-grid-layout .cat-product .product-img {
+  width: 100%;
+  height: 56px;
+}
+.cat-grid-layout .cat-product .product-info {
+  width: 100%;
+  text-align: center;
+}
+.cat-grid-layout .cat-product .product-name {
+  white-space: normal;
+  font-size: var(--font-size-xs);
+  line-height: 1.3;
+}
+.cat-grid-layout .cat-product .product-eta {
+  font-size: 10px;
+}
+.cat-grid-layout .cat-product .product-price {
+  font-size: var(--font-size-sm);
+}
+.cat-grid-layout .cat-product .buy-btn {
+  align-self: stretch;
+  padding: 4px 0;
+  font-size: var(--font-size-xs);
+  border-radius: 12px;
+}
+
 .order-tabs {
   display: flex;
   background: #fff;
@@ -1498,11 +1537,12 @@ body.text-mode .text-mode-doc { display: block; }
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               <span>预计下单后1-3天到店自提</span>
             </div>
-            <div class="search-bar-app" onclick="navigateAPP('page-app-category')" data-link="feature-home">
+            <div class="search-bar-app" data-link="feature-home">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <span>搜索商品</span>
+              <input type="text" id="homeSearch" placeholder="搜索商品" oninput="filterHomeProducts(this.value)" style="border:none;background:none;outline:none;flex:1;font-size:var(--font-size-sm);color:var(--text-main)" />
             </div>
-            <div class="product-card-app" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
+            <div id="homeNoResult" style="display:none;text-align:center;padding:40px 16px;color:var(--text-muted);font-size:var(--font-size-sm)">未找到匹配的商品</div>
+            <div class="product-card-app home-product" data-name="有机红富士苹果" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
               <div class="product-img">🍎</div>
               <div class="product-info">
                 <div class="product-name">有机红富士苹果</div>
@@ -1511,7 +1551,7 @@ body.text-mode .text-mode-doc { display: block; }
               </div>
               <button class="buy-btn" type="button" onclick="event.stopPropagation();navigateAPP('page-app-detail')">购买</button>
             </div>
-            <div class="product-card-app" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
+            <div class="product-card-app home-product" data-name="农夫山泉天然水" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
               <div class="product-img">💧</div>
               <div class="product-info">
                 <div class="product-name">农夫山泉天然水 550ml</div>
@@ -1520,7 +1560,7 @@ body.text-mode .text-mode-doc { display: block; }
               </div>
               <button class="buy-btn" type="button" onclick="event.stopPropagation();navigateAPP('page-app-detail')">购买</button>
             </div>
-            <div class="product-card-app" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
+            <div class="product-card-app home-product" data-name="三只松鼠坚果礼盒" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
               <div class="product-img">🥜</div>
               <div class="product-info">
                 <div class="product-name">三只松鼠坚果礼盒</div>
@@ -1529,7 +1569,7 @@ body.text-mode .text-mode-doc { display: block; }
               </div>
               <button class="buy-btn" type="button" onclick="event.stopPropagation();navigateAPP('page-app-detail')">购买</button>
             </div>
-            <div class="product-card-app" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
+            <div class="product-card-app home-product" data-name="蓝月亮洗衣液" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
               <div class="product-img">🧴</div>
               <div class="product-info">
                 <div class="product-name">蓝月亮洗衣液 2kg</div>
@@ -1538,7 +1578,7 @@ body.text-mode .text-mode-doc { display: block; }
               </div>
               <button class="buy-btn" type="button" onclick="event.stopPropagation();navigateAPP('page-app-detail')">购买</button>
             </div>
-            <div class="product-card-app" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
+            <div class="product-card-app home-product" data-name="伊利纯牛奶" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
               <div class="product-img">🥛</div>
               <div class="product-info">
                 <div class="product-name">伊利纯牛奶 250ml×12</div>
@@ -1570,39 +1610,38 @@ body.text-mode .text-mode-doc { display: block; }
               <div style="padding:14px 8px;text-align:center;font-size:var(--font-size-sm);color:var(--text-muted)">零食坚果</div>
               <div style="padding:14px 8px;text-align:center;font-size:var(--font-size-sm);color:var(--text-muted)">日用百货</div>
             </div>
-            <div style="flex:1;padding:8px" data-link="feature-home" id="categoryProductList">
-              <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin:8px 0" id="categorySortLabel">按销量排序</div>
-              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="有机红富士苹果" onclick="navigateAPP('page-app-detail')">
+            <div style="flex:1;padding:8px" data-link="feature-home" id="categoryProductList" class="cat-grid-layout">
+              <div class="product-card-app cat-product" data-name="有机红富士苹果" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">🍎</div>
                 <div class="product-info"><div class="product-name">有机红富士苹果</div><div class="product-eta">预计2天到货</div><div class="product-price">¥12.90</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
-              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="新疆和田大枣" onclick="navigateAPP('page-app-detail')">
+              <div class="product-card-app cat-product" data-name="新疆和田大枣" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">🌰</div>
                 <div class="product-info"><div class="product-name">新疆和田大枣</div><div class="product-eta">预计2天到货</div><div class="product-price">¥25.90</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
-              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="农夫山泉天然水" onclick="navigateAPP('page-app-detail')">
+              <div class="product-card-app cat-product" data-name="农夫山泉天然水" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">💧</div>
                 <div class="product-info"><div class="product-name">农夫山泉天然水 550ml</div><div class="product-eta">预计1天到货</div><div class="product-price">¥2.00</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
-              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="三只松鼠坚果礼盒" onclick="navigateAPP('page-app-detail')">
+              <div class="product-card-app cat-product" data-name="三只松鼠坚果礼盒" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">🥜</div>
                 <div class="product-info"><div class="product-name">三只松鼠坚果礼盒</div><div class="product-eta">预计3天到货</div><div class="product-price">¥89.90</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
-              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="蓝月亮洗衣液" onclick="navigateAPP('page-app-detail')">
+              <div class="product-card-app cat-product" data-name="蓝月亮洗衣液" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">🧴</div>
                 <div class="product-info"><div class="product-name">蓝月亮洗衣液 2kg</div><div class="product-eta">预计2天到货</div><div class="product-price">¥39.90</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
-              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="伊利纯牛奶" onclick="navigateAPP('page-app-detail')">
+              <div class="product-card-app cat-product" data-name="伊利纯牛奶" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">🥛</div>
                 <div class="product-info"><div class="product-name">伊利纯牛奶 250ml×12</div><div class="product-eta">预计1天到货</div><div class="product-price">¥49.90</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
-              <div id="categoryNoResult" style="display:none;text-align:center;padding:40px 16px;color:var(--text-muted);font-size:var(--font-size-sm)">未找到匹配的商品</div>
+              <div id="categoryNoResult" style="display:none;text-align:center;padding:40px 16px;color:var(--text-muted);font-size:var(--font-size-sm);grid-column:1/-1">未找到匹配的商品</div>
             </div>
           </div>
           <nav class="app-tabbar">
@@ -2986,6 +3025,23 @@ body.text-mode .text-mode-doc { display: block; }
     } else {
       navigateAPP('page-app-home', true);
     }
+  };
+
+  window.filterHomeProducts = function(keyword) {
+    var products = document.querySelectorAll('.home-product');
+    var noResult = document.getElementById('homeNoResult');
+    var found = 0;
+    var kw = keyword.trim().toLowerCase();
+    products.forEach(function(p) {
+      var name = (p.getAttribute('data-name') || '').toLowerCase();
+      if (!kw || name.indexOf(kw) > -1) {
+        p.style.display = '';
+        found++;
+      } else {
+        p.style.display = 'none';
+      }
+    });
+    if (noResult) noResult.style.display = found === 0 && kw ? '' : 'none';
   };
 
   window.filterCategoryProducts = function(keyword) {
