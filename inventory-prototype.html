@@ -143,7 +143,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  order: 1;
+  order: 3;
 }
 .resize-handle {
   flex: 0 0 6px;
@@ -175,7 +175,7 @@ body {
   flex-direction: column;
   background: var(--bg-secondary);
   overflow: hidden;
-  order: 3;
+  order: 1;
 }
 
 /* ==================== Browser Frame (PC) ==================== */
@@ -3318,7 +3318,7 @@ body.text-mode .text-mode-doc { display: block; }
     document.addEventListener('mousemove', function(e) {
       if (!isDragging) return;
       var rect = container.getBoundingClientRect();
-      var pct = ((e.clientX - rect.left) / rect.width) * 100;
+      var pct = ((rect.right - e.clientX) / rect.width) * 100;
       left.style.flex = '0 0 ' + Math.max(50, Math.min(80, pct)) + '%';
       scalePrototype();
     });
