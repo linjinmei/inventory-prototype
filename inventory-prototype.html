@@ -224,6 +224,7 @@ body {
 }
 
 /* ==================== Phone Frame (APP) ==================== */
+.frame-hidden { display: none !important; }
 .phone-frame {
   width: 375px;
   height: 720px;
@@ -1481,7 +1482,7 @@ body.text-mode .text-mode-doc { display: block; }
     </div>
 
     <!-- Phone Frame (APP) -->
-    <div class="phone-frame" id="phoneFrame" style="display:none">
+    <div class="phone-frame frame-hidden" id="phoneFrame">
       <div class="phone-screen" id="prototypeRootAPP">
         <!-- Home -->
         <div class="app-page active" id="page-app-home">
@@ -3019,8 +3020,13 @@ body.text-mode .text-mode-doc { display: block; }
     }
     var bf = document.getElementById('browserFrame');
     var pf = document.getElementById('phoneFrame');
-    if (device === 'pc') { bf.style.display = ''; pf.style.display = 'none'; }
-    else { bf.style.display = 'none'; pf.style.display = ''; }
+    if (device === 'pc') {
+      bf.classList.remove('frame-hidden');
+      pf.classList.add('frame-hidden');
+    } else {
+      bf.classList.add('frame-hidden');
+      pf.classList.remove('frame-hidden');
+    }
     setTimeout(scalePrototype, 50);
   };
 
@@ -3319,7 +3325,7 @@ body.text-mode .text-mode-doc { display: block; }
 
   function scalePrototype() {
     var frame = currentDevice === 'pc' ? document.getElementById('browserFrame') : document.getElementById('phoneFrame');
-    if (!frame || frame.style.display === 'none') return;
+    if (!frame || frame.classList.contains('frame-hidden')) return;
     var padding = 20;
     var panelW = left.clientWidth - padding * 2;
     var panelH = left.clientHeight - padding * 2;
