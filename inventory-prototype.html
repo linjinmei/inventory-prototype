@@ -134,15 +134,16 @@ body {
   height: calc(100vh - 56px);
 }
 .left-panel {
-  flex: 0 0 66.67%;
+  flex: 0 0 42%;
   min-width: 300px;
-  max-width: 85%;
+  max-width: 70%;
   position: relative;
   overflow: hidden;
   background: var(--bg-primary);
   display: flex;
   align-items: center;
   justify-content: center;
+  order: 3;
 }
 .resize-handle {
   flex: 0 0 6px;
@@ -150,6 +151,7 @@ body {
   background: transparent;
   position: relative;
   z-index: 10;
+  order: 2;
 }
 .resize-handle::after {
   content: '';
@@ -171,6 +173,7 @@ body {
   flex-direction: column;
   background: var(--bg-secondary);
   overflow: hidden;
+  order: 1;
 }
 
 /* ==================== Browser Frame (PC) ==================== */
@@ -674,45 +677,6 @@ body {
   cursor: pointer;
 }
 
-/* Category page grid layout */
-.cat-grid-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  align-content: start;
-}
-.cat-grid-layout .cat-product {
-  flex-direction: column;
-  margin: 0;
-  padding: 8px;
-  gap: 6px;
-}
-.cat-grid-layout .cat-product .product-img {
-  width: 100%;
-  height: 56px;
-}
-.cat-grid-layout .cat-product .product-info {
-  width: 100%;
-  text-align: center;
-}
-.cat-grid-layout .cat-product .product-name {
-  white-space: normal;
-  font-size: var(--font-size-xs);
-  line-height: 1.3;
-}
-.cat-grid-layout .cat-product .product-eta {
-  font-size: 10px;
-}
-.cat-grid-layout .cat-product .product-price {
-  font-size: var(--font-size-sm);
-}
-.cat-grid-layout .cat-product .buy-btn {
-  align-self: stretch;
-  padding: 4px 0;
-  font-size: var(--font-size-xs);
-  border-radius: 12px;
-}
-
 .order-tabs {
   display: flex;
   background: #fff;
@@ -1125,21 +1089,14 @@ body {
 body.text-mode { overflow: auto; height: auto; background: #fff; }
 body.text-mode .main-layout { display: none; }
 body.text-mode .link-indicator { display: none !important; }
-body.text-mode .text-mode-doc { display: block !important; visibility: visible !important; opacity: 1 !important; }
-.text-mode-doc { display: block; max-width: 960px; margin: 0 auto; padding: 96px 50px 40px; }
+body.text-mode .text-mode-doc { display: block; }
+.text-mode-doc { display: none; max-width: 960px; margin: 0 auto; padding: 96px 50px 40px; }
 .text-mode-doc h1 { font-size: 28px; margin-bottom: 8px; }
 .text-mode-doc h2 { font-size: 22px; margin-top: 40px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #333; }
 .text-mode-doc h3 { font-size: 18px; margin-top: 28px; margin-bottom: 12px; }
 .text-mode-doc p { margin-bottom: 14px; text-align: justify; line-height: 1.7; }
 .text-mode-doc table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
 .text-mode-doc th, .text-mode-doc td { border: 1px solid #ddd; padding: 10px 14px; text-align: left; vertical-align: top; }
-.text-mode-doc .pc-table { font-size: 12px !important; }
-.text-mode-doc .pc-table th { background: #f0f0f0 !important; font-size: 12px !important; }
-.text-mode-doc .pc-table td { font-size: 12px !important; }
-.text-mode-doc .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
-.text-mode-doc .badge-success { background: #e6ffed; color: #22c55e; }
-.text-mode-doc .badge-gray { background: #f1f5f9; color: #64748b; }
-
 .text-mode-doc th { background: #f5f5f5; font-weight: bold; }
 
 /* Modal */
@@ -1173,69 +1130,6 @@ body.text-mode .text-mode-doc { display: block !important; visibility: visible !
 .modal-close { cursor: pointer; font-size: 20px; color: var(--text-muted); background: none; border: none; }
 .modal-body { padding: 20px; }
 .modal-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
-/* ==================== Product Form Styles ==================== */
-.form-group { margin-bottom: 14px; }
-.form-group label { display: block; font-size: var(--font-size-sm); font-weight: 600; color: var(--text-muted); margin-bottom: 4px; }
-.form-group input, .form-group select, .form-group textarea {
-  width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px;
-  font-size: var(--font-size-base); color: var(--text-main); outline: none;
-  transition: border-color var(--transition-fast); background: #fff;
-}
-.form-group input:focus, .form-group select:focus { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-light); }
-.form-row { display: flex; gap: 12px; }
-.form-row .form-group { flex: 1; }
-
-/* Product List Sub-tabs */
-.product-sub-tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 2px solid var(--border); }
-.product-sub-tab {
-  padding: 8px 20px; font-size: var(--font-size-sm); font-weight: 600;
-  color: var(--text-muted); cursor: pointer; border: none; background: none;
-  border-bottom: 2px solid transparent; margin-bottom: -2px; transition: var(--transition-fast);
-}
-.product-sub-tab:hover { color: var(--text-main); }
-.product-sub-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
-/* Pagination */
-.pagination-wrap { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; margin-top: 8px; border-top: 1px solid var(--border); }
-.pagination-info { font-size: var(--font-size-sm); color: var(--text-muted); }
-.pagination-btns { display: flex; gap: 4px; align-items: center; }
-.pagination-btn { padding: 5px 10px; border: 1px solid var(--border); border-radius: 4px; background: #fff; font-size: var(--font-size-xs); color: var(--text-main); cursor: pointer; transition: var(--transition-fast); }
-.pagination-btn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
-.pagination-btn:disabled { color: var(--text-light); cursor: not-allowed; opacity: 0.5; }
-.pagination-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-.pagination-goto { display: flex; align-items: center; gap: 4px; font-size: var(--font-size-xs); color: var(--text-muted); margin-left: 8px; }
-.pagination-goto input { width: 40px; padding: 4px 6px; border: 1px solid var(--border); border-radius: 4px; text-align: center; font-size: var(--font-size-xs); outline: none; }
-.pagination-goto input:focus { border-color: var(--primary); }
-/* Scrollable table container */
-.table-scroll-wrap { max-height: 360px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; }
-.table-scroll-wrap .pc-table { margin-bottom: 0; }
-.table-scroll-wrap .pc-table thead { position: sticky; top: 0; z-index: 1; }
-.table-scroll-wrap .pc-table thead th { background: var(--bg-tertiary); }
-
-
-/* Category Management */
-.cat-list-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; }
-.cat-list-item:hover { background: var(--bg-tertiary); }
-.cat-list-item .cat-name { font-size: var(--font-size-base); font-weight: 500; }
-.cat-add-row { display: flex; gap: 8px; margin-top: 12px; }
-.cat-add-row input { flex: 1; }
-
-/* Toast */
-.toast { position: fixed; top: 20px; right: 20px; padding: 12px 20px; border-radius: 8px; font-size: var(--font-size-sm); font-weight: 500; color: #fff; z-index: 9999; opacity: 0; transform: translateY(-20px); transition: all 0.3s ease; pointer-events: none; }
-.toast.show { opacity: 1; transform: translateY(0); }
-.toast-success { background: var(--success); }
-.toast-danger { background: var(--danger); }
-.toast-info { background: var(--info); }
-
-/* Restore button */
-.btn-restore { background: var(--info-light); color: var(--info); border: 1px solid var(--info); border-radius: 6px; padding: 4px 10px; font-size: var(--font-size-xs); cursor: pointer; }
-.btn-restore:hover { background: var(--info); color: #fff; }
-
-/* Confirm dialog */
-.confirm-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000; }
-.confirm-box { background: #fff; border-radius: 12px; padding: 24px; max-width: 400px; width: 90%; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
-.confirm-box .confirm-msg { font-size: var(--font-size-base); margin-bottom: 20px; line-height: 1.6; }
-.confirm-box .confirm-btns { display: flex; justify-content: flex-end; gap: 8px; }
-
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -1286,8 +1180,8 @@ body.text-mode .text-mode-doc { display: block !important; visibility: visible !
   </div>
   <div class="top-bar-right">
     <div class="device-toggle">
-      <button class="device-btn active" type="button" onclick="switchDevice('pc')">PC后台</button>
-      <button class="device-btn" type="button" onclick="switchDevice('app')">APP端</button>
+      <button class="device-btn active" type="button" onclick="switchDevice('pc', this)">PC后台</button>
+      <button class="device-btn" type="button" onclick="switchDevice('app', this)">APP端</button>
     </div>
     <div class="mode-toggle">
       <button class="mode-btn active" type="button" onclick="switchMode('preview')">预览模式</button>
@@ -1377,210 +1271,36 @@ body.text-mode .text-mode-doc { display: block !important; visibility: visible !
               </div>
             </div>
 
-                        <!-- Products -->
+            <!-- Products -->
             <div class="pc-page" id="page-pc-products">
               <div class="pc-page-header">
                 <div class="pc-page-title">商品管理</div>
-                <div style="display:flex;gap:8px">
-                  <button class="btn btn-outline btn-sm" type="button" onclick="showCategoryManager()">管理分类</button>
-                  <button class="btn btn-primary" type="button" onclick="showProductForm()">+ 新增商品</button>
-                </div>
+                <button class="btn btn-primary" type="button">+ 新增商品</button>
               </div>
               <div class="pc-page-body">
-                <div class="product-sub-tabs">
-                  <button class="product-sub-tab active" type="button" onclick="switchProductTab('active', this)">在售商品</button>
-                  <button class="product-sub-tab" type="button" onclick="switchProductTab('deleted', this)">已删除商品</button>
-                </div>
                 <div class="filter-bar">
-                  <input class="filter-input" type="text" placeholder="搜索商品名称/SKU" oninput="filterProductTable(this.value)">
-                  <select class="filter-select" onchange="filterProductTable()"><option>全部分类</option><option>生鲜水果</option><option>饮料饮品</option><option>零食坚果</option><option>日用百货</option></select>
-                  <select class="filter-select" onchange="filterProductTable()"><option>全部状态</option><option>已上架</option><option>已下架</option></select>
+                  <input class="filter-input" type="text" placeholder="搜索商品名称/SKU">
+                  <select class="filter-select"><option>全部分类</option><option>生鲜水果</option><option>饮料饮品</option><option>零食坚果</option><option>日用百货</option></select>
+                  <select class="filter-select"><option>全部状态</option><option>已上架</option><option>已下架</option></select>
                   <button class="btn btn-outline btn-sm" type="button">导出</button>
                 </div>
-                <!-- Active Products Table -->
-                <div id="activeProductsTable">
-                <div class="table-scroll-wrap">
                 <table class="pc-table">
-                  <thead><tr><th>SKU编码</th><th>商品名称</th><th>分类</th><th>规格</th><th>售价</th><th>预计到货天数</th><th>状态</th><th>创建时间</th><th>更新时间</th><th>操作</th></tr></thead>
-                  <tbody id="productTableBody">
-                    <tr data-sku="SKU001" data-category="生鲜水果" data-status="listed">
-                      <td>SKU001</td><td>有机红富士苹果</td><td>生鲜水果</td><td>500g/袋</td><td>¥12.90</td><td>2天</td>
-                      <td><span class="badge badge-success">已上架</span></td>
-                      <td>2026-08-10 09:30:15</td><td>2026-08-14 14:22:08</td>
-                      <td>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="editProduct(this)">编辑</button>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="toggleProductStatus(this)" style="color:var(--warning);border-color:var(--warning)">下架</button>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="deleteProduct(this)" style="color:var(--danger);border-color:var(--danger)">删除</button>
-                      </td>
-                    </tr>
-                    <tr data-sku="SKU002" data-category="饮料饮品" data-status="listed">
-                      <td>SKU002</td><td>农夫山泉天然水</td><td>饮料饮品</td><td>550ml/瓶</td><td>¥2.00</td><td>1天</td>
-                      <td><span class="badge badge-success">已上架</span></td>
-                      <td>2026-08-10 10:15:30</td><td>2026-08-14 11:05:22</td>
-                      <td>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="editProduct(this)">编辑</button>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="toggleProductStatus(this)" style="color:var(--warning);border-color:var(--warning)">下架</button>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="deleteProduct(this)" style="color:var(--danger);border-color:var(--danger)">删除</button>
-                      </td>
-                    </tr>
-                    <tr data-sku="SKU003" data-category="零食坚果" data-status="listed">
-                      <td>SKU003</td><td>三只松鼠坚果礼盒</td><td>零食坚果</td><td>1.5kg/盒</td><td>¥89.90</td><td>3天</td>
-                      <td><span class="badge badge-success">已上架</span></td>
-                      <td>2026-08-09 16:42:11</td><td>2026-08-13 09:18:45</td>
-                      <td>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="editProduct(this)">编辑</button>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="toggleProductStatus(this)" style="color:var(--warning);border-color:var(--warning)">下架</button>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="deleteProduct(this)" style="color:var(--danger);border-color:var(--danger)">删除</button>
-                      </td>
-                    </tr>
-                    <tr data-sku="SKU004" data-category="日用百货" data-status="listed">
-                      <td>SKU004</td><td>蓝月亮洗衣液</td><td>日用百货</td><td>2kg/瓶</td><td>¥39.90</td><td>2天</td>
-                      <td><span class="badge badge-success">已上架</span></td>
-                      <td>2026-08-08 13:20:55</td><td>2026-08-15 08:33:19</td>
-                      <td>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="editProduct(this)">编辑</button>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="toggleProductStatus(this)" style="color:var(--warning);border-color:var(--warning)">下架</button>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="deleteProduct(this)" style="color:var(--danger);border-color:var(--danger)">删除</button>
-                      </td>
-                    </tr>
-                    <tr data-sku="SKU005" data-category="饮料饮品" data-status="listed">
-                      <td>SKU005</td><td>伊利纯牛奶</td><td>饮料饮品</td><td>250ml×12</td><td>¥49.90</td><td>1天</td>
-                      <td><span class="badge badge-success">已上架</span></td>
-                      <td>2026-08-11 08:55:03</td><td>2026-08-14 16:40:12</td>
-                      <td>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="editProduct(this)">编辑</button>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="toggleProductStatus(this)" style="color:var(--warning);border-color:var(--warning)">下架</button>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="deleteProduct(this)" style="color:var(--danger);border-color:var(--danger)">删除</button>
-                      </td>
-                    </tr>
-                    <tr data-sku="SKU006" data-category="零食坚果" data-status="unlisted">
-                      <td>SKU006</td><td>百草味猪肉脯</td><td>零食坚果</td><td>100g/袋</td><td>¥15.90</td><td>2天</td>
-                      <td><span class="badge badge-gray">已下架</span></td>
-                      <td>2026-08-07 15:30:42</td><td>2026-08-12 10:15:33</td>
-                      <td>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="editProduct(this)">编辑</button>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="toggleProductStatus(this)" style="color:var(--success);border-color:var(--success)">上架</button>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="deleteProduct(this)" style="color:var(--danger);border-color:var(--danger)">删除</button>
-                      </td>
-                    </tr>
-                    <tr data-sku="SKU007" data-category="生鲜水果" data-status="listed">
-                      <td>SKU007</td><td>新疆和田大枣</td><td>生鲜水果</td><td>500g/袋</td><td>¥25.90</td><td>2天</td>
-                      <td><span class="badge badge-success">已上架</span></td>
-                      <td>2026-08-10 11:08:27</td><td>2026-08-14 14:22:08</td>
-                      <td>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="editProduct(this)">编辑</button>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="toggleProductStatus(this)" style="color:var(--warning);border-color:var(--warning)">下架</button>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="deleteProduct(this)" style="color:var(--danger);border-color:var(--danger)">删除</button>
-                      </td>
-                    </tr>
-                    <tr data-sku="SKU008" data-category="日用百货" data-status="listed">
-                      <td>SKU008</td><td>舒肤佳香皂</td><td>日用百货</td><td>125g×3</td><td>¥19.90</td><td>1天</td>
-                      <td><span class="badge badge-success">已上架</span></td>
-                      <td>2026-08-09 14:22:08</td><td>2026-08-13 17:55:41</td>
-                      <td>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="editProduct(this)">编辑</button>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="toggleProductStatus(this)" style="color:var(--warning);border-color:var(--warning)">下架</button>
-                        <button class="btn btn-outline btn-sm" type="button" onclick="deleteProduct(this)" style="color:var(--danger);border-color:var(--danger)">删除</button>
-                      </td>
-                    </tr>
+                  <thead><tr><th>SKU编码</th><th>商品名称</th><th>分类</th><th>规格</th><th>售价</th><th>预计到货天数</th><th>状态</th><th>操作</th></tr></thead>
+                  <tbody>
+                    <tr><td>SKU001</td><td>有机红富士苹果</td><td>生鲜水果</td><td>500g/袋</td><td>¥12.90</td><td>2天</td><td><span class="badge badge-success">已上架</span></td><td><button class="btn btn-outline btn-sm" type="button">编辑</button></td></tr>
+                    <tr><td>SKU002</td><td>农夫山泉天然水</td><td>饮料饮品</td><td>550ml/瓶</td><td>¥2.00</td><td>1天</td><td><span class="badge badge-success">已上架</span></td><td><button class="btn btn-outline btn-sm" type="button">编辑</button></td></tr>
+                    <tr><td>SKU003</td><td>三只松鼠坚果礼盒</td><td>零食坚果</td><td>1.5kg/盒</td><td>¥89.90</td><td>3天</td><td><span class="badge badge-success">已上架</span></td><td><button class="btn btn-outline btn-sm" type="button">编辑</button></td></tr>
+                    <tr><td>SKU004</td><td>蓝月亮洗衣液</td><td>日用百货</td><td>2kg/瓶</td><td>¥39.90</td><td>2天</td><td><span class="badge badge-success">已上架</span></td><td><button class="btn btn-outline btn-sm" type="button">编辑</button></td></tr>
+                    <tr><td>SKU005</td><td>伊利纯牛奶</td><td>饮料饮品</td><td>250ml×12</td><td>¥49.90</td><td>1天</td><td><span class="badge badge-success">已上架</span></td><td><button class="btn btn-outline btn-sm" type="button">编辑</button></td></tr>
+                    <tr><td>SKU006</td><td>百草味猪肉脯</td><td>零食坚果</td><td>100g/袋</td><td>¥15.90</td><td>2天</td><td><span class="badge badge-gray">已下架</span></td><td><button class="btn btn-outline btn-sm" type="button">编辑</button></td></tr>
+                    <tr><td>SKU007</td><td>新疆和田大枣</td><td>生鲜水果</td><td>500g/袋</td><td>¥25.90</td><td>2天</td><td><span class="badge badge-success">已上架</span></td><td><button class="btn btn-outline btn-sm" type="button">编辑</button></td></tr>
+                    <tr><td>SKU008</td><td>舒肤佳香皂</td><td>日用百货</td><td>125g×3</td><td>¥19.90</td><td>1天</td><td><span class="badge badge-success">已上架</span></td><td><button class="btn btn-outline btn-sm" type="button">编辑</button></td></tr>
                   </tbody>
                 </table>
-                                <!-- Pagination Controls -->
-                <div class="pagination-wrap" id="productPagination">
-                  <div class="pagination-info" id="paginationInfo">共 8 条记录，第 1/1 页</div>
-                  <div style="display:flex;align-items:center">
-                    <div class="pagination-btns">
-                      <button class="pagination-btn" type="button" onclick="goToPage(1)" disabled id="btnFirst">首页</button>
-                      <button class="pagination-btn" type="button" onclick="goToPage(currentPage - 1)" disabled id="btnPrev">上一页</button>
-                      <span id="pageNumbers" style="display:flex;gap:4px"></span>
-                      <button class="pagination-btn" type="button" onclick="goToPage(currentPage + 1)" disabled id="btnNext">下一页</button>
-                      <button class="pagination-btn" type="button" onclick="goToPage(totalPages)" disabled id="btnLast">末页</button>
-                    </div>
-                    <div class="pagination-goto">
-                      跳至 <input type="number" id="gotoPageInput" min="1" value="1" onkeydown="if(event.key==='Enter')goToPage(parseInt(this.value))"> 页
-                    </div>
-                  </div>
-                </div>
-
-                </div>
-                <!-- Deleted Products Table -->
-                <div id="deletedProductsTable" style="display:none">
-                <div class="table-scroll-wrap">
-                <table class="pc-table">
-                  <thead><tr><th>SKU编码</th><th>商品名称</th><th>分类</th><th>规格</th><th>售价</th><th>删除时间</th><th>操作</th></tr></thead>
-                  <tbody id="deletedTableBody">
-                    <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:40px">暂无已删除商品</td></tr>
-                  </tbody>
-                </table>
-                </div>
               </div>
             </div>
 
-
-            <!-- Product Form Modal -->
-            <div class="modal-overlay" id="productFormModal">
-              <div class="modal-box" style="max-width:600px">
-                <div class="modal-header">
-                  <h3 id="productFormTitle">新增商品</h3>
-                  <button class="modal-close" type="button" onclick="closeProductForm()">✕</button>
-                </div>
-                <div class="modal-body">
-                  <div class="form-row">
-                    <div class="form-group"><label>SKU编码</label><input type="text" id="prodSku" placeholder="自动生成" readonly></div>
-                    <div class="form-group"><label>商品名称 *</label><input type="text" id="prodName" placeholder="请输入商品名称"></div>
-                  </div>
-                  <div class="form-row">
-                    <div class="form-group"><label>商品分类 *</label><select id="prodCategory"><option value="">请选择分类</option></select></div>
-                    <div class="form-group"><label>规格</label><input type="text" id="prodSpec" placeholder="如：500g/袋"></div>
-                  </div>
-                  <div class="form-row">
-                    <div class="form-group"><label>售价 (¥) *</label><input type="number" id="prodPrice" placeholder="0.00" step="0.01" min="0"></div>
-                    <div class="form-group"><label>预计到货天数</label><input type="number" id="prodDelivery" placeholder="1" min="1" value="2"></div>
-                  </div>
-                  <div class="form-group"><label>商品状态</label><select id="prodStatus"><option value="listed">已上架</option><option value="unlisted">已下架</option></select></div>
-                  <input type="hidden" id="prodEditSku" value="">
-                </div>
-                <div class="modal-footer">
-                  <button class="btn btn-outline" type="button" onclick="closeProductForm()">取消</button>
-                  <button class="btn btn-primary" type="button" onclick="saveProduct()">保存</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Category Management Modal -->
-            <div class="modal-overlay" id="categoryManagerModal">
-              <div class="modal-box" style="max-width:450px">
-                <div class="modal-header">
-                  <h3>商品分类管理</h3>
-                  <button class="modal-close" type="button" onclick="closeCategoryManager()">✕</button>
-                </div>
-                <div class="modal-body">
-                  <div id="categoryList">
-                    <!-- Dynamic categories -->
-                  </div>
-                  <div class="cat-add-row">
-                    <input type="text" id="newCatName" placeholder="输入新分类名称">
-                    <button class="btn btn-primary btn-sm" type="button" onclick="addCategory()">添加</button>
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button class="btn btn-outline" type="button" onclick="closeCategoryManager()">关闭</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Confirm Delete Dialog -->
-            <div class="confirm-overlay" id="confirmDialog" style="display:none">
-              <div class="confirm-box">
-                <div class="confirm-msg" id="confirmMsg">确定要删除该商品吗？删除后可在"已删除商品"中恢复。</div>
-                <div class="confirm-btns">
-                  <button class="btn btn-outline btn-sm" type="button" onclick="closeConfirm()">取消</button>
-                  <button class="btn btn-primary btn-sm" type="button" id="confirmOkBtn" style="background:var(--danger)">确认删除</button>
-                </div>
-              </div>
-            </div>
-
-<!-- Sales Orders -->
+            <!-- Sales Orders -->
             <div class="pc-page" id="page-pc-sales">
               <div class="pc-page-header">
                 <div class="pc-page-title">销售订单管理</div>
@@ -1778,12 +1498,11 @@ body.text-mode .text-mode-doc { display: block !important; visibility: visible !
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               <span>预计下单后1-3天到店自提</span>
             </div>
-            <div class="search-bar-app" data-link="feature-home">
+            <div class="search-bar-app" onclick="navigateAPP('page-app-category')" data-link="feature-home">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input type="text" id="homeSearch" placeholder="搜索商品" oninput="filterHomeProducts(this.value)" style="border:none;background:none;outline:none;flex:1;font-size:var(--font-size-sm);color:var(--text-main)" />
+              <span>搜索商品</span>
             </div>
-            <div id="homeNoResult" style="display:none;text-align:center;padding:40px 16px;color:var(--text-muted);font-size:var(--font-size-sm)">未找到匹配的商品</div>
-            <div class="product-card-app home-product" data-name="有机红富士苹果" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
+            <div class="product-card-app" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
               <div class="product-img">🍎</div>
               <div class="product-info">
                 <div class="product-name">有机红富士苹果</div>
@@ -1792,7 +1511,7 @@ body.text-mode .text-mode-doc { display: block !important; visibility: visible !
               </div>
               <button class="buy-btn" type="button" onclick="event.stopPropagation();navigateAPP('page-app-detail')">购买</button>
             </div>
-            <div class="product-card-app home-product" data-name="农夫山泉天然水" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
+            <div class="product-card-app" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
               <div class="product-img">💧</div>
               <div class="product-info">
                 <div class="product-name">农夫山泉天然水 550ml</div>
@@ -1801,7 +1520,7 @@ body.text-mode .text-mode-doc { display: block !important; visibility: visible !
               </div>
               <button class="buy-btn" type="button" onclick="event.stopPropagation();navigateAPP('page-app-detail')">购买</button>
             </div>
-            <div class="product-card-app home-product" data-name="三只松鼠坚果礼盒" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
+            <div class="product-card-app" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
               <div class="product-img">🥜</div>
               <div class="product-info">
                 <div class="product-name">三只松鼠坚果礼盒</div>
@@ -1810,7 +1529,7 @@ body.text-mode .text-mode-doc { display: block !important; visibility: visible !
               </div>
               <button class="buy-btn" type="button" onclick="event.stopPropagation();navigateAPP('page-app-detail')">购买</button>
             </div>
-            <div class="product-card-app home-product" data-name="蓝月亮洗衣液" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
+            <div class="product-card-app" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
               <div class="product-img">🧴</div>
               <div class="product-info">
                 <div class="product-name">蓝月亮洗衣液 2kg</div>
@@ -1819,7 +1538,7 @@ body.text-mode .text-mode-doc { display: block !important; visibility: visible !
               </div>
               <button class="buy-btn" type="button" onclick="event.stopPropagation();navigateAPP('page-app-detail')">购买</button>
             </div>
-            <div class="product-card-app home-product" data-name="伊利纯牛奶" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
+            <div class="product-card-app" onclick="navigateAPP('page-app-detail')" data-link="feature-home">
               <div class="product-img">🥛</div>
               <div class="product-info">
                 <div class="product-name">伊利纯牛奶 250ml×12</div>
@@ -1845,45 +1564,45 @@ body.text-mode .text-mode-doc { display: block !important; visibility: visible !
             <input type="text" id="categorySearch" placeholder="搜索商品名称" oninput="filterCategoryProducts(this.value)" style="border:none;background:none;outline:none;flex:1;font-size:var(--font-size-sm);color:var(--text-main)" />
           </div>
           <div class="app-body" style="display:flex">
-            <div style="width:90px;background:var(--bg-tertiary);flex-shrink:0;overflow-y:auto" id="catSidebar">
-              <div class="cat-sidebar-item active" style="padding:14px 8px;text-align:center;font-size:var(--font-size-sm);font-weight:600;color:var(--primary);background:#fff;border-left:3px solid var(--primary);cursor:pointer" onclick="filterCategoryByTab('all', this)">全部</div>
-              <div class="cat-sidebar-item" style="padding:14px 8px;text-align:center;font-size:var(--font-size-sm);color:var(--text-muted);cursor:pointer" onclick="filterCategoryByTab('生鲜水果', this)">生鲜水果</div>
-              <div class="cat-sidebar-item" style="padding:14px 8px;text-align:center;font-size:var(--font-size-sm);color:var(--text-muted);cursor:pointer" onclick="filterCategoryByTab('饮料饮品', this)">饮料饮品</div>
-              <div class="cat-sidebar-item" style="padding:14px 8px;text-align:center;font-size:var(--font-size-sm);color:var(--text-muted);cursor:pointer" onclick="filterCategoryByTab('零食坚果', this)">零食坚果</div>
-              <div class="cat-sidebar-item" style="padding:14px 8px;text-align:center;font-size:var(--font-size-sm);color:var(--text-muted);cursor:pointer" onclick="filterCategoryByTab('日用百货', this)">日用百货</div>
+            <div style="width:90px;background:var(--bg-tertiary);flex-shrink:0">
+              <div style="padding:14px 8px;text-align:center;font-size:var(--font-size-sm);font-weight:600;color:var(--primary);background:#fff;border-left:3px solid var(--primary)">生鲜水果</div>
+              <div style="padding:14px 8px;text-align:center;font-size:var(--font-size-sm);color:var(--text-muted)">饮料饮品</div>
+              <div style="padding:14px 8px;text-align:center;font-size:var(--font-size-sm);color:var(--text-muted)">零食坚果</div>
+              <div style="padding:14px 8px;text-align:center;font-size:var(--font-size-sm);color:var(--text-muted)">日用百货</div>
             </div>
-            <div style="flex:1;padding:8px" data-link="feature-home" id="categoryProductList" class="cat-grid-layout">
-              <div class="product-card-app cat-product" data-name="有机红富士苹果" data-category="生鲜水果" onclick="navigateAPP('page-app-detail')">
+            <div style="flex:1;padding:8px" data-link="feature-home" id="categoryProductList">
+              <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin:8px 0" id="categorySortLabel">按销量排序</div>
+              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="有机红富士苹果" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">🍎</div>
                 <div class="product-info"><div class="product-name">有机红富士苹果</div><div class="product-eta">预计2天到货</div><div class="product-price">¥12.90</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
-              <div class="product-card-app cat-product" data-name="新疆和田大枣" data-category="生鲜水果" onclick="navigateAPP('page-app-detail')">
+              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="新疆和田大枣" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">🌰</div>
                 <div class="product-info"><div class="product-name">新疆和田大枣</div><div class="product-eta">预计2天到货</div><div class="product-price">¥25.90</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
-              <div class="product-card-app cat-product" data-name="农夫山泉天然水" data-category="饮料饮品" onclick="navigateAPP('page-app-detail')">
+              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="农夫山泉天然水" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">💧</div>
                 <div class="product-info"><div class="product-name">农夫山泉天然水 550ml</div><div class="product-eta">预计1天到货</div><div class="product-price">¥2.00</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
-              <div class="product-card-app cat-product" data-name="三只松鼠坚果礼盒" data-category="零食坚果" onclick="navigateAPP('page-app-detail')">
+              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="三只松鼠坚果礼盒" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">🥜</div>
                 <div class="product-info"><div class="product-name">三只松鼠坚果礼盒</div><div class="product-eta">预计3天到货</div><div class="product-price">¥89.90</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
-              <div class="product-card-app cat-product" data-name="蓝月亮洗衣液" data-category="日用百货" onclick="navigateAPP('page-app-detail')">
+              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="蓝月亮洗衣液" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">🧴</div>
                 <div class="product-info"><div class="product-name">蓝月亮洗衣液 2kg</div><div class="product-eta">预计2天到货</div><div class="product-price">¥39.90</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
-              <div class="product-card-app cat-product" data-name="伊利纯牛奶" data-category="饮料饮品" onclick="navigateAPP('page-app-detail')">
+              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="伊利纯牛奶" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">🥛</div>
                 <div class="product-info"><div class="product-name">伊利纯牛奶 250ml×12</div><div class="product-eta">预计1天到货</div><div class="product-price">¥49.90</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
-              <div id="categoryNoResult" style="display:none;text-align:center;padding:40px 16px;color:var(--text-muted);font-size:var(--font-size-sm);grid-column:1/-1">未找到匹配的商品</div>
+              <div id="categoryNoResult" style="display:none;text-align:center;padding:40px 16px;color:var(--text-muted);font-size:var(--font-size-sm)">未找到匹配的商品</div>
             </div>
           </div>
           <nav class="app-tabbar">
@@ -3269,23 +2988,6 @@ body.text-mode .text-mode-doc { display: block !important; visibility: visible !
     }
   };
 
-  window.filterHomeProducts = function(keyword) {
-    var products = document.querySelectorAll('.home-product');
-    var noResult = document.getElementById('homeNoResult');
-    var found = 0;
-    var kw = keyword.trim().toLowerCase();
-    products.forEach(function(p) {
-      var name = (p.getAttribute('data-name') || '').toLowerCase();
-      if (!kw || name.indexOf(kw) > -1) {
-        p.style.display = '';
-        found++;
-      } else {
-        p.style.display = 'none';
-      }
-    });
-    if (noResult) noResult.style.display = found === 0 && kw ? '' : 'none';
-  };
-
   window.filterCategoryProducts = function(keyword) {
     var products = document.querySelectorAll('#categoryProductList .cat-product');
     var noResult = document.getElementById('categoryNoResult');
@@ -3305,632 +3007,21 @@ body.text-mode .text-mode-doc { display: block !important; visibility: visible !
     if (noResult) noResult.style.display = found === 0 ? '' : 'none';
   };
 
-
-  // ==================== Product Management Functions ====================
-
-  // Product data store
-  window.productCategories = ['生鲜水果', '饮料饮品', '零食坚果', '日用百货'];
-  window.deletedProducts = [];
-  window.productNextId = 9;
-
-  // --- Product Form ---
-  window.showProductForm = function(editSku) {
-    var modal = document.getElementById('productFormModal');
-    var title = document.getElementById('productFormTitle');
-    var skuInput = document.getElementById('prodSku');
-    var editSkuHidden = document.getElementById('prodEditSku');
-    var catSelect = document.getElementById('prodCategory');
-
-    // Populate category dropdown
-    catSelect.innerHTML = '<option value="">请选择分类</option>';
-    window.productCategories.forEach(function(c) {
-      catSelect.innerHTML += '<option value="' + c + '">' + c + '</option>';
-    });
-
-    if (editSku) {
-      title.textContent = '编辑商品';
-      editSkuHidden.value = editSku;
-      // Find the row and populate
-      var row = document.querySelector('#productTableBody tr[data-sku="' + editSku + '"]');
-      if (row) {
-        var cells = row.querySelectorAll('td');
-        skuInput.value = editSku;
-        document.getElementById('prodName').value = cells[1].textContent;
-        document.getElementById('prodCategory').value = row.getAttribute('data-category') || '';
-        document.getElementById('prodSpec').value = cells[3].textContent;
-        document.getElementById('prodPrice').value = cells[4].textContent.replace('¥', '');
-        document.getElementById('prodDelivery').value = cells[5].textContent.replace('天', '');
-        document.getElementById('prodStatus').value = row.getAttribute('data-status') || 'listed';
-      }
-    } else {
-      title.textContent = '新增商品';
-      editSkuHidden.value = '';
-      skuInput.value = 'SKU' + String(window.productNextId).padStart(3, '0');
-      document.getElementById('prodName').value = '';
-      document.getElementById('prodCategory').value = '';
-      document.getElementById('prodSpec').value = '';
-      document.getElementById('prodPrice').value = '';
-      document.getElementById('prodDelivery').value = '2';
-      document.getElementById('prodStatus').value = 'listed';
-    }
-    modal.classList.add('active');
-  };
-
-  window.closeProductForm = function() {
-    document.getElementById('productFormModal').classList.remove('active');
-  };
-
-  window.saveProduct = function() {
-    var name = document.getElementById('prodName').value.trim();
-    var category = document.getElementById('prodCategory').value;
-    var spec = document.getElementById('prodSpec').value.trim();
-    var price = document.getElementById('prodPrice').value;
-    var delivery = document.getElementById('prodDelivery').value;
-    var status = document.getElementById('prodStatus').value;
-    var editSku = document.getElementById('prodEditSku').value;
-    var sku = document.getElementById('prodSku').value;
-
-    if (!name) { showToast('请输入商品名称', 'danger'); return; }
-    if (!category) { showToast('请选择商品分类', 'danger'); return; }
-    if (!price || parseFloat(price) <= 0) { showToast('请输入有效的售价', 'danger'); return; }
-
-    var now = getNow();
-    var priceFormatted = '¥' + parseFloat(price).toFixed(2);
-    var badgeClass = status === 'listed' ? 'badge-success' : 'badge-gray';
-    var badgeText = status === 'listed' ? '已上架' : '已下架';
-    var toggleText = status === 'listed' ? '下架' : '上架';
-    var toggleColor = status === 'listed' ? 'var(--warning)' : 'var(--success)';
-
-    if (editSku) {
-      // Update existing row
-      var row = document.querySelector('#productTableBody tr[data-sku="' + editSku + '"]');
-      if (row) {
-        var cells = row.querySelectorAll('td');
-        cells[1].textContent = name;
-        row.setAttribute('data-category', category);
-        cells[2].textContent = category;
-        cells[3].textContent = spec || '-';
-        cells[4].textContent = priceFormatted;
-        cells[5].textContent = (delivery || '2') + '天';
-        var badge = cells[6].querySelector('.badge');
-        badge.className = 'badge ' + badgeClass;
-        badge.textContent = badgeText;
-        row.setAttribute('data-status', status);
-        cells[8].textContent = now; // update time
-        // Update toggle button
-        var btns = cells[9].querySelectorAll('button');
-        if (btns.length >= 2) {
-          btns[1].textContent = toggleText;
-          btns[1].style.color = toggleColor;
-          btns[1].style.borderColor = toggleColor;
-        }
-      }
-      showToast('商品 ' + name + ' 已更新', 'success');
-    } else {
-      // Add new row
-      var tbody = document.getElementById('productTableBody');
-      var newRow = document.createElement('tr');
-      newRow.setAttribute('data-sku', sku);
-      newRow.setAttribute('data-category', category);
-      newRow.setAttribute('data-status', status);
-      newRow.innerHTML = '<td>' + sku + '</td>' +
-        '<td>' + name + '</td>' +
-        '<td>' + category + '</td>' +
-        '<td>' + (spec || '-') + '</td>' +
-        '<td>' + priceFormatted + '</td>' +
-        '<td>' + (delivery || '2') + '天</td>' +
-        '<td><span class="badge ' + badgeClass + '">' + badgeText + '</span></td>' +
-        '<td>' + now + '</td>' +
-        '<td>' + now + '</td>' +
-        '<td>' +
-          '<button class="btn btn-outline btn-sm" type="button" onclick="editProduct(this)">编辑</button> ' +
-          '<button class="btn btn-outline btn-sm" type="button" onclick="toggleProductStatus(this)" style="color:' + toggleColor + ';border-color:' + toggleColor + '">' + toggleText + '</button> ' +
-          '<button class="btn btn-outline btn-sm" type="button" onclick="deleteProduct(this)" style="color:var(--danger);border-color:var(--danger)">删除</button>' +
-        '</td>';
-      tbody.appendChild(newRow);
-      window.productNextId++;
-      showToast('商品 ' + name + ' 已添加', 'success');
-    }
-    closeProductForm();
-  };
-
-  window.editProduct = function(btn) {
-    var row = btn.closest('tr');
-    var sku = row.getAttribute('data-sku');
-    showProductForm(sku);
-  };
-
-  // --- Toggle Product Status ---
-  window.toggleProductStatus = function(btn) {
-    var row = btn.closest('tr');
-    var currentStatus = row.getAttribute('data-status');
-    var newStatus = currentStatus === 'listed' ? 'unlisted' : 'listed';
-    var badge = row.querySelector('.badge');
-    var now = getNow();
-
-    row.setAttribute('data-status', newStatus);
-    if (newStatus === 'listed') {
-      badge.className = 'badge badge-success';
-      badge.textContent = '已上架';
-      btn.textContent = '下架';
-      btn.style.color = 'var(--warning)';
-      btn.style.borderColor = 'var(--warning)';
-    } else {
-      badge.className = 'badge badge-gray';
-      badge.textContent = '已下架';
-      btn.textContent = '上架';
-      btn.style.color = 'var(--success)';
-      btn.style.borderColor = 'var(--success)';
-    }
-    // Update time
-    var cells = row.querySelectorAll('td');
-    cells[8].textContent = now;
-    showToast('商品状态已更新', 'success');
-  };
-
-  // --- Delete Product ---
-  var pendingDeleteRow = null;
-  window.deleteProduct = function(btn) {
-    pendingDeleteRow = btn.closest('tr');
-    document.getElementById('confirmMsg').textContent = '确定要删除该商品吗？删除后可在"已删除商品"中恢复。';
-    document.getElementById('confirmDialog').style.display = 'flex';
-    document.getElementById('confirmOkBtn').onclick = function() {
-      confirmDeleteProduct();
-    };
-  };
-
-  window.closeConfirm = function() {
-    document.getElementById('confirmDialog').style.display = 'none';
-    pendingDeleteRow = null;
-  };
-
-  window.confirmDeleteProduct = function() {
-    if (!pendingDeleteRow) return;
-    var row = pendingDeleteRow;
-    var sku = row.getAttribute('data-sku');
-    var name = row.querySelectorAll('td')[1].textContent;
-    var category = row.getAttribute('data-category') || '';
-    var spec = row.querySelectorAll('td')[3].textContent;
-    var price = row.querySelectorAll('td')[4].textContent;
-    var now = getNow();
-
-    // Store deleted product
-    window.deletedProducts.push({
-      sku: sku, name: name, category: category, spec: spec, price: price,
-      deletedTime: now, rowHTML: row.innerHTML, dataStatus: row.getAttribute('data-status'),
-      dataCategory: row.getAttribute('data-category')
-    });
-
-    // Remove from active table
-    row.remove();
-    updateDeletedTable();
-    closeConfirm();
-    showToast('商品 ' + name + ' 已删除', 'info');
-  };
-
-  // --- Restore Deleted Product ---
-  window.restoreProduct = function(index) {
-    var item = window.deletedProducts[index];
-    if (!item) return;
-    var tbody = document.getElementById('productTableBody');
-    var newRow = document.createElement('tr');
-    newRow.setAttribute('data-sku', item.sku);
-    newRow.setAttribute('data-category', item.dataCategory);
-    newRow.setAttribute('data-status', item.dataStatus);
-    var now = getNow();
-    var badgeClass = item.dataStatus === 'listed' ? 'badge-success' : 'badge-gray';
-    var badgeText = item.dataStatus === 'listed' ? '已上架' : '已下架';
-    var toggleText = item.dataStatus === 'listed' ? '下架' : '上架';
-    var toggleColor = item.dataStatus === 'listed' ? 'var(--warning)' : 'var(--success)';
-    newRow.innerHTML = '<td>' + item.sku + '</td>' +
-      '<td>' + item.name + '</td>' +
-      '<td>' + item.category + '</td>' +
-      '<td>' + item.spec + '</td>' +
-      '<td>' + item.price + '</td>' +
-      '<td>2天</td>' +
-      '<td><span class="badge ' + badgeClass + '">' + badgeText + '</span></td>' +
-      '<td>' + item.deletedTime + '</td>' +
-      '<td>' + now + '</td>' +
-      '<td>' +
-        '<button class="btn btn-outline btn-sm" type="button" onclick="editProduct(this)">编辑</button> ' +
-        '<button class="btn btn-outline btn-sm" type="button" onclick="toggleProductStatus(this)" style="color:' + toggleColor + ';border-color:' + toggleColor + '">' + toggleText + '</button> ' +
-        '<button class="btn btn-outline btn-sm" type="button" onclick="deleteProduct(this)" style="color:var(--danger);border-color:var(--danger)">删除</button>' +
-      '</td>';
-    tbody.appendChild(newRow);
-    window.deletedProducts.splice(index, 1);
-    updateDeletedTable();
-    showToast('商品 ' + item.name + ' 已恢复', 'success');
-  };
-
-  function updateDeletedTable() {
-    var tbody = document.getElementById('deletedTableBody');
-    if (window.deletedProducts.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:40px">暂无已删除商品</td></tr>';
-    } else {
-      var html = '';
-      window.deletedProducts.forEach(function(item, i) {
-        html += '<tr data-sku="' + item.sku + '">' +
-          '<td>' + item.sku + '</td>' +
-          '<td>' + item.name + '</td>' +
-          '<td>' + item.category + '</td>' +
-          '<td>' + item.spec + '</td>' +
-          '<td>' + item.price + '</td>' +
-          '<td>' + item.deletedTime + '</td>' +
-          '<td><button class="btn-restore" type="button" onclick="restoreProduct(' + i + ')">恢复</button></td>' +
-          '</tr>';
-      });
-      tbody.innerHTML = html;
-    }
-  }
-
-  // --- Product Table Tabs ---
-  window.switchProductTab = function(tab, btn) {
-    document.querySelectorAll('.product-sub-tab').forEach(function(b) { b.classList.remove('active'); });
-    btn.classList.add('active');
-    if (tab === 'active') {
-      document.getElementById('activeProductsTable').style.display = '';
-      document.getElementById('deletedProductsTable').style.display = 'none';
-    } else {
-      document.getElementById('activeProductsTable').style.display = 'none';
-      document.getElementById('deletedProductsTable').style.display = '';
-    }
-  };
-  // --- Pagination ---
-  window.pageSize = 5;
-  window.currentPage = 1;
-  window.totalPages = 1;
-
-  window.initPagination = function() {
-    updatePagination();
-  };
-
-  function getVisibleRows() {
-    var rows = document.querySelectorAll('#productTableBody tr');
-    var visibleRows = [];
-    rows.forEach(function(r) {
-      // A row is "visible" if it's not hidden by pagination itself
-      // We check if it was previously hidden by pagination (has data-page-hidden)
-      var hiddenByPage = r.getAttribute('data-page-hidden') === '1';
-      if (!hiddenByPage) {
-        visibleRows.push(r);
-      }
-    });
-    return visibleRows;
-  }
-
-  function updatePagination() {
-    var allRows = document.querySelectorAll('#productTableBody tr');
-    // Count all rows (not filtered)
-    var total = 0;
-    allRows.forEach(function(r) {
-      // Only count rows that are not filtered out by search/category/status
-      if (r.style.display !== 'none') {
-        total++;
-      }
-    });
-
-    if (total === 0) {
-      // If all are hidden, recount all rows
-      total = allRows.length;
-    }
-
-    window.totalPages = Math.max(1, Math.ceil(total / window.pageSize));
-    if (window.currentPage > window.totalPages) window.currentPage = window.totalPages;
-
-    var infoEl = document.getElementById('paginationInfo');
-    if (infoEl) infoEl.textContent = '共 ' + total + ' 条记录，第 ' + window.currentPage + '/' + window.totalPages + ' 页';
-
-    var btnFirst = document.getElementById('btnFirst');
-    var btnPrev = document.getElementById('btnPrev');
-    var btnNext = document.getElementById('btnNext');
-    var btnLast = document.getElementById('btnLast');
-    if (btnFirst) { btnFirst.disabled = window.currentPage <= 1; }
-    if (btnPrev) { btnPrev.disabled = window.currentPage <= 1; }
-    if (btnNext) { btnNext.disabled = window.currentPage >= window.totalPages; }
-    if (btnLast) { btnLast.disabled = window.currentPage >= window.totalPages; }
-
-    var gotoInput = document.getElementById('gotoPageInput');
-    if (gotoInput) { gotoInput.value = window.currentPage; gotoInput.max = window.totalPages; }
-
-    // Render page numbers
-    var pageNums = document.getElementById('pageNumbers');
-    if (pageNums) {
-      var html = '';
-      var maxShow = 5;
-      var startPage = Math.max(1, window.currentPage - Math.floor(maxShow / 2));
-      var endPage = Math.min(window.totalPages, startPage + maxShow - 1);
-      if (endPage - startPage < maxShow - 1) startPage = Math.max(1, endPage - maxShow + 1);
-      for (var p = startPage; p <= endPage; p++) {
-        html += '<button class="pagination-btn' + (p === window.currentPage ? ' active' : '') + '" type="button" onclick="goToPage(' + p + ')">' + p + '</button>';
-      }
-      pageNums.innerHTML = html;
-    }
-
-    // Show/hide rows based on page: only show rows for current page
-    var start = (window.currentPage - 1) * window.pageSize;
-    var end = window.currentPage * window.pageSize;
-    var idx = 0;
-    allRows.forEach(function(r) {
-      // Check if row is filtered out (by search/category/status)
-      var isFilteredOut = (r.style.display === 'none');
-      if (isFilteredOut) {
-        return; // Don't touch filtered rows
-      }
-      if (idx >= start && idx < end) {
-        r.style.display = '';
-        r.setAttribute('data-page-hidden', '0');
-      } else {
-        r.style.display = 'none';
-        r.setAttribute('data-page-hidden', '1');
-      }
-      idx++;
-    });
-  }
-
-  window.goToPage = function(page) {
-    if (page < 1 || page > window.totalPages) return;
-    window.currentPage = page;
-    updatePagination();
-    // Scroll table to top
-    var scrollWrap = document.querySelector('#activeProductsTable .table-scroll-wrap');
-    if (scrollWrap) scrollWrap.scrollTop = 0;
-  };
-
-  // Override filterProductTable to reset pagination
-  var _origFilterProductTable = window.filterProductTable;
-  window.filterProductTable = function(keyword) {
-    // Reset to page 1
-    window.currentPage = 1;
-    _origFilterProductTable(keyword);
-    // After filtering, update pagination
-    setTimeout(updatePagination, 50);
-  };
-
-  // Override switchProductTab to update pagination
-  var _origSwitchProductTab = window.switchProductTab;
-  window.switchProductTab = function(tab, btn) {
-    _origSwitchProductTab(tab, btn);
-    if (tab === 'active') {
-      window.currentPage = 1;
-      setTimeout(updatePagination, 50);
-    }
-  };
-
-  // Initialize pagination on load
-  setTimeout(initPagination, 200);
-
-
-  // --- Filter Product Table ---
-  window.filterProductTable = function(keyword) {
-    var kw = (typeof keyword === 'string' ? keyword : '').trim().toLowerCase();
-    var selects = document.querySelectorAll('#page-pc-products .filter-select');
-    var catFilter = selects.length > 0 ? selects[0].value : '全部分类';
-    var statusFilter = selects.length > 1 ? selects[1].value : '全部状态';
-
-    var rows = document.querySelectorAll('#productTableBody tr');
-    rows.forEach(function(row) {
-      var name = (row.querySelectorAll('td')[1] || {}).textContent || '';
-      var sku = row.getAttribute('data-sku') || '';
-      var cat = row.getAttribute('data-category') || '';
-      var status = row.getAttribute('data-status') || '';
-      var show = true;
-      if (kw && name.toLowerCase().indexOf(kw) === -1 && sku.toLowerCase().indexOf(kw) === -1) show = false;
-      if (catFilter !== '全部分类' && cat !== catFilter) show = false;
-      if (statusFilter === '已上架' && status !== 'listed') show = false;
-      if (statusFilter === '已下架' && status !== 'unlisted') show = false;
-      row.style.display = show ? '' : 'none';
-    });
-  };
-
-  
-
-  // --- Category Management ---
-  window.showCategoryManager = function() {
-    document.getElementById('categoryManagerModal').classList.add('active');
-    renderCategoryList();
-  };
-
-  window.closeCategoryManager = function() {
-    document.getElementById('categoryManagerModal').classList.remove('active');
-  };
-
-  function renderCategoryList() {
-    var list = document.getElementById('categoryList');
-    var html = '';
-    window.productCategories.forEach(function(cat, i) {
-      html += '<div class="cat-list-item">' +
-        '<span class="cat-name">' + cat + '</span>' +
-        '<button class="btn btn-outline btn-sm" type="button" onclick="removeCategory(' + i + ')" style="color:var(--danger);border-color:var(--danger);font-size:var(--font-size-xs)">删除</button>' +
-        '</div>';
-    });
-    if (window.productCategories.length === 0) {
-      html = '<div style="text-align:center;color:var(--text-muted);padding:20px">暂无分类</div>';
-    }
-    list.innerHTML = html;
-  }
-
-  window.addCategory = function() {
-    var input = document.getElementById('newCatName');
-    var name = input.value.trim();
-    if (!name) { showToast('请输入分类名称', 'danger'); return; }
-    if (window.productCategories.indexOf(name) > -1) { showToast('该分类已存在', 'danger'); return; }
-    window.productCategories.push(name);
-    input.value = '';
-    renderCategoryList();
-    refreshAllCategorySelects();
-    showToast('分类 "' + name + '" 已添加', 'success');
-  };
-
-  window.removeCategory = function(index) {
-    var name = window.productCategories[index];
-    if (confirm('确定要删除分类 "' + name + '" 吗？')) {
-      window.productCategories.splice(index, 1);
-      renderCategoryList();
-      refreshAllCategorySelects();
-      showToast('分类 "' + name + '" 已删除', 'info');
-    }
-  };
-
-  function refreshAllCategorySelects() {
-    // Refresh all category dropdowns
-    var selects = document.querySelectorAll('select');
-    selects.forEach(function(sel) {
-      var val = sel.value;
-      // Check if this is a category select (has "全部" or category names)
-      var opts = sel.querySelectorAll('option');
-      var isCatSelect = false;
-      opts.forEach(function(o) {
-        if (o.value === '生鲜水果' || o.value === '饮料饮品' || o.value === '零食坚果' || o.value === '日用百货' || o.value === '全部分类') {
-          isCatSelect = true;
-        }
-      });
-      if (isCatSelect) {
-        var firstOpt = opts[0];
-        sel.innerHTML = '';
-        if (firstOpt && (firstOpt.value === '全部分类' || firstOpt.value === '')) {
-          sel.appendChild(firstOpt.cloneNode(true));
-        }
-        window.productCategories.forEach(function(c) {
-          var opt = document.createElement('option');
-          opt.value = c;
-          opt.textContent = c;
-          if (c === val) opt.selected = true;
-          sel.appendChild(opt);
-        });
-      }
-    });
-    // Also refresh the APP category sidebar
-    refreshCatSidebar();
-  }
-
-  function refreshCatSidebar() {
-    var sidebar = document.getElementById('catSidebar');
-    if (!sidebar) return;
-    var activeCat = sidebar.querySelector('.cat-sidebar-item.active');
-    var activeName = activeCat ? activeCat.textContent : '全部';
-    var html = '<div class="cat-sidebar-item' + (activeName === '全部' ? ' active' : '') + '" style="padding:14px 8px;text-align:center;font-size:var(--font-size-sm);font-weight:600;color:var(--primary);background:#fff;border-left:3px solid var(--primary);cursor:pointer" onclick="filterCategoryByTab(&apos;all&apos;, this)">全部</div>';
-    window.productCategories.forEach(function(c) {
-      var isActive = c === activeName;
-      html += '<div class="cat-sidebar-item' + (isActive ? ' active' : '') + '" style="padding:14px 8px;text-align:center;font-size:var(--font-size-sm);' + (isActive ? 'font-weight:600;color:var(--primary);background:#fff;border-left:3px solid var(--primary)' : 'color:var(--text-muted)') + ';cursor:pointer" onclick="filterCategoryByTab(&apos;' + c + '&apos;, this)">' + c + '</div>';
-    });
-    sidebar.innerHTML = html;
-  }
-
-  // --- Toast Notification ---
-  function showToast(msg, type) {
-    var toast = document.getElementById('globalToast');
-    if (!toast) {
-      toast = document.createElement('div');
-      toast.id = 'globalToast';
-      toast.className = 'toast';
-      document.body.appendChild(toast);
-    }
-    toast.textContent = msg;
-    toast.className = 'toast toast-' + (type || 'success') + ' show';
-    clearTimeout(toast._timeout);
-    toast._timeout = setTimeout(function() {
-      toast.classList.remove('show');
-    }, 2000);
-  }
-
-  // --- Utility ---
-  function getNow() {
-    var d = new Date();
-    var yyyy = d.getFullYear();
-    var mm = String(d.getMonth() + 1).padStart(2, '0');
-    var dd = String(d.getDate()).padStart(2, '0');
-    var hh = String(d.getHours()).padStart(2, '0');
-    var min = String(d.getMinutes()).padStart(2, '0');
-    var ss = String(d.getSeconds()).padStart(2, '0');
-    return yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + min + ':' + ss;
-  }
-
-  // --- APP Category Filter by Tab ---
-  window.filterCategoryByTab = function(category, el) {
-    // Update sidebar active state
-    document.querySelectorAll('#catSidebar .cat-sidebar-item').forEach(function(item) {
-      item.style.fontWeight = '400';
-      item.style.color = 'var(--text-muted)';
-      item.style.background = 'transparent';
-      item.style.borderLeft = '3px solid transparent';
-      item.classList.remove('active');
-    });
-    el.style.fontWeight = '600';
-    el.style.color = 'var(--primary)';
-    el.style.background = '#fff';
-    el.style.borderLeft = '3px solid var(--primary)';
-    el.classList.add('active');
-
-    // Filter products
-    var products = document.querySelectorAll('#categoryProductList .cat-product');
-    var searchKw = document.getElementById('categorySearch');
-    var searchText = searchKw ? searchKw.value.trim().toLowerCase() : '';
-    var found = 0;
-
-    products.forEach(function(p) {
-      var cat = p.getAttribute('data-category') || '';
-      var name = (p.getAttribute('data-name') || '').toLowerCase();
-      var catMatch = (category === 'all' || cat === category);
-      var searchMatch = !searchText || name.indexOf(searchText) > -1;
-      if (catMatch && searchMatch) {
-        p.style.display = '';
-        found++;
-      } else {
-        p.style.display = 'none';
-      }
-    });
-
-    var noResult = document.getElementById('categoryNoResult');
-    if (noResult) noResult.style.display = found === 0 ? '' : 'none';
-  };
-
-  // Update filterCategoryProducts to respect active category tab
-  var _origFilterCategoryProducts = window.filterCategoryProducts;
-  window.filterCategoryProducts = function(keyword) {
-    var activeCat = document.querySelector('#catSidebar .cat-sidebar-item.active');
-    var catName = activeCat ? activeCat.textContent : '全部';
-    var products = document.querySelectorAll('#categoryProductList .cat-product');
-    var noResult = document.getElementById('categoryNoResult');
-    var found = 0;
-    var kw = keyword.trim().toLowerCase();
-    products.forEach(function(p) {
-      var cat = p.getAttribute('data-category') || '';
-      var name = (p.getAttribute('data-name') || '').toLowerCase();
-      var catMatch = (catName === '全部' || cat === catName);
-      var searchMatch = !kw || name.indexOf(kw) > -1;
-      if (catMatch && searchMatch) {
-        p.style.display = '';
-        found++;
-      } else {
-        p.style.display = 'none';
-      }
-    });
-    if (noResult) noResult.style.display = found === 0 ? '' : 'none';
-  };
-
-  window.switchDevice = function(device) {
+  window.switchDevice = function(device, btn) {
     currentDevice = device;
-    // Ensure preview mode is active (remove text-mode class)
-    document.body.classList.remove('text-mode');
     document.querySelectorAll('.device-btn').forEach(function(b) { b.classList.remove('active'); });
-    // Find and activate the button by matching device type
-    var btns = document.querySelectorAll('.device-btn');
-    btns.forEach(function(b) {
-      if ((device === 'pc' && b.textContent.trim() === 'PC后台') || (device === 'app' && b.textContent.trim() === 'APP端')) {
-        b.classList.add('active');
-      }
-    });
-    // Also activate preview mode button
-    document.querySelectorAll('.mode-btn').forEach(function(b) { b.classList.remove('active'); });
-    var modeBtns = document.querySelectorAll('.mode-btn');
-    if (modeBtns[0]) modeBtns[0].classList.add('active');
-    
+    if (btn) btn.classList.add('active');
+    else {
+      var btns = document.querySelectorAll('.device-btn');
+      btns.forEach(function(b) {
+        if (b.textContent.indexOf(device === 'pc' ? 'PC' : 'APP') !== -1) b.classList.add('active');
+      });
+    }
     var bf = document.getElementById('browserFrame');
     var pf = document.getElementById('phoneFrame');
     if (device === 'pc') { bf.style.display = ''; pf.style.display = 'none'; }
-    else { bf.style.display = 'block'; pf.style.display = 'block'; }
-    setTimeout(scalePrototype, 100);
-    setTimeout(scalePrototype, 300);
+    else { bf.style.display = 'none'; pf.style.display = ''; }
+    setTimeout(scalePrototype, 50);
   };
 
   window.switchAppRole = function() {
@@ -4188,144 +3279,25 @@ body.text-mode .text-mode-doc { display: block !important; visibility: visible !
   }
 
   window.switchMode = function(mode) {
-    try {
-      var modeBtns = document.querySelectorAll('.mode-toggle .mode-btn');
-      modeBtns.forEach(function(b) { b.classList.remove('active'); });
-      if (mode === 'text') {
-        var textDoc = document.getElementById('textModeDoc');
-        if (!textDoc) return;
-        var html = '<h1>门店进销存系统产品需求文档</h1>';
-        html += '<p>版本: V2.0 | ' + getNow() + ' | 自动同步</p>';
-
-        // 1. Sync PRD documentation panes
-        var panes = document.querySelectorAll('.tab-content-wrapper > .tab-pane');
-        if (panes.length > 0) {
-          panes.forEach(function(pane, i) {
-            if (i > 0) html += '<hr style="border:none;border-top:1px solid #ddd;margin:30px 0">';
-            html += pane.innerHTML;
-          });
-        } else {
-          html += '<p style="color:red">未找到文档内容面板</p>';
-        }
-
-        // 2. Sync PC backend product management table
-        html += '<hr style="border:none;border-top:2px solid #333;margin:40px 0">';
-        html += '<h2>PC后台 — 商品管理（当前数据快照）</h2>';
-
-        try {
-          var activeTable = document.getElementById('activeProductsTable');
-          if (activeTable) {
-            var tableClone = activeTable.querySelector('table');
-            if (tableClone) {
-              html += '<h3>在售商品列表</h3>';
-              html += '<div style="overflow-x:auto">' + tableClone.outerHTML + '</div>';
-            }
-          }
-        } catch(e) { html += '<p style="color:red">商品表格渲染失败: ' + e.message + '</p>'; }
-
-        try {
-          var deletedTable = document.getElementById('deletedProductsTable');
-          if (deletedTable) {
-            var delClone = deletedTable.querySelector('table');
-            if (delClone) {
-              html += '<h3>已删除商品列表</h3>';
-              html += '<div style="overflow-x:auto">' + delClone.outerHTML + '</div>';
-            }
-          }
-        } catch(e) { html += '<p style="color:red">已删除表格渲染失败: ' + e.message + '</p>'; }
-
-        // 3. Sync APP category page
-        html += '<hr style="border:none;border-top:2px solid #333;margin:40px 0">';
-        html += '<h2>APP端 — 分类页（当前数据快照）</h2>';
-        try {
-          var catList = document.getElementById('categoryProductList');
-          if (catList) {
-            html += '<h3>商品分类列表</h3>';
-            var items = catList.querySelectorAll('.cat-product');
-            if (items.length > 0) {
-              html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">';
-              items.forEach(function(item) {
-                var name = item.getAttribute('data-name') || '';
-                var cat = item.getAttribute('data-category') || '';
-                var price = (item.querySelector('.product-price') || {}).textContent || '';
-                var eta = (item.querySelector('.product-eta') || {}).textContent || '';
-                html += '<div style="border:1px solid #ddd;padding:12px;border-radius:8px;background:#fafafa">';
-                html += '<div style="font-weight:600;font-size:14px">' + name + '</div>';
-                html += '<div style="font-size:12px;color:#666">分类：' + cat + ' | ' + eta + '</div>';
-                html += '<div style="font-size:14px;color:#e53e3e;font-weight:600;margin-top:4px">' + price + '</div>';
-                html += '</div>';
-              });
-              html += '</div>';
-            } else {
-              html += '<p style="color:#666">分类页暂无商品</p>';
-            }
-          } else {
-            html += '<p style="color:#666">未找到分类页元素</p>';
-          }
-        } catch(e) { html += '<p style="color:red">分类页渲染失败: ' + e.message + '</p>'; }
-
-        // 4. Sync APP home page
-        html += '<hr style="border:none;border-top:2px solid #333;margin:40px 0">';
-        html += '<h2>APP端 — 首页商品列表</h2>';
-        try {
-          var homeProducts = document.querySelectorAll('#prototypeRootAPP .home-product');
-          if (homeProducts.length > 0) {
-            html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">';
-            homeProducts.forEach(function(item) {
-              var name = item.getAttribute('data-name') || '';
-              var price = (item.querySelector('.product-price') || {}).textContent || '';
-              var eta = (item.querySelector('.product-eta') || {}).textContent || '';
-              html += '<div style="border:1px solid #ddd;padding:12px;border-radius:8px;background:#fafafa">';
-              html += '<div style="font-weight:600;font-size:14px">' + name + '</div>';
-              html += '<div style="font-size:12px;color:#666">' + eta + '</div>';
-              html += '<div style="font-size:14px;color:#e53e3e;font-weight:600;margin-top:4px">' + price + '</div>';
-              html += '</div>';
-            });
-            html += '</div>';
-          } else {
-            html += '<p style="color:#666">首页暂无商品</p>';
-          }
-        } catch(e) { html += '<p style="color:red">首页渲染失败: ' + e.message + '</p>'; }
-
-        // 5. Sync PC Dashboard KPIs
-        html += '<hr style="border:none;border-top:2px solid #333;margin:40px 0">';
-        html += '<h2>PC后台 — 数据概览</h2>';
-        try {
-          var kpiGrid = document.querySelector('#page-pc-dashboard .kpi-grid');
-          if (kpiGrid) {
-            html += '<div style="overflow-x:auto">' + kpiGrid.outerHTML + '</div>';
-          } else {
-            html += '<p style="color:#666">未找到数据概览面板</p>';
-          }
-        } catch(e) { html += '<p style="color:red">数据概览渲染失败: ' + e.message + '</p>'; }
-
-        textDoc.innerHTML = html;
-        // Force text-mode-doc to be visible with inline styles
-        textDoc.style.display = 'block';
-        textDoc.style.maxWidth = '960px';
-        textDoc.style.margin = '0 auto';
-        textDoc.style.padding = '96px 50px 40px';
-        textDoc.style.background = '#ffffff';
-        textDoc.style.color = '#333333';
-        console.log('switchMode: textDoc innerHTML length =', html.length);
-        console.log('switchMode: textDoc scrollHeight =', textDoc.scrollHeight);
-        document.body.classList.add('text-mode');
-        document.body.style.overflow = 'auto';
-        document.body.style.height = 'auto';
-        window.scrollTo(0, 0);
-        if (modeBtns[1]) modeBtns[1].classList.add('active');
-      } else {
-        document.body.classList.remove('text-mode');
-        // Hide text-mode-doc when switching back to preview
-        var tdoc = document.getElementById('textModeDoc');
-        if (tdoc) tdoc.style.display = 'none';
-        window.scrollTo(0, 0);
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
-        if (modeBtns[0]) modeBtns[0].classList.add('active');
-      }
-    } catch(e) {
-      console.error('switchMode error:', e);
+    var modeBtns = document.querySelectorAll('.mode-toggle .mode-btn');
+    modeBtns.forEach(function(b) { b.classList.remove('active'); });
+    if (mode === 'text') {
+      var textDoc = document.getElementById('textModeDoc');
+      var html = '<h1>门店进销存系统产品需求文档</h1><p>版本: V2.0 | 2026年8月14日 | 初稿</p>';
+      var panes = document.querySelectorAll('.tab-content-wrapper > .tab-pane');
+      panes.forEach(function(pane, i) {
+        if (i > 0) html += '<hr style="border:none;border-top:1px solid #ddd;margin:30px 0">';
+        html += pane.innerHTML;
+      });
+      textDoc.innerHTML = html;
+      document.body.classList.add('text-mode');
+      modeBtns[1].classList.add('active');
+    } else {
+      document.body.classList.remove('text-mode');
+      window.scrollTo(0, 0);
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+      modeBtns[0].classList.add('active');
     }
   };
 
@@ -4347,39 +3319,23 @@ body.text-mode .text-mode-doc { display: block !important; visibility: visible !
 
   function scalePrototype() {
     var frame = currentDevice === 'pc' ? document.getElementById('browserFrame') : document.getElementById('phoneFrame');
-    if (!frame) return;
-    if (frame.style.display === 'none') return;
-    // Ensure frame is visible with display:block
-    if (frame.style.display === '') frame.style.display = 'block';
-    if (!left) { left = document.querySelector('.left-panel'); }
-    if (!left) return;
+    if (!frame || frame.style.display === 'none') return;
     var padding = 20;
     var panelW = left.clientWidth - padding * 2;
     var panelH = left.clientHeight - padding * 2;
-    if (panelW <= 0 || panelH <= 0) {
-      // Retry after layout
-      setTimeout(scalePrototype, 200);
-      return;
-    }
     var origW, origH;
     if (frame.classList.contains('phone-frame')) { origW = 375; origH = 720; }
     else { origW = 1200; origH = 760; }
     var scale = Math.min(panelW / origW, panelH / origH, 1.2);
-    if (scale <= 0) return;
     frame.style.transform = 'scale(' + scale + ')';
     frame.style.left = (padding + (panelW - origW * scale) / 2) + 'px';
     frame.style.top = (padding + (panelH - origH * scale) / 2) + 'px';
   }
   window.scalePrototype = scalePrototype;
   window.addEventListener('resize', scalePrototype);
-  window.addEventListener('load', function() {
-    scalePrototype();
-    // Second call to handle any layout shifts
-    setTimeout(scalePrototype, 300);
-  });
+  window.addEventListener('load', scalePrototype);
   setTimeout(scalePrototype, 100);
   setTimeout(scalePrototype, 500);
-  setTimeout(scalePrototype, 1000);
 
   var countdownEl = document.getElementById('countdown');
   if (countdownEl) {
@@ -4393,16 +3349,6 @@ body.text-mode .text-mode-doc { display: block !important; visibility: visible !
       tab.classList.add('active');
     });
   });
-})();
-</script>
-<script>
-// Fix: Move text-mode-doc to be a direct child of body
-// (HTML parser may incorrectly nest it inside main-layout due to malformed tags)
-(function() {
-  var td = document.getElementById('textModeDoc');
-  if (td && td.parentElement !== document.body) {
-    document.body.appendChild(td);
-  }
 })();
 </script>
 </body>
