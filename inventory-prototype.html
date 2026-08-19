@@ -145,6 +145,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  order: 3;
 }
 .resize-handle {
   flex: 0 0 6px;
@@ -155,6 +156,7 @@ body {
   background: transparent;
   position: relative;
   z-index: 10;
+  order: 2;
 }
 .resize-handle::after {
   content: '';
@@ -178,6 +180,7 @@ body {
   flex-direction: column;
   background: var(--bg-secondary);
   overflow: hidden;
+  order: 1;
 }
 
 /* ==================== Browser Frame (PC) ==================== */
@@ -3471,15 +3474,16 @@ body.text-mode .text-mode-doc { display: block; }
 
   var handle = document.getElementById('resizeHandle');
   var left = document.querySelector('.left-panel');
+  var right = document.querySelector('.right-panel');
   var container = document.querySelector('.main-layout');
-  if (handle && left && container) {
+  if (handle && left && right && container) {
     var isDragging = false;
     handle.addEventListener('mousedown', function() { isDragging = true; handle.classList.add('active'); document.body.style.userSelect = 'none'; });
     document.addEventListener('mousemove', function(e) {
       if (!isDragging) return;
       var rect = container.getBoundingClientRect();
       var pct = ((e.clientX - rect.left) / rect.width) * 100;
-      left.style.flex = '0 0 ' + Math.max(50, Math.min(80, pct)) + '%';
+      right.style.flex = '0 0 ' + Math.max(20, Math.min(50, pct)) + '%';
       scalePrototype();
     });
     document.addEventListener('mouseup', function() { isDragging = false; handle.classList.remove('active'); document.body.style.userSelect = ''; });
