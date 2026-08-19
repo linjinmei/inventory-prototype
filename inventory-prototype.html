@@ -1340,7 +1340,7 @@ body.text-mode .text-mode-doc { display: block; }
                   <input class="filter-input" type="text" placeholder="搜索商品名称/SKU">
                   <select class="filter-select" id="productCategoryFilter"><option>全部分类</option><option>生鲜水果</option><option>饮料饮品</option><option>零食坚果</option><option>日用百货</option></select>
                   <select class="filter-select"><option>全部状态</option><option>已上架</option><option>已下架</option></select>
-                  <button class="btn btn-outline btn-sm" type="button">导出</button>
+                  <button class="btn btn-outline btn-sm" type="button" onclick="exportProducts()">导出</button>
                 </div>
                 <div class="table-scroll">
                 <table class="pc-table">
@@ -1402,7 +1402,7 @@ body.text-mode .text-mode-doc { display: block; }
             <div class="pc-page" id="page-pc-sales">
               <div class="pc-page-header">
                 <div class="pc-page-title">销售订单管理</div>
-                <button class="btn btn-outline btn-sm" type="button">导出订单</button>
+                <button class="btn btn-outline btn-sm" type="button" onclick="exportOrders()">导出订单</button>
               </div>
               <div class="pc-page-body">
                 <div class="filter-bar">
@@ -1413,13 +1413,13 @@ body.text-mode .text-mode-doc { display: block; }
                 <table class="pc-table">
                   <thead><tr><th>订单号</th><th>商品</th><th>门店</th><th>金额</th><th>下单时间</th><th>状态</th><th>操作</th></tr></thead>
                   <tbody>
-                    <tr><td>SO20260814001</td><td>有机红富士苹果 ×2</td><td>北京朝阳店</td><td>¥25.80</td><td>08-14 09:30</td><td><span class="badge badge-success">待自提</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail()">详情</button></td></tr>
-                    <tr><td>SO20260814002</td><td>农夫山泉 ×24</td><td>北京朝阳店</td><td>¥48.00</td><td>08-14 10:15</td><td><span class="badge badge-info">备货中</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail()">详情</button></td></tr>
-                    <tr><td>SO20260814003</td><td>三只松鼠坚果礼盒 ×1</td><td>上海浦东店</td><td>¥89.90</td><td>08-14 11:00</td><td><span class="badge badge-success">待自提</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail()">详情</button></td></tr>
-                    <tr><td>SO20260814004</td><td>伊利纯牛奶 ×2</td><td>北京朝阳店</td><td>¥99.80</td><td>08-14 12:30</td><td><span class="badge badge-warning">退款中</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail()">详情</button></td></tr>
-                    <tr><td>SO20260813005</td><td>蓝月亮洗衣液 ×1</td><td>北京海淀店</td><td>¥39.90</td><td>08-13 14:00</td><td><span class="badge badge-gray">已完成</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail()">详情</button></td></tr>
-                    <tr><td>SO20260813006</td><td>新疆和田大枣 ×3</td><td>上海浦东店</td><td>¥77.70</td><td>08-13 15:20</td><td><span class="badge badge-info">备货中</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail()">详情</button></td></tr>
-                    <tr><td>SO20260813007</td><td>舒肤佳香皂 ×2</td><td>北京海淀店</td><td>¥39.80</td><td>08-13 16:45</td><td><span class="badge badge-gray">已完成</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail()">详情</button></td></tr>
+                    <tr><td>SO20260814001</td><td>有机红富士苹果 ×2</td><td>北京朝阳店</td><td>¥25.80</td><td>08-14 09:30</td><td><span class="badge badge-success">待自提</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail(this)">详情</button></td></tr>
+                    <tr><td>SO20260814002</td><td>农夫山泉 ×24</td><td>北京朝阳店</td><td>¥48.00</td><td>08-14 10:15</td><td><span class="badge badge-info">备货中</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail(this)">详情</button></td></tr>
+                    <tr><td>SO20260814003</td><td>三只松鼠坚果礼盒 ×1</td><td>上海浦东店</td><td>¥89.90</td><td>08-14 11:00</td><td><span class="badge badge-success">待自提</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail(this)">详情</button></td></tr>
+                    <tr><td>SO20260814004</td><td>伊利纯牛奶 ×2</td><td>北京朝阳店</td><td>¥99.80</td><td>08-14 12:30</td><td><span class="badge badge-warning">退款中</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail(this)">详情</button></td></tr>
+                    <tr><td>SO20260813005</td><td>蓝月亮洗衣液 ×1</td><td>北京海淀店</td><td>¥39.90</td><td>08-13 14:00</td><td><span class="badge badge-gray">已完成</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail(this)">详情</button></td></tr>
+                    <tr><td>SO20260813006</td><td>新疆和田大枣 ×3</td><td>上海浦东店</td><td>¥77.70</td><td>08-13 15:20</td><td><span class="badge badge-info">备货中</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail(this)">详情</button></td></tr>
+                    <tr><td>SO20260813007</td><td>舒肤佳香皂 ×2</td><td>北京海淀店</td><td>¥39.80</td><td>08-13 16:45</td><td><span class="badge badge-gray">已完成</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail(this)">详情</button></td></tr>
                   </tbody>
                 </table>
               </div>
@@ -1429,7 +1429,7 @@ body.text-mode .text-mode-doc { display: block; }
             <div class="pc-page" id="page-pc-purchase">
               <div class="pc-page-header">
                 <div class="pc-page-title">采购管理</div>
-                <button class="btn btn-primary" type="button">+ 新建采购单</button>
+                <button class="btn btn-primary" type="button" onclick="createPurchaseOrder()">+ 新建采购单</button>
               </div>
               <div class="pc-page-body">
                 <div class="decomp-demo">
@@ -1460,11 +1460,11 @@ body.text-mode .text-mode-doc { display: block; }
                 <table class="pc-table">
                   <thead><tr><th>采购单号</th><th>供应商</th><th>门店</th><th>商品/数量</th><th>状态</th><th>预计到货</th><th>操作</th></tr></thead>
                   <tbody>
-                    <tr><td>PO20260814001</td><td>绿源农业</td><td>北京朝阳店</td><td>有机苹果 100件</td><td><span class="badge badge-purple">运输中</span></td><td>08-15</td><td><button class="btn btn-outline btn-sm" type="button">查看</button></td></tr>
-                    <tr><td>PO20260814002</td><td>鲜达供应链</td><td>北京朝阳店</td><td>农夫山泉 200件</td><td><span class="badge badge-info">待发货</span></td><td>08-16</td><td><button class="btn btn-outline btn-sm" type="button">查看</button></td></tr>
-                    <tr><td>PO20260813003</td><td>品质优选</td><td>上海浦东店</td><td>三只松鼠礼盒 50件</td><td><span class="badge badge-gray">已到货</span></td><td>08-14</td><td><button class="btn btn-outline btn-sm" type="button">查看</button></td></tr>
-                    <tr><td>PO20260813004</td><td>绿源农业</td><td>北京海淀店</td><td>新疆大枣 80件</td><td><span class="badge badge-purple">运输中</span></td><td>08-15</td><td><button class="btn btn-outline btn-sm" type="button">查看</button></td></tr>
-                    <tr><td>PO20260812005</td><td>品质优选</td><td>北京朝阳店</td><td>伊利牛奶 120件</td><td><span class="badge badge-warning">到货拆解中</span></td><td>08-14</td><td><button class="btn btn-outline btn-sm" type="button">查看</button></td></tr>
+                    <tr><td>PO20260814001</td><td>绿源农业</td><td>北京朝阳店</td><td>有机苹果 100件</td><td><span class="badge badge-purple">运输中</span></td><td>08-15</td><td><button class="btn btn-outline btn-sm" type="button" onclick="viewPurchase(this)">查看</button></td></tr>
+                    <tr><td>PO20260814002</td><td>鲜达供应链</td><td>北京朝阳店</td><td>农夫山泉 200件</td><td><span class="badge badge-info">待发货</span></td><td>08-16</td><td><button class="btn btn-outline btn-sm" type="button" onclick="viewPurchase(this)">查看</button></td></tr>
+                    <tr><td>PO20260813003</td><td>品质优选</td><td>上海浦东店</td><td>三只松鼠礼盒 50件</td><td><span class="badge badge-gray">已到货</span></td><td>08-14</td><td><button class="btn btn-outline btn-sm" type="button" onclick="viewPurchase(this)">查看</button></td></tr>
+                    <tr><td>PO20260813004</td><td>绿源农业</td><td>北京海淀店</td><td>新疆大枣 80件</td><td><span class="badge badge-purple">运输中</span></td><td>08-15</td><td><button class="btn btn-outline btn-sm" type="button" onclick="viewPurchase(this)">查看</button></td></tr>
+                    <tr><td>PO20260812005</td><td>品质优选</td><td>北京朝阳店</td><td>伊利牛奶 120件</td><td><span class="badge badge-warning">到货拆解中</span></td><td>08-14</td><td><button class="btn btn-outline btn-sm" type="button" onclick="viewPurchase(this)">查看</button></td></tr>
                   </tbody>
                 </table>
               </div>
@@ -1476,7 +1476,7 @@ body.text-mode .text-mode-doc { display: block; }
                 <div class="pc-page-title">多状态库存台账</div>
                 <div style="display:flex;gap:8px">
                   <select class="filter-select"><option>全部门店</option><option>北京朝阳店</option><option>北京海淀店</option><option>上海浦东店</option></select>
-                  <button class="btn btn-outline btn-sm" type="button">导出</button>
+                  <button class="btn btn-outline btn-sm" type="button" onclick="exportInventory()">导出</button>
                 </div>
               </div>
               <div class="pc-page-body">
@@ -1507,16 +1507,16 @@ body.text-mode .text-mode-doc { display: block; }
             <div class="pc-page" id="page-pc-transfer">
               <div class="pc-page-header">
                 <div class="pc-page-title">门店调拨管理</div>
-                <button class="btn btn-primary" type="button">+ 发起调拨</button>
+                <button class="btn btn-primary" type="button" onclick="createTransfer()">+ 发起调拨</button>
               </div>
               <div class="pc-page-body">
                 <table class="pc-table">
                   <thead><tr><th>调拨单号</th><th>调出门店</th><th>调入门店</th><th>商品/数量</th><th>状态</th><th>物流</th><th>操作</th></tr></thead>
                   <tbody>
-                    <tr><td>TR20260814001</td><td>北京海淀店</td><td>北京朝阳店</td><td>三只松鼠礼盒 ×5</td><td><span class="badge badge-purple">调拨在途</span></td><td>顺丰 SF1234567</td><td><button class="btn btn-outline btn-sm" type="button">追踪</button></td></tr>
-                    <tr><td>TR20260813002</td><td>上海浦东店</td><td>北京海淀店</td><td>蓝月亮洗衣液 ×10</td><td><span class="badge badge-success">已收货</span></td><td>京东 JD7654321</td><td><button class="btn btn-outline btn-sm" type="button">查看</button></td></tr>
-                    <tr><td>TR20260812003</td><td>北京朝阳店</td><td>上海浦东店</td><td>伊利纯牛奶 ×20</td><td><span class="badge badge-gray">已完成</span></td><td>顺丰 SF9876543</td><td><button class="btn btn-outline btn-sm" type="button">查看</button></td></tr>
-                    <tr><td>TR20260814004</td><td>北京海淀店</td><td>上海浦东店</td><td>舒肤佳香皂 ×15</td><td><span class="badge badge-info">待确认出库</span></td><td>-</td><td><button class="btn btn-primary btn-sm" type="button">确认出库</button></td></tr>
+                    <tr><td>TR20260814001</td><td>北京海淀店</td><td>北京朝阳店</td><td>三只松鼠礼盒 ×5</td><td><span class="badge badge-purple">调拨在途</span></td><td>顺丰 SF1234567</td><td><button class="btn btn-outline btn-sm" type="button" onclick="trackTransfer(this)">追踪</button></td></tr>
+                    <tr><td>TR20260813002</td><td>上海浦东店</td><td>北京海淀店</td><td>蓝月亮洗衣液 ×10</td><td><span class="badge badge-success">已收货</span></td><td>京东 JD7654321</td><td><button class="btn btn-outline btn-sm" type="button" onclick="viewTransfer(this)">查看</button></td></tr>
+                    <tr><td>TR20260812003</td><td>北京朝阳店</td><td>上海浦东店</td><td>伊利纯牛奶 ×20</td><td><span class="badge badge-gray">已完成</span></td><td>顺丰 SF9876543</td><td><button class="btn btn-outline btn-sm" type="button" onclick="viewTransfer(this)">查看</button></td></tr>
+                    <tr><td>TR20260814004</td><td>北京海淀店</td><td>上海浦东店</td><td>舒肤佳香皂 ×15</td><td><span class="badge badge-info">待确认出库</span></td><td>-</td><td><button class="btn btn-primary btn-sm" type="button" onclick="confirmTransferOutPC(this)">确认出库</button></td></tr>
                   </tbody>
                 </table>
               </div>
@@ -1526,7 +1526,7 @@ body.text-mode .text-mode-doc { display: block; }
             <div class="pc-page" id="page-pc-defective">
               <div class="pc-page-header">
                 <div class="pc-page-title">残次品池 & 异常冻结池</div>
-                <button class="btn btn-primary" type="button">+ 创建退供单</button>
+                <button class="btn btn-primary" type="button" onclick="createReturnOrder()">+ 创建退供单</button>
               </div>
               <div class="pc-page-body">
                 <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
@@ -1565,10 +1565,10 @@ body.text-mode .text-mode-doc { display: block; }
                 <table class="pc-table">
                   <thead><tr><th>采购单号</th><th>供应商</th><th>应付金额</th><th>已付金额</th><th>状态</th><th>操作</th></tr></thead>
                   <tbody>
-                    <tr><td>PO20260812005</td><td>品质优选</td><td>¥5,988</td><td>¥0</td><td><span class="badge badge-warning">待付款</span></td><td><button class="btn btn-outline btn-sm" type="button">对账</button></td></tr>
-                    <tr><td>PO20260810006</td><td>绿源农业</td><td>¥12,900</td><td>¥12,900</td><td><span class="badge badge-success">已结清</span></td><td><button class="btn btn-outline btn-sm" type="button">查看</button></td></tr>
-                    <tr><td>PO20260808007</td><td>鲜达供应链</td><td>¥8,400</td><td>¥4,200</td><td><span class="badge badge-info">部分付款</span></td><td><button class="btn btn-outline btn-sm" type="button">对账</button></td></tr>
-                    <tr><td>PO20260813003</td><td>品质优选</td><td>¥4,495</td><td>¥0</td><td><span class="badge badge-warning">待付款</span></td><td><button class="btn btn-outline btn-sm" type="button">对账</button></td></tr>
+                    <tr><td>PO20260812005</td><td>品质优选</td><td>¥5,988</td><td>¥0</td><td><span class="badge badge-warning">待付款</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="reconcileFinance(this)">对账</button></td></tr>
+                    <tr><td>PO20260810006</td><td>绿源农业</td><td>¥12,900</td><td>¥12,900</td><td><span class="badge badge-success">已结清</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="viewFinance(this)">查看</button></td></tr>
+                    <tr><td>PO20260808007</td><td>鲜达供应链</td><td>¥8,400</td><td>¥4,200</td><td><span class="badge badge-info">部分付款</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="reconcileFinance(this)">对账</button></td></tr>
+                    <tr><td>PO20260813003</td><td>品质优选</td><td>¥4,495</td><td>¥0</td><td><span class="badge badge-warning">待付款</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="reconcileFinance(this)">对账</button></td></tr>
                   </tbody>
                 </table>
               </div>
@@ -3281,8 +3281,108 @@ body.text-mode .text-mode-doc { display: block; }
     if (el) { el.style.display = ''; el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
   };
 
-  window.showOrderDetail = function() {
-    alert('订单详情：SO20260814001\n商品：有机红富士苹果 x2\n门店：北京朝阳店\n状态：待自提\n采购单号：PO20260814001\n供应商：绿源农业');
+  window.showOrderDetail = function(btn) {
+    var row = btn.closest('tr');
+    var cells = row.querySelectorAll('td');
+    var orderNo = cells[0].textContent.trim();
+    var product = cells[1].textContent.trim();
+    var store = cells[2].textContent.trim();
+    var amount = cells[3].textContent.trim();
+    var time = cells[4].textContent.trim();
+    var status = cells[5].textContent.trim();
+    alert('订单详情\n━━━━━━━━━━\n订单号：' + orderNo + '\n商品：' + product + '\n门店：' + store + '\n金额：' + amount + '\n下单时间：' + time + '\n状态：' + status);
+  };
+
+  window.exportProducts = function() {
+    var tbody = document.getElementById('productTableBody');
+    var count = tbody.querySelectorAll('tr').length;
+    alert('商品数据导出成功！\n共导出 ' + count + ' 条商品记录。');
+  };
+
+  window.exportOrders = function() {
+    alert('销售订单导出成功！\n共导出 7 条订单记录。');
+  };
+
+  window.exportInventory = function() {
+    alert('库存台账导出成功！\n共导出 7 条库存记录。');
+  };
+
+  window.createPurchaseOrder = function() {
+    alert('新建采购单\n\n请填写采购信息：\n- 选择供应商\n- 选择商品及数量\n- 选择目标门店\n- 设置预计到货日期\n\n（原型演示，点击确定模拟创建）');
+  };
+
+  window.viewPurchase = function(btn) {
+    var row = btn.closest('tr');
+    var cells = row.querySelectorAll('td');
+    var poNo = cells[0].textContent.trim();
+    var supplier = cells[1].textContent.trim();
+    var store = cells[2].textContent.trim();
+    var product = cells[3].textContent.trim();
+    var status = cells[4].textContent.trim();
+    var eta = cells[5].textContent.trim();
+    alert('采购单详情\n━━━━━━━━━━\n采购单号：' + poNo + '\n供应商：' + supplier + '\n门店：' + store + '\n商品：' + product + '\n状态：' + status + '\n预计到货：' + eta);
+  };
+
+  window.createTransfer = function() {
+    alert('发起调拨\n\n请填写调拨信息：\n- 选择调出门店\n- 选择调入门店\n- 选择调拨商品及数量\n- 确认可用库存\n\n（原型演示，点击确定模拟创建）');
+  };
+
+  window.trackTransfer = function(btn) {
+    var row = btn.closest('tr');
+    var cells = row.querySelectorAll('td');
+    var trNo = cells[0].textContent.trim();
+    var logistics = cells[5].textContent.trim();
+    alert('物流追踪\n━━━━━━━━━━\n调拨单号：' + trNo + '\n物流公司：' + logistics + '\n当前状态：运输中\n预计到达：2026-08-16');
+  };
+
+  window.viewTransfer = function(btn) {
+    var row = btn.closest('tr');
+    var cells = row.querySelectorAll('td');
+    var trNo = cells[0].textContent.trim();
+    var from = cells[1].textContent.trim();
+    var to = cells[2].textContent.trim();
+    var product = cells[3].textContent.trim();
+    var status = cells[4].textContent.trim();
+    var logistics = cells[5].textContent.trim();
+    alert('调拨详情\n━━━━━━━━━━\n调拨单号：' + trNo + '\n调出门店：' + from + '\n调入门店：' + to + '\n商品：' + product + '\n状态：' + status + '\n物流：' + logistics);
+  };
+
+  window.confirmTransferOutPC = function(btn) {
+    var row = btn.closest('tr');
+    if (confirm('确认出库？\n\n确认后库存将扣减，调拨状态变更为"调拨在途"。')) {
+      var cells = row.querySelectorAll('td');
+      var badge = row.querySelector('.badge');
+      if (badge) { badge.className = 'badge badge-purple'; badge.textContent = '调拨在途'; }
+      cells[5].textContent = '顺丰 SF' + Math.floor(Math.random() * 9000000 + 1000000);
+      var actionCell = cells[6];
+      actionCell.innerHTML = '<button class="btn btn-outline btn-sm" type="button" onclick="trackTransfer(this)">追踪</button>';
+      alert('出库确认成功！\n调拨状态已更新为"调拨在途"。');
+    }
+  };
+
+  window.createReturnOrder = function() {
+    alert('创建退供单\n\n系统将自动汇总残次品和异常冻结库存，\n生成退供单并通知供应商。\n\n当前待退供批次：2\n- 残次品：4件\n- 异常冻结：10件\n\n（原型演示，点击确定模拟创建）');
+  };
+
+  window.reconcileFinance = function(btn) {
+    var row = btn.closest('tr');
+    var cells = row.querySelectorAll('td');
+    var poNo = cells[0].textContent.trim();
+    var supplier = cells[1].textContent.trim();
+    var amount = cells[2].textContent.trim();
+    var paid = cells[3].textContent.trim();
+    alert('采购对账\n━━━━━━━━━━\n采购单号：' + poNo + '\n供应商：' + supplier + '\n应付金额：' + amount + '\n已付金额：' + paid + '\n\n对账状态：对账中\n（原型演示，点击确定模拟完成对账）');
+  };
+
+  window.viewFinance = function(btn) {
+    var row = btn.closest('tr');
+    var cells = row.querySelectorAll('td');
+    var poNo = cells[0].textContent.trim();
+    var supplier = cells[1].textContent.trim();
+    var amount = cells[2].textContent.trim();
+    var paid = cells[3].textContent.trim();
+    var status = cells[4].textContent.trim();
+    alert('财务明细\n━━━━━━━━━━\n采购单号：' + poNo + '\n供应商：' + supplier + '\n应付金额：' + amount + '\n已付金额：' + paid + '\n结算状态：' + status);
   };
 
   window.filterTransferStatus = function(btn, status) {
