@@ -1332,7 +1332,7 @@ body.text-mode .text-mode-doc { display: block; }
                 <div class="pc-page-title">商品管理</div>
                 <div style="display:flex;gap:8px">
                   <button class="btn btn-outline btn-sm" type="button" onclick="showCategoryModal()">+ 新增分类</button>
-                  <button class="btn btn-primary" type="button" onclick="showProductModal()">+ 新增商品</button>
+                  <button class="btn btn-primary" type="button" onclick="openProductNewPage()">+ 新增商品</button>
                 </div>
               </div>
               <div class="pc-page-body">
@@ -1429,7 +1429,7 @@ body.text-mode .text-mode-doc { display: block; }
             <div class="pc-page" id="page-pc-purchase">
               <div class="pc-page-header">
                 <div class="pc-page-title">采购管理</div>
-                <button class="btn btn-primary" type="button" onclick="createPurchaseOrder()">+ 新建采购单</button>
+                <button class="btn btn-primary" type="button" onclick="navigatePC('page-pc-purchase-new')">+ 新建采购单</button>
               </div>
               <div class="pc-page-body">
                 <div class="decomp-demo">
@@ -1507,7 +1507,7 @@ body.text-mode .text-mode-doc { display: block; }
             <div class="pc-page" id="page-pc-transfer">
               <div class="pc-page-header">
                 <div class="pc-page-title">门店调拨管理</div>
-                <button class="btn btn-primary" type="button" onclick="createTransfer()">+ 发起调拨</button>
+                <button class="btn btn-primary" type="button" onclick="navigatePC('page-pc-transfer-new')">+ 发起调拨</button>
               </div>
               <div class="pc-page-body">
                 <table class="pc-table">
@@ -1526,7 +1526,7 @@ body.text-mode .text-mode-doc { display: block; }
             <div class="pc-page" id="page-pc-defective">
               <div class="pc-page-header">
                 <div class="pc-page-title">残次品池 & 异常冻结池</div>
-                <button class="btn btn-primary" type="button" onclick="createReturnOrder()">+ 创建退供单</button>
+                <button class="btn btn-primary" type="button" onclick="navigatePC('page-pc-return-new')">+ 创建退供单</button>
               </div>
               <div class="pc-page-body">
                 <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
@@ -1573,6 +1573,110 @@ body.text-mode .text-mode-doc { display: block; }
                 </table>
               </div>
             </div>
+
+            <!-- ====== Form Pages ====== -->
+            <!-- New Product Page -->
+            <div class="pc-page" id="page-pc-product-new">
+              <div class="pc-page-header">
+                <button class="btn btn-outline btn-sm" type="button" onclick="pcGoBack('page-pc-products')" style="margin-right:12px">&larr; 返回</button>
+                <div class="pc-page-title" id="productPageTitle">新增商品</div>
+              </div>
+              <div class="pc-page-body">
+                <input type="hidden" id="productEditSku" />
+                <div class="form-inline">
+                  <div class="form-group"><label>SKU编码</label><input type="text" id="prodSku" placeholder="SKU009" /></div>
+                  <div class="form-group"><label>商品名称</label><input type="text" id="prodName" placeholder="请输入商品名称" /></div>
+                </div>
+                <div class="form-inline">
+                  <div class="form-group"><label>商品分类</label><select id="prodCategory"><option>生鲜水果</option><option>饮料饮品</option><option>零食坚果</option><option>日用百货</option></select></div>
+                  <div class="form-group"><label>规格</label><input type="text" id="prodSpec" placeholder="如 500g/袋" /></div>
+                </div>
+                <div class="form-inline">
+                  <div class="form-group"><label>售价（元）</label><input type="number" id="prodPrice" placeholder="0.00" step="0.01" min="0" /></div>
+                  <div class="form-group"><label>预计到货天数</label><input type="number" id="prodDays" placeholder="2" min="1" /></div>
+                </div>
+                <div class="form-group"><label>商品描述</label><textarea id="prodDesc" placeholder="请输入商品描述（选填）"></textarea></div>
+                <div style="margin-top:24px;display:flex;gap:12px">
+                  <button class="btn btn-outline" type="button" onclick="pcGoBack('page-pc-products')">取消</button>
+                  <button class="btn btn-primary" type="button" onclick="saveProductPage()">保存</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- New Purchase Order Page -->
+            <div class="pc-page" id="page-pc-purchase-new">
+              <div class="pc-page-header">
+                <button class="btn btn-outline btn-sm" type="button" onclick="pcGoBack('page-pc-purchase')" style="margin-right:12px">&larr; 返回</button>
+                <div class="pc-page-title">新建采购单</div>
+              </div>
+              <div class="pc-page-body">
+                <div class="form-inline">
+                  <div class="form-group"><label>供应商</label><select id="purchaseSupplier"><option value="">请选择供应商</option><option>绿源农业</option><option>鲜达供应链</option><option>品质优选</option></select></div>
+                  <div class="form-group"><label>目标门店</label><select id="purchaseStore"><option value="">请选择门店</option><option>北京朝阳店</option><option>北京海淀店</option><option>上海浦东店</option></select></div>
+                </div>
+                <div class="form-inline">
+                  <div class="form-group"><label>商品名称</label><select id="purchaseProduct" onchange="updatePurchaseSKU()"><option value="">请选择商品</option><option value="有机红富士苹果" data-sku="SKU001">有机红富士苹果</option><option value="农夫山泉天然水" data-sku="SKU002">农夫山泉天然水</option><option value="三只松鼠坚果礼盒" data-sku="SKU003">三只松鼠坚果礼盒</option><option value="蓝月亮洗衣液" data-sku="SKU004">蓝月亮洗衣液</option><option value="伊利纯牛奶" data-sku="SKU005">伊利纯牛奶</option><option value="新疆和田大枣" data-sku="SKU007">新疆和田大枣</option></select></div>
+                  <div class="form-group"><label>SKU编码</label><input type="text" id="purchaseSKU" readonly placeholder="选择商品后自动填充" /></div>
+                </div>
+                <div class="form-inline">
+                  <div class="form-group"><label>采购数量（件）</label><input type="number" id="purchaseQty" placeholder="请输入数量" min="1" value="100" /></div>
+                  <div class="form-group"><label>预计到货日期</label><input type="date" id="purchaseETA" /></div>
+                </div>
+                <div class="form-group"><label>备注</label><textarea id="purchaseNote" placeholder="请输入备注（选填）"></textarea></div>
+                <div style="margin-top:24px;display:flex;gap:12px">
+                  <button class="btn btn-outline" type="button" onclick="pcGoBack('page-pc-purchase')">取消</button>
+                  <button class="btn btn-primary" type="button" onclick="submitPurchaseOrderPage()">提交采购单</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- New Transfer Page -->
+            <div class="pc-page" id="page-pc-transfer-new">
+              <div class="pc-page-header">
+                <button class="btn btn-outline btn-sm" type="button" onclick="pcGoBack('page-pc-transfer')" style="margin-right:12px">&larr; 返回</button>
+                <div class="pc-page-title">发起调拨</div>
+              </div>
+              <div class="pc-page-body">
+                <div class="form-inline">
+                  <div class="form-group"><label>调出门店</label><select id="transferFromStore"><option value="">请选择调出门店</option><option>北京朝阳店</option><option>北京海淀店</option><option>上海浦东店</option></select></div>
+                  <div class="form-group"><label>调入门店</label><select id="transferToStore"><option value="">请选择调入门店</option><option>北京朝阳店</option><option>北京海淀店</option><option>上海浦东店</option></select></div>
+                </div>
+                <div class="form-inline">
+                  <div class="form-group"><label>调拨商品</label><select id="transferProductModal" onchange="updateTransferStockInfo()"><option value="">请选择商品</option><option value="有机红富士苹果" data-stock="8">有机红富士苹果（可用库存：8件）</option><option value="农夫山泉天然水" data-stock="15">农夫山泉天然水（可用库存：15件）</option><option value="三只松鼠坚果礼盒" data-stock="3">三只松鼠坚果礼盒（可用库存：3件）</option><option value="伊利纯牛奶" data-stock="12">伊利纯牛奶（可用库存：12件）</option><option value="舒肤佳香皂" data-stock="20">舒肤佳香皂（可用库存：20件）</option></select></div>
+                  <div class="form-group"><label>调拨数量（件）</label><input type="number" id="transferQtyModal" placeholder="请输入数量" min="1" value="1" oninput="validateTransferQtyModal()" /></div>
+                </div>
+                <div id="transferStockTip" style="font-size:var(--font-size-sm);color:var(--text-muted);margin-bottom:8px">选择商品后将显示可用库存</div>
+                <div class="form-group"><label>备注</label><textarea id="transferNote" placeholder="请输入备注（选填）"></textarea></div>
+                <div style="margin-top:24px;display:flex;gap:12px">
+                  <button class="btn btn-outline" type="button" onclick="pcGoBack('page-pc-transfer')">取消</button>
+                  <button class="btn btn-primary" type="button" onclick="submitTransferPage()">提交调拨单</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- New Return Order Page -->
+            <div class="pc-page" id="page-pc-return-new">
+              <div class="pc-page-header">
+                <button class="btn btn-outline btn-sm" type="button" onclick="pcGoBack('page-pc-defective')" style="margin-right:12px">&larr; 返回</button>
+                <div class="pc-page-title">创建退供单</div>
+              </div>
+              <div class="pc-page-body">
+                <div class="form-inline">
+                  <div class="form-group"><label>退供类型</label><select id="returnType"><option>残次品</option><option>异常冻结</option></select></div>
+                  <div class="form-group"><label>供应商</label><select id="returnSupplier"><option value="">请选择供应商</option><option>绿源农业</option><option>鲜达供应链</option><option>品质优选</option></select></div>
+                </div>
+                <div class="form-inline">
+                  <div class="form-group"><label>关联SKU</label><select id="returnSKU"><option value="">请选择SKU</option><option value="SKU001">SKU001 - 有机红富士苹果</option><option value="SKU004">SKU004 - 蓝月亮洗衣液</option><option value="SKU005">SKU005 - 伊利纯牛奶</option><option value="SKU007">SKU007 - 新疆和田大枣</option></select></div>
+                  <div class="form-group"><label>退供数量（件）</label><input type="number" id="returnQty" placeholder="请输入数量" min="1" value="1" /></div>
+                </div>
+                <div class="form-group"><label>退供原因</label><textarea id="returnReason" placeholder="如：收货时发现包装破损、保质期临近等"></textarea></div>
+                <div style="margin-top:24px;display:flex;gap:12px">
+                  <button class="btn btn-outline" type="button" onclick="pcGoBack('page-pc-defective')">取消</button>
+                  <button class="btn btn-primary" type="button" onclick="submitReturnOrderPage()">提交退供单</button>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -3166,8 +3270,13 @@ body.text-mode .text-mode-doc { display: block; }
     'page-pc-inventory': 'admin.store.com/inventory',
     'page-pc-transfer': 'admin.store.com/transfer',
     'page-pc-defective': 'admin.store.com/defective',
-    'page-pc-finance': 'admin.store.com/finance'
+    'page-pc-finance': 'admin.store.com/finance',
+    'page-pc-product-new': 'admin.store.com/products/new',
+    'page-pc-purchase-new': 'admin.store.com/purchase/new',
+    'page-pc-transfer-new': 'admin.store.com/transfer/new',
+    'page-pc-return-new': 'admin.store.com/defective/return-new'
   };
+  var pcNavHistory = [];
   var featureNames = {
     'feature-dashboard': '数据概览',
     'feature-product': '商品管理',
@@ -3188,6 +3297,10 @@ body.text-mode .text-mode-doc { display: block; }
   var isStaffMode = false;
 
   window.navigatePC = function(pageId) {
+    var currentPage = document.querySelector('#prototypeRootPC .pc-page.active');
+    if (currentPage && currentPage.id !== pageId) {
+      pcNavHistory.push(currentPage.id);
+    }
     document.querySelectorAll('#prototypeRootPC .pc-page').forEach(function(p) { p.classList.remove('active'); });
     var target = document.getElementById(pageId);
     if (target) target.classList.add('active');
@@ -3197,6 +3310,81 @@ body.text-mode .text-mode-doc { display: block; }
     var addr = document.getElementById('addressBar');
     if (addr) addr.textContent = routeMap[pageId] || pageId;
     if (pageId === 'page-pc-products') { productPage = 1; renderPagination(); }
+  };
+
+  window.pcGoBack = function(fallbackPage) {
+    var prevPage = pcNavHistory.pop();
+    if (!prevPage) prevPage = fallbackPage;
+    navigatePC(prevPage || 'page-pc-dashboard');
+  };
+
+  window.openProductNewPage = function() {
+    document.getElementById('productPageTitle').textContent = '新增商品';
+    document.getElementById('productEditSku').value = '';
+    document.getElementById('prodSku').value = '';
+    document.getElementById('prodName').value = '';
+    document.getElementById('prodCategory').value = '生鲜水果';
+    document.getElementById('prodSpec').value = '';
+    document.getElementById('prodPrice').value = '';
+    document.getElementById('prodDays').value = '';
+    document.getElementById('prodDesc').value = '';
+    navigatePC('page-pc-product-new');
+  };
+
+  window.editProduct = function(sku) {
+    document.getElementById('productPageTitle').textContent = '编辑商品';
+    document.getElementById('productEditSku').value = sku;
+    document.getElementById('prodSku').value = sku;
+    var row = document.getElementById('row-' + sku);
+    if (row) {
+      var cells = row.querySelectorAll('td');
+      document.getElementById('prodName').value = cells[1].textContent.trim();
+      document.getElementById('prodCategory').value = cells[2].textContent.trim();
+      document.getElementById('prodSpec').value = cells[3].textContent.trim();
+      document.getElementById('prodPrice').value = cells[4].textContent.replace('¥','').trim();
+      document.getElementById('prodDays').value = cells[5].textContent.trim();
+      document.getElementById('prodDesc').value = '';
+    } else {
+      document.getElementById('prodName').value = '';
+      document.getElementById('prodCategory').value = '生鲜水果';
+      document.getElementById('prodSpec').value = '';
+      document.getElementById('prodPrice').value = '';
+      document.getElementById('prodDays').value = '';
+      document.getElementById('prodDesc').value = '';
+    }
+    navigatePC('page-pc-product-new');
+  };
+
+  window.saveProductPage = function() {
+    var sku = document.getElementById('prodSku').value.trim();
+    var name = document.getElementById('prodName').value.trim();
+    var category = document.getElementById('prodCategory').value;
+    var spec = document.getElementById('prodSpec').value.trim();
+    var price = document.getElementById('prodPrice').value.trim();
+    var days = document.getElementById('prodDays').value.trim();
+    var editSku = document.getElementById('productEditSku').value;
+    if (!sku) { alert('请输入SKU编码'); return; }
+    if (!name) { alert('请输入商品名称'); return; }
+    if (!price || parseFloat(price) <= 0) { alert('请输入有效的售价'); return; }
+    if (!days || parseInt(days) < 1) { alert('请输入有效的预计到货天数'); return; }
+    var tbody = document.getElementById('productTableBody');
+    if (editSku) {
+      var row = document.getElementById('row-' + editSku);
+      if (row) {
+        var now = new Date().toISOString().slice(0, 10);
+        row.innerHTML = '<td>' + sku + '</td><td>' + name + '</td><td>' + category + '</td><td>' + spec + '</td><td>¥' + parseFloat(price).toFixed(2) + '</td><td>' + days + '</td><td><span class="badge badge-success">已上架</span></td><td>' + now + '</td><td>' + now + '</td><td><button class="btn btn-outline btn-sm" type="button" onclick="editProduct(\'' + sku + '\')">编辑</button><button class="btn btn-outline btn-sm" type="button" onclick="toggleShelf(\'' + sku + '\')">下架</button><button class="btn btn-outline btn-sm" type="button" onclick="deleteProduct(\'' + sku + '\')">删除</button></td>';
+        row.id = 'row-' + sku;
+        alert('商品更新成功！');
+      }
+    } else {
+      var now = new Date().toISOString().slice(0, 10);
+      var tr = document.createElement('tr');
+      tr.id = 'row-' + sku;
+      tr.innerHTML = '<td>' + sku + '</td><td>' + name + '</td><td>' + category + '</td><td>' + spec + '</td><td>¥' + parseFloat(price).toFixed(2) + '</td><td>' + days + '</td><td><span class="badge badge-success">已上架</span></td><td>' + now + '</td><td>' + now + '</td><td><button class="btn btn-outline btn-sm" type="button" onclick="editProduct(\'' + sku + '\')">编辑</button><button class="btn btn-outline btn-sm" type="button" onclick="toggleShelf(\'' + sku + '\')">下架</button><button class="btn btn-outline btn-sm" type="button" onclick="deleteProduct(\'' + sku + '\')">删除</button></td>';
+      tbody.insertBefore(tr, tbody.firstChild);
+      alert('商品新增成功！\nSKU：' + sku + '\n名称：' + name);
+    }
+    pcGoBack('page-pc-products');
   };
 
   var appNavHistory = ['page-app-home'];
@@ -3384,7 +3572,27 @@ body.text-mode .text-mode-doc { display: block; }
     document.getElementById('purchaseSKU').value = '';
     document.getElementById('purchaseQty').value = '100';
     document.getElementById('purchaseNote').value = '';
-    document.getElementById('purchaseModal').classList.add('show');
+    navigatePC('page-pc-purchase-new');
+  };
+
+  window.submitPurchaseOrderPage = function() {
+    var supplier = document.getElementById('purchaseSupplier').value;
+    var store = document.getElementById('purchaseStore').value;
+    var product = document.getElementById('purchaseProduct').value;
+    var sku = document.getElementById('purchaseSKU').value;
+    var qty = document.getElementById('purchaseQty').value;
+    var eta = document.getElementById('purchaseETA').value;
+    if (!supplier) { alert('请选择供应商'); return; }
+    if (!store) { alert('请选择目标门店'); return; }
+    if (!product) { alert('请选择商品'); return; }
+    if (!qty || parseInt(qty) < 1) { alert('请输入有效的采购数量'); return; }
+    var poNo = 'PO' + new Date().toISOString().slice(0,10).replace(/-/g,'') + String(Math.floor(Math.random()*900)+100);
+    var tbody = document.querySelector('#page-pc-purchase .pc-table tbody');
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + poNo + '</td><td>' + supplier + '</td><td>' + store + '</td><td>' + product + ' ' + qty + '件</td><td><span class="badge badge-info">待发货</span></td><td>' + eta.slice(5) + '</td><td><button class="btn btn-outline btn-sm" type="button" onclick="viewPurchase(this)">查看</button></td>';
+    tbody.insertBefore(tr, tbody.firstChild);
+    pcGoBack('page-pc-purchase');
+    alert('采购单创建成功！\n\n单号：' + poNo + '\n供应商：' + supplier + '\n商品：' + product + '\n数量：' + qty + '件\n状态：待发货');
   };
 
   window.closePurchaseModal = function() {
@@ -3438,7 +3646,30 @@ body.text-mode .text-mode-doc { display: block; }
     document.getElementById('transferNote').value = '';
     document.getElementById('transferStockTip').textContent = '选择商品后将显示可用库存';
     document.getElementById('transferStockTip').style.color = 'var(--text-muted)';
-    document.getElementById('transferModal').classList.add('show');
+    navigatePC('page-pc-transfer-new');
+  };
+
+  window.submitTransferPage = function() {
+    var from = document.getElementById('transferFromStore').value;
+    var to = document.getElementById('transferToStore').value;
+    var product = document.getElementById('transferProductModal').value;
+    var qty = document.getElementById('transferQtyModal').value;
+    if (!from) { alert('请选择调出门店'); return; }
+    if (!to) { alert('请选择调入门店'); return; }
+    if (from === to) { alert('调出门店和调入门店不能相同'); return; }
+    if (!product) { alert('请选择调拨商品'); return; }
+    if (!qty || parseInt(qty) < 1) { alert('请输入有效的调拨数量'); return; }
+    var sel = document.getElementById('transferProductModal');
+    var opt = sel.options[sel.selectedIndex];
+    var stock = parseInt(opt.getAttribute('data-stock') || '0');
+    if (parseInt(qty) > stock) { alert('调拨数量不可超过可用库存（' + stock + '件）'); return; }
+    var trNo = 'TR' + new Date().toISOString().slice(0,10).replace(/-/g,'') + String(Math.floor(Math.random()*900)+100);
+    var tbody = document.querySelector('#page-pc-transfer .pc-table tbody');
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + trNo + '</td><td>' + from + '</td><td>' + to + '</td><td>' + product + ' ×' + qty + '</td><td><span class="badge badge-info">待确认出库</span></td><td>-</td><td><button class="btn btn-primary btn-sm" type="button" onclick="confirmTransferOutPC(this)">确认出库</button></td>';
+    tbody.insertBefore(tr, tbody.firstChild);
+    pcGoBack('page-pc-transfer');
+    alert('调拨单创建成功！\n\n单号：' + trNo + '\n调出：' + from + '\n调入：' + to + '\n商品：' + product + '\n数量：' + qty + '件\n状态：待确认出库');
   };
 
   window.closeTransferModal = function() {
@@ -3536,7 +3767,21 @@ body.text-mode .text-mode-doc { display: block; }
     document.getElementById('returnSKU').value = '';
     document.getElementById('returnQty').value = '1';
     document.getElementById('returnReason').value = '';
-    document.getElementById('returnModal').classList.add('show');
+    navigatePC('page-pc-return-new');
+  };
+
+  window.submitReturnOrderPage = function() {
+    var type = document.getElementById('returnType').value;
+    var supplier = document.getElementById('returnSupplier').value;
+    var sku = document.getElementById('returnSKU').value;
+    var qty = document.getElementById('returnQty').value;
+    var reason = document.getElementById('returnReason').value;
+    if (!supplier) { alert('请选择供应商'); return; }
+    if (!sku) { alert('请选择关联SKU'); return; }
+    if (!qty || parseInt(qty) < 1) { alert('请输入有效的退供数量'); return; }
+    var roNo = 'RO' + new Date().toISOString().slice(0,10).replace(/-/g,'') + String(Math.floor(Math.random()*900)+100);
+    pcGoBack('page-pc-defective');
+    alert('退供单创建成功！\n\n单号：' + roNo + '\n退供类型：' + type + '\n供应商：' + supplier + '\nSKU：' + sku + '\n数量：' + qty + '件\n退供原因：' + (reason || '未填写') + '\n\n已将退供单发送至供应商，待供应商确认。');
   };
 
   window.closeReturnModal = function() {
