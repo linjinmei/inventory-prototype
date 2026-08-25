@@ -1840,7 +1840,7 @@ body.text-mode .text-mode-doc { display: block; }
                 <div class="product-eta">预计2天到店自提</div>
                 <div class="product-price">¥12.90</div>
               </div>
-              <button class="buy-btn" type="button" onclick="event.stopPropagation();navigateAPP('page-app-detail')">购买</button>
+              <button class="buy-btn" type="button" onclick="event.stopPropagation();openSpecPageFromCard(this)">购买</button>
             </div>
             <div class="product-card-app home-product" onclick="navigateAPP('page-app-detail')" data-link="feature-home" data-name="农夫山泉天然水">
               <div class="product-img">💧</div>
@@ -1849,7 +1849,7 @@ body.text-mode .text-mode-doc { display: block; }
                 <div class="product-eta">预计1天到店自提</div>
                 <div class="product-price">¥2.00</div>
               </div>
-              <button class="buy-btn" type="button" onclick="event.stopPropagation();navigateAPP('page-app-detail')">购买</button>
+              <button class="buy-btn" type="button" onclick="event.stopPropagation();openSpecPageFromCard(this)">购买</button>
             </div>
             <div class="product-card-app home-product" onclick="navigateAPP('page-app-detail')" data-link="feature-home" data-name="三只松鼠坚果礼盒">
               <div class="product-img">🥜</div>
@@ -1858,7 +1858,7 @@ body.text-mode .text-mode-doc { display: block; }
                 <div class="product-eta">预计3天到店自提</div>
                 <div class="product-price">¥89.90</div>
               </div>
-              <button class="buy-btn" type="button" onclick="event.stopPropagation();navigateAPP('page-app-detail')">购买</button>
+              <button class="buy-btn" type="button" onclick="event.stopPropagation();openSpecPageFromCard(this)">购买</button>
             </div>
             <div class="product-card-app home-product" onclick="navigateAPP('page-app-detail')" data-link="feature-home" data-name="蓝月亮洗衣液">
               <div class="product-img">🧴</div>
@@ -1867,7 +1867,7 @@ body.text-mode .text-mode-doc { display: block; }
                 <div class="product-eta">预计2天到店自提</div>
                 <div class="product-price">¥39.90</div>
               </div>
-              <button class="buy-btn" type="button" onclick="event.stopPropagation();navigateAPP('page-app-detail')">购买</button>
+              <button class="buy-btn" type="button" onclick="event.stopPropagation();openSpecPageFromCard(this)">购买</button>
             </div>
             <div class="product-card-app home-product" onclick="navigateAPP('page-app-detail')" data-link="feature-home" data-name="伊利纯牛奶">
               <div class="product-img">🥛</div>
@@ -1876,7 +1876,7 @@ body.text-mode .text-mode-doc { display: block; }
                 <div class="product-eta">预计1天到店自提</div>
                 <div class="product-price">¥49.90</div>
               </div>
-              <button class="buy-btn" type="button" onclick="event.stopPropagation();navigateAPP('page-app-detail')">购买</button>
+              <button class="buy-btn" type="button" onclick="event.stopPropagation();openSpecPageFromCard(this)">购买</button>
             </div>
             <div id="homeNoResult" style="display:none;text-align:center;padding:40px 16px;color:var(--text-muted);font-size:var(--font-size-sm)">未找到匹配的商品</div>
           </div>
@@ -1973,7 +1973,7 @@ body.text-mode .text-mode-doc { display: block; }
           </div>
           <div style="padding:10px 16px;background:#fff;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0">
             <button class="btn btn-outline" type="button" style="flex:1" onclick="navigateAPP('page-app-home')">加入购物车</button>
-            <button class="btn btn-primary" type="button" style="flex:1" onclick="navigateAPP('page-app-orders')">立即购买</button>
+            <button class="btn btn-primary" type="button" style="flex:1" onclick="openSpecPage('有机红富士苹果','🍎','¥12.90','预计2天到店自提')">立即购买</button>
           </div>
         </div>
 
@@ -2823,6 +2823,200 @@ body.text-mode .text-mode-doc { display: block; }
               <button class="btn btn-primary" type="button" style="width:100%;margin-top:12px" onclick="goBackAPP()">完成</button>
             </div>
           </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Product Spec Selection -->
+        <div class="app-page" id="page-app-spec">
+          <div class="app-status-bar"><span>9:41</span><span>5G ●●●●</span></div>
+          <div class="app-header">
+            <button type="button" onclick="goBackAPP()" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
+            <div class="app-header-title">选择规格</div>
+            <div style="width:20px"></div>
+          </div>
+          <div class="app-body">
+            <div style="display:flex;padding:16px;background:#fff;gap:12px" id="specProductInfo">
+              <div style="font-size:60px;width:80px;height:80px;background:var(--bg-tertiary);border-radius:10px;display:flex;align-items:center;justify-content:center" id="specProductIcon">🍎</div>
+              <div style="flex:1">
+                <div style="font-size:var(--font-size-lg);font-weight:600;margin-bottom:4px" id="specProductName">有机红富士苹果</div>
+                <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin-bottom:6px" id="specProductEta">预计2天到店自提</div>
+                <div style="font-size:var(--font-size-2xl);font-weight:700;color:var(--danger)" id="specProductPrice">¥12.90</div>
+              </div>
+            </div>
+            <div style="margin-top:10px;background:#fff;padding:16px">
+              <div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:12px">规格</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px" id="specOptions">
+                <div class="spec-option active" onclick="selectSpec(this,'500g/袋')" style="padding:8px 16px;border:1.5px solid var(--primary);background:var(--primary-light);color:var(--primary);border-radius:20px;font-size:var(--font-size-sm);cursor:pointer">500g/袋</div>
+                <div class="spec-option" onclick="selectSpec(this,'1kg/盒')" style="padding:8px 16px;border:1.5px solid var(--border);background:#fff;color:var(--text-main);border-radius:20px;font-size:var(--font-size-sm);cursor:pointer">1kg/盒</div>
+                <div class="spec-option" onclick="selectSpec(this,'2kg/箱')" style="padding:8px 16px;border:1.5px solid var(--border);background:#fff;color:var(--text-main);border-radius:20px;font-size:var(--font-size-sm);cursor:pointer">2kg/箱</div>
+              </div>
+            </div>
+            <div style="margin-top:10px;background:#fff;padding:16px">
+              <div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:12px">数量</div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <button type="button" onclick="changeSpecQty(-1)" style="width:32px;height:32px;border:1px solid var(--border);border-radius:50%;background:#fff;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center">−</button>
+                <span id="specQty" style="font-size:var(--font-size-lg);font-weight:600;min-width:30px;text-align:center">1</span>
+                <button type="button" onclick="changeSpecQty(1)" style="width:32px;height:32px;border:1px solid var(--border);border-radius:50%;background:#fff;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
+              </div>
+            </div>
+          </div>
+          <div style="padding:10px 16px;background:#fff;border-top:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0">
+            <div style="flex:1"><span style="font-size:var(--font-size-xs);color:var(--text-muted)">合计：</span><span style="font-size:var(--font-size-xl);font-weight:700;color:var(--danger)" id="specTotalPrice">¥12.90</span></div>
+            <button class="btn btn-primary" type="button" style="padding:10px 32px;border-radius:24px" onclick="goToConfirmOrder()">确认购买</button>
+          </div>
+        </div>
+
+        <!-- Confirm Order -->
+        <div class="app-page" id="page-app-order-confirm">
+          <div class="app-status-bar"><span>9:41</span><span>5G ●●●●</span></div>
+          <div class="app-header">
+            <button type="button" onclick="goBackAPP()" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
+            <div class="app-header-title">确认订单</div>
+            <div style="width:20px"></div>
+          </div>
+          <div class="app-body">
+            <div style="padding:14px 16px;background:#fff;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border-light)">
+              <span style="font-size:20px">📍</span>
+              <div style="flex:1">
+                <div style="font-size:var(--font-size-sm);font-weight:600">北京朝阳店</div>
+                <div style="font-size:var(--font-size-xs);color:var(--text-muted)">朝阳区建国路88号 · 自提</div>
+              </div>
+              <span style="color:var(--text-light)">›</span>
+            </div>
+            <div style="margin-top:10px;background:#fff;padding:14px 16px">
+              <div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:10px">商品信息</div>
+              <div style="display:flex;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--border-light)" id="confirmOrderItem">
+                <div style="font-size:40px;width:56px;height:56px;background:var(--bg-tertiary);border-radius:8px;display:flex;align-items:center;justify-content:center" id="confirmItemIcon">🍎</div>
+                <div style="flex:1">
+                  <div style="font-size:var(--font-size-sm);font-weight:500" id="confirmItemName">有机红富士苹果</div>
+                  <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:2px" id="confirmItemSpec">500g/袋</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-size:var(--font-size-sm);font-weight:600;color:var(--danger)" id="confirmItemPrice">¥12.90</div>
+                  <div style="font-size:var(--font-size-xs);color:var(--text-muted)" id="confirmItemQty">×1</div>
+                </div>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:var(--font-size-sm);color:var(--text-muted)">
+                <span>商品金额</span><span id="confirmSubtotal">¥12.90</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:var(--font-size-sm);color:var(--text-muted)">
+                <span>配送费</span><span style="color:var(--success)">免运费</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:var(--font-size-base);font-weight:700;border-top:1px solid var(--border-light)">
+                <span>合计</span><span style="color:var(--danger)" id="confirmTotal">¥12.90</span>
+              </div>
+            </div>
+            <div style="margin-top:10px;background:#fff;padding:14px 16px">
+              <div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:10px">支付方式</div>
+              <label style="display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer">
+                <input type="radio" name="payMethod" checked style="accent-color:var(--primary)" />
+                <span style="font-size:var(--font-size-sm)">微信支付</span>
+              </label>
+            </div>
+          </div>
+          <div style="padding:10px 16px;background:#fff;border-top:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0">
+            <div style="flex:1"><span style="font-size:var(--font-size-xs);color:var(--text-muted)">应付：</span><span style="font-size:var(--font-size-xl);font-weight:700;color:var(--danger)" id="confirmFooterTotal">¥12.90</span></div>
+            <button class="btn btn-primary" type="button" style="padding:10px 32px;border-radius:24px" onclick="goToCashier()">确认支付</button>
+          </div>
+        </div>
+
+        <!-- Cashier -->
+        <div class="app-page" id="page-app-cashier">
+          <div class="app-status-bar"><span>9:41</span><span>5G ●●●●</span></div>
+          <div class="app-header">
+            <button type="button" onclick="goBackAPP()" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
+            <div class="app-header-title">收银台</div>
+            <div style="width:20px"></div>
+          </div>
+          <div class="app-body" style="display:flex;flex-direction:column;align-items:center;justify-content:center">
+            <div style="text-align:center;padding:30px 0 20px">
+              <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-bottom:8px">支付金额</div>
+              <div style="font-size:36px;font-weight:700;color:var(--text-main)" id="cashierAmount">¥12.90</div>
+              <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:4px">微信支付</div>
+            </div>
+            <div style="width:160px;height:36px;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:24px" id="passwordDots">
+              <div class="pwd-dot" style="width:10px;height:10px;border-radius:50%;background:var(--border)"></div>
+              <div class="pwd-dot" style="width:10px;height:10px;border-radius:50%;background:var(--border)"></div>
+              <div class="pwd-dot" style="width:10px;height:10px;border-radius:50%;background:var(--border)"></div>
+              <div class="pwd-dot" style="width:10px;height:10px;border-radius:50%;background:var(--border)"></div>
+              <div class="pwd-dot" style="width:10px;height:10px;border-radius:50%;background:var(--border)"></div>
+              <div class="pwd-dot" style="width:10px;height:10px;border-radius:50%;background:var(--border)"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:240px;padding-bottom:20px">
+              <button class="keypad-btn" type="button" onclick="inputPwd('1')" style="width:100%;height:48px;border:1px solid var(--border);border-radius:8px;background:#fff;font-size:var(--font-size-lg);cursor:pointer">1</button>
+              <button class="keypad-btn" type="button" onclick="inputPwd('2')" style="width:100%;height:48px;border:1px solid var(--border);border-radius:8px;background:#fff;font-size:var(--font-size-lg);cursor:pointer">2</button>
+              <button class="keypad-btn" type="button" onclick="inputPwd('3')" style="width:100%;height:48px;border:1px solid var(--border);border-radius:8px;background:#fff;font-size:var(--font-size-lg);cursor:pointer">3</button>
+              <button class="keypad-btn" type="button" onclick="inputPwd('4')" style="width:100%;height:48px;border:1px solid var(--border);border-radius:8px;background:#fff;font-size:var(--font-size-lg);cursor:pointer">4</button>
+              <button class="keypad-btn" type="button" onclick="inputPwd('5')" style="width:100%;height:48px;border:1px solid var(--border);border-radius:8px;background:#fff;font-size:var(--font-size-lg);cursor:pointer">5</button>
+              <button class="keypad-btn" type="button" onclick="inputPwd('6')" style="width:100%;height:48px;border:1px solid var(--border);border-radius:8px;background:#fff;font-size:var(--font-size-lg);cursor:pointer">6</button>
+              <button class="keypad-btn" type="button" onclick="inputPwd('7')" style="width:100%;height:48px;border:1px solid var(--border);border-radius:8px;background:#fff;font-size:var(--font-size-lg);cursor:pointer">7</button>
+              <button class="keypad-btn" type="button" onclick="inputPwd('8')" style="width:100%;height:48px;border:1px solid var(--border);border-radius:8px;background:#fff;font-size:var(--font-size-lg);cursor:pointer">8</button>
+              <button class="keypad-btn" type="button" onclick="inputPwd('9')" style="width:100%;height:48px;border:1px solid var(--border);border-radius:8px;background:#fff;font-size:var(--font-size-lg);cursor:pointer">9</button>
+              <div></div>
+              <button class="keypad-btn" type="button" onclick="inputPwd('0')" style="width:100%;height:48px;border:1px solid var(--border);border-radius:8px;background:#fff;font-size:var(--font-size-lg);cursor:pointer">0</button>
+              <button class="keypad-btn" type="button" onclick="deletePwd()" style="width:100%;height:48px;border:1px solid var(--border);border-radius:8px;background:var(--bg-tertiary);font-size:var(--font-size-sm);cursor:pointer">⌫</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Success -->
+        <div class="app-page" id="page-app-pay-success">
+          <div class="app-status-bar"><span>9:41</span><span>5G ●●●●</span></div>
+          <div class="app-body" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+            <div style="width:64px;height:64px;border-radius:50%;background:var(--success-light);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:16px">✓</div>
+            <div style="font-size:var(--font-size-xl);font-weight:700;color:var(--success);margin-bottom:8px">支付成功</div>
+            <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin-bottom:24px" id="paySuccessAmount">已支付 ¥12.90</div>
+            <div style="background:var(--bg-tertiary);border-radius:10px;padding:16px 24px;margin-bottom:24px">
+              <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-bottom:4px">订单编号</div>
+              <div style="font-size:var(--font-size-base);font-weight:600;color:var(--text-main)" id="paySuccessOrderNo">SO20260825001</div>
+            </div>
+            <div style="display:flex;gap:12px">
+              <button class="btn btn-outline" type="button" onclick="navigateAPP('page-app-home',true);appNavHistory=['page-app-home']">返回首页</button>
+              <button class="btn btn-primary" type="button" onclick="viewOrderDetail()">查看订单</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Detail -->
+        <div class="app-page" id="page-app-order-detail">
+          <div class="app-status-bar"><span>9:41</span><span>5G ●●●●</span></div>
+          <div class="app-header">
+            <button type="button" onclick="goBackAPP()" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
+            <div class="app-header-title">订单详情</div>
+            <div style="width:20px"></div>
+          </div>
+          <div class="app-body">
+            <div style="padding:20px 16px;background:var(--success-light);text-align:center">
+              <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--success)" id="orderDetailStatus">备货中</div>
+              <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:4px">预计1-3天到店，到货后通知自提</div>
+            </div>
+            <div style="background:#fff;margin:10px 16px;border-radius:10px;padding:14px" id="orderDetailStore">
+              <div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:4px">自提门店</div>
+              <div style="font-size:var(--font-size-sm);color:var(--text-muted)">北京朝阳店 · 朝阳区建国路88号</div>
+            </div>
+            <div style="background:#fff;margin:0 16px 10px;border-radius:10px;padding:14px" id="orderDetailItems">
+              <div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:10px">商品信息</div>
+              <div style="display:flex;gap:10px;align-items:center">
+                <div style="font-size:36px;width:48px;height:48px;background:var(--bg-tertiary);border-radius:8px;display:flex;align-items:center;justify-content:center" id="orderDetailIcon">🍎</div>
+                <div style="flex:1">
+                  <div style="font-size:var(--font-size-sm);font-weight:500" id="orderDetailName">有机红富士苹果</div>
+                  <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:2px" id="orderDetailSpec">500g/袋 ×1</div>
+                </div>
+                <div style="font-size:var(--font-size-base);font-weight:600;color:var(--danger)" id="orderDetailPrice">¥12.90</div>
+              </div>
+            </div>
+            <div style="background:#fff;margin:0 16px 10px;border-radius:10px;padding:14px">
+              <div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:10px">订单信息</div>
+              <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:var(--font-size-xs);color:var(--text-muted)"><span>订单编号</span><span id="orderDetailNo">SO20260825001</span></div>
+              <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:var(--font-size-xs);color:var(--text-muted)"><span>下单时间</span><span id="orderDetailTime">2026-08-25 14:30</span></div>
+              <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:var(--font-size-xs);color:var(--text-muted)"><span>支付方式</span><span>微信支付</span></div>
+              <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:var(--font-size-xs);font-weight:600"><span>实付金额</span><span style="color:var(--danger)" id="orderDetailPaid">¥12.90</span></div>
+            </div>
+          </div>
+          <div style="padding:10px 16px;background:#fff;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0">
+            <button class="btn btn-outline" type="button" style="flex:1" onclick="goBackAPP()">返回</button>
+            <button class="btn btn-primary" type="button" style="flex:1" onclick="navigateAPP('page-app-home',true);appNavHistory=['page-app-home']">返回首页</button>
           </div>
         </div>
       </div>
@@ -4318,6 +4512,163 @@ body.text-mode .text-mode-doc { display: block; }
     var total = tbody.querySelectorAll('tr').length;
     var totalPages = Math.ceil(total / productPageSize);
     if (productPage < totalPages) { productPage++; renderPagination(); }
+  };
+
+  // ==================== Payment Flow Functions ====================
+  var currentSpecData = { name: '', icon: '', price: 0, eta: '', spec: '500g/袋', qty: 1 };
+
+  window.openSpecPage = function(name, icon, priceStr, eta) {
+    currentSpecData.name = name;
+    currentSpecData.icon = icon;
+    currentSpecData.price = parseFloat(priceStr.replace('¥',''));
+    currentSpecData.eta = eta;
+    currentSpecData.spec = '500g/袋';
+    currentSpecData.qty = 1;
+    updateSpecUI();
+    document.querySelectorAll('#specOptions .spec-option').forEach(function(el, i) {
+      el.classList.toggle('active', i === 0);
+      el.style.border = i === 0 ? '1.5px solid var(--primary)' : '1.5px solid var(--border)';
+      el.style.background = i === 0 ? 'var(--primary-light)' : '#fff';
+      el.style.color = i === 0 ? 'var(--primary)' : 'var(--text-main)';
+    });
+    document.getElementById('specQty').textContent = '1';
+    navigateAPP('page-app-spec');
+  };
+
+  window.openSpecPageFromCard = function(btn) {
+    var card = btn.closest('.product-card-app');
+    if (!card) {
+      card = btn.closest('.home-product');
+      if (!card) card = btn.closest('.cat-product');
+    }
+    if (!card) return;
+    var name = card.getAttribute('data-name') || card.querySelector('.product-name');
+    if (name && name.textContent) name = name.textContent.trim();
+    else if (typeof name === 'string') name = name;
+    else name = '商品';
+    var priceEl = card.querySelector('.product-price');
+    var priceStr = priceEl ? priceEl.textContent.trim() : '¥0.00';
+    var etaEl = card.querySelector('.product-eta');
+    var eta = etaEl ? etaEl.textContent.trim() : '预计到货';
+    var iconEl = card.querySelector('.product-img');
+    var icon = iconEl ? iconEl.textContent.trim() : '📦';
+    openSpecPage(name, icon, priceStr, eta);
+  };
+
+  function updateSpecUI() {
+    document.getElementById('specProductName').textContent = currentSpecData.name;
+    document.getElementById('specProductIcon').textContent = currentSpecData.icon;
+    document.getElementById('specProductPrice').textContent = '¥' + currentSpecData.price.toFixed(2);
+    document.getElementById('specProductEta').textContent = currentSpecData.eta;
+    updateSpecTotal();
+  }
+
+  window.selectSpec = function(el, specVal) {
+    currentSpecData.spec = specVal;
+    document.querySelectorAll('#specOptions .spec-option').forEach(function(s) {
+      s.classList.remove('active');
+      s.style.border = '1.5px solid var(--border)';
+      s.style.background = '#fff';
+      s.style.color = 'var(--text-main)';
+    });
+    el.classList.add('active');
+    el.style.border = '1.5px solid var(--primary)';
+    el.style.background = 'var(--primary-light)';
+    el.style.color = 'var(--primary)';
+    updateSpecTotal();
+  };
+
+  window.changeSpecQty = function(delta) {
+    var qty = currentSpecData.qty + delta;
+    if (qty < 1) qty = 1;
+    if (qty > 99) qty = 99;
+    currentSpecData.qty = qty;
+    document.getElementById('specQty').textContent = qty;
+    updateSpecTotal();
+  };
+
+  function updateSpecTotal() {
+    var total = currentSpecData.price * currentSpecData.qty;
+    document.getElementById('specTotalPrice').textContent = '¥' + total.toFixed(2);
+  }
+
+  window.goToConfirmOrder = function() {
+    var total = currentSpecData.price * currentSpecData.qty;
+    document.getElementById('confirmItemIcon').textContent = currentSpecData.icon;
+    document.getElementById('confirmItemName').textContent = currentSpecData.name;
+    document.getElementById('confirmItemSpec').textContent = currentSpecData.spec;
+    document.getElementById('confirmItemPrice').textContent = '¥' + currentSpecData.price.toFixed(2);
+    document.getElementById('confirmItemQty').textContent = '×' + currentSpecData.qty;
+    document.getElementById('confirmSubtotal').textContent = '¥' + total.toFixed(2);
+    document.getElementById('confirmTotal').textContent = '¥' + total.toFixed(2);
+    document.getElementById('confirmFooterTotal').textContent = '¥' + total.toFixed(2);
+    navigateAPP('page-app-order-confirm');
+  };
+
+  window.goToCashier = function() {
+    var total = currentSpecData.price * currentSpecData.qty;
+    document.getElementById('cashierAmount').textContent = '¥' + total.toFixed(2);
+    pwdInput = '';
+    document.querySelectorAll('#passwordDots .pwd-dot').forEach(function(d) {
+      d.style.background = 'var(--border)';
+    });
+    navigateAPP('page-app-cashier');
+  };
+
+  var pwdInput = '';
+  window.inputPwd = function(digit) {
+    if (pwdInput.length >= 6) return;
+    pwdInput += digit;
+    var dots = document.querySelectorAll('#passwordDots .pwd-dot');
+    dots.forEach(function(d, i) {
+      d.style.background = i < pwdInput.length ? 'var(--primary)' : 'var(--border)';
+    });
+    if (pwdInput.length === 6) {
+      setTimeout(function() {
+        if (pwdInput === '123456') {
+          finishPayment();
+        } else {
+          alert('支付密码错误，请重试（提示：密码为 123456）');
+          pwdInput = '';
+          dots.forEach(function(d) { d.style.background = 'var(--border)'; });
+        }
+      }, 300);
+    }
+  };
+
+  window.deletePwd = function() {
+    if (pwdInput.length === 0) return;
+    pwdInput = pwdInput.slice(0, -1);
+    var dots = document.querySelectorAll('#passwordDots .pwd-dot');
+    dots.forEach(function(d, i) {
+      d.style.background = i < pwdInput.length ? 'var(--primary)' : 'var(--border)';
+    });
+  };
+
+  function finishPayment() {
+    var total = currentSpecData.price * currentSpecData.qty;
+    var now = new Date();
+    var pad = function(n) { return n < 10 ? '0' + n : n; };
+    var orderNo = 'SO' + now.getFullYear() + pad(now.getMonth()+1) + pad(now.getDate()) + String(Math.floor(Math.random()*900+100));
+    var timeStr = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+    document.getElementById('paySuccessAmount').textContent = '已支付 ¥' + total.toFixed(2);
+    document.getElementById('paySuccessOrderNo').textContent = orderNo;
+    currentSpecData.orderNo = orderNo;
+    currentSpecData.orderTime = timeStr;
+    currentSpecData.paid = total.toFixed(2);
+    navigateAPP('page-app-pay-success');
+  };
+
+  window.viewOrderDetail = function() {
+    document.getElementById('orderDetailIcon').textContent = currentSpecData.icon;
+    document.getElementById('orderDetailName').textContent = currentSpecData.name;
+    document.getElementById('orderDetailSpec').textContent = currentSpecData.spec + ' ×' + currentSpecData.qty;
+    document.getElementById('orderDetailPrice').textContent = '¥' + currentSpecData.paid;
+    document.getElementById('orderDetailNo').textContent = currentSpecData.orderNo;
+    document.getElementById('orderDetailTime').textContent = currentSpecData.orderTime;
+    document.getElementById('orderDetailPaid').textContent = '¥' + currentSpecData.paid;
+    document.getElementById('orderDetailStatus').textContent = '备货中';
+    navigateAPP('page-app-order-detail');
   };
 
   // Initialize pagination on first product page visit
