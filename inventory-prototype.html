@@ -2076,7 +2076,7 @@ body.text-mode .text-mode-doc { display: block; }
             <button class="order-tab" type="button">退款中</button>
           </div>
           <div class="app-body" data-link="feature-sales">
-            <div class="order-card-app">
+            <div class="order-card-app" style="cursor:pointer" onclick="viewOrderDetailFromList('SO20260814001')">
               <div class="order-card-header">
                 <span class="order-no">SO20260814001</span>
                 <span class="badge badge-success">待自提</span>
@@ -2090,11 +2090,11 @@ body.text-mode .text-mode-doc { display: block; }
                 <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥25.80</div>
               </div>
               <div class="order-card-footer">
-                <button class="order-btn" type="button">申请售后</button>
-                <button class="order-btn highlight" type="button" onclick="navigateAPP('page-app-pickup')">查看取货码</button>
+                <button class="order-btn" type="button" onclick="event.stopPropagation()">申请售后</button>
+                <button class="order-btn highlight" type="button" onclick="event.stopPropagation();navigateAPP('page-app-pickup')">查看取货码</button>
               </div>
             </div>
-            <div class="order-card-app">
+            <div class="order-card-app" style="cursor:pointer" onclick="viewOrderDetailFromList('SO20260814003')">
               <div class="order-card-header">
                 <span class="order-no">SO20260814003</span>
                 <span class="badge badge-success">待自提</span>
@@ -2108,8 +2108,8 @@ body.text-mode .text-mode-doc { display: block; }
                 <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥89.90</div>
               </div>
               <div class="order-card-footer">
-                <button class="order-btn" type="button">申请售后</button>
-                <button class="order-btn highlight" type="button" onclick="navigateAPP('page-app-pickup')">查看取货码</button>
+                <button class="order-btn" type="button" onclick="event.stopPropagation()">申请售后</button>
+                <button class="order-btn highlight" type="button" onclick="event.stopPropagation();navigateAPP('page-app-pickup')">查看取货码</button>
               </div>
             </div>
             <div style="margin:12px 16px;padding:10px 14px;background:var(--info-light);border-radius:8px;font-size:var(--font-size-xs);color:var(--info)">
@@ -2314,7 +2314,7 @@ body.text-mode .text-mode-doc { display: block; }
               <div style="padding:12px 16px;background:var(--info-light);font-size:var(--font-size-xs);color:var(--info);display:flex;align-items:center;gap:6px">
                 <span>👤</span><span>店长视图 · 可查看本门店全部会员订单</span>
               </div>
-              <div class="order-card-app" style="margin:10px 16px">
+              <div class="order-card-app" style="margin:10px 16px;cursor:pointer" onclick="viewOrderDetailFromList('SO20260814001')">
                 <div class="order-card-header">
                   <span class="order-no">SO20260814001</span>
                   <span class="badge badge-success">待自提</span>
@@ -2331,7 +2331,7 @@ body.text-mode .text-mode-doc { display: block; }
                   <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥25.80</div>
                 </div>
               </div>
-              <div class="order-card-app" style="margin:10px 16px">
+              <div class="order-card-app" style="margin:10px 16px;cursor:pointer" onclick="viewOrderDetailFromList('SO20260814002')">
                 <div class="order-card-header">
                   <span class="order-no">SO20260814002</span>
                   <span class="badge badge-info">备货中</span>
@@ -2348,7 +2348,7 @@ body.text-mode .text-mode-doc { display: block; }
                   <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥49.90</div>
                 </div>
               </div>
-              <div class="order-card-app" style="margin:10px 16px">
+              <div class="order-card-app" style="margin:10px 16px;cursor:pointer" onclick="viewOrderDetailFromList('SO20260814003')">
                 <div class="order-card-header">
                   <span class="order-no">SO20260814003</span>
                   <span class="badge badge-success">待自提</span>
@@ -2365,7 +2365,7 @@ body.text-mode .text-mode-doc { display: block; }
                   <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥89.90</div>
                 </div>
               </div>
-              <div class="order-card-app" style="margin:10px 16px">
+              <div class="order-card-app" style="margin:10px 16px;cursor:pointer" onclick="viewOrderDetailFromList('SO20260813005')">
                 <div class="order-card-header">
                   <span class="order-no">SO20260813005</span>
                   <span class="badge badge-muted">已完成</span>
@@ -2382,7 +2382,7 @@ body.text-mode .text-mode-doc { display: block; }
                   <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥39.90</div>
                 </div>
               </div>
-              <div class="order-card-app" style="margin:10px 16px">
+              <div class="order-card-app" style="margin:10px 16px;cursor:pointer" onclick="viewOrderDetailFromList('SO20260813008')">
                 <div class="order-card-header">
                   <span class="order-no">SO20260813008</span>
                   <span class="badge badge-warning">退款中</span>
@@ -2404,7 +2404,7 @@ body.text-mode .text-mode-doc { display: block; }
               <div style="padding:12px 16px;background:var(--info-light);font-size:var(--font-size-xs);color:var(--info);display:flex;align-items:center;gap:6px">
                 <span>👤</span><span>店员视图 · 仅可查看归属自己的会员订单</span>
               </div>
-              <div class="order-card-app" style="margin:10px 16px">
+              <div class="order-card-app" style="margin:10px 16px;cursor:pointer" onclick="viewOrderDetailFromList('SO20260814001')">
                 <div class="order-card-header">
                   <span class="order-no">SO20260814001</span>
                   <span class="badge badge-success">待自提</span>
@@ -2421,7 +2421,7 @@ body.text-mode .text-mode-doc { display: block; }
                   <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥25.80</div>
                 </div>
               </div>
-              <div class="order-card-app" style="margin:10px 16px">
+              <div class="order-card-app" style="margin:10px 16px;cursor:pointer" onclick="viewOrderDetailFromList('SO20260814003')">
                 <div class="order-card-header">
                   <span class="order-no">SO20260814003</span>
                   <span class="badge badge-success">待自提</span>
@@ -3589,6 +3589,31 @@ body.text-mode .text-mode-doc { display: block; }
   };
 
   var appNavHistory = ['page-app-home'];
+
+  var mockOrders = {
+    'SO20260814001': { icon:'🍎', name:'有机红富士苹果', spec:'500g/袋 ×2', price:'25.80', status:'待自提', statusClass:'badge-success', store:'北京朝阳店 · 朝阳区建国路88号', time:'2026-08-14 10:25', payment:'微信支付' },
+    'SO20260814002': { icon:'🥛', name:'伊利纯牛奶', spec:'250ml×12盒 ×1', price:'49.90', status:'备货中', statusClass:'badge-info', store:'北京朝阳店 · 朝阳区建国路88号', time:'2026-08-14 14:10', payment:'微信支付' },
+    'SO20260814003': { icon:'🥜', name:'三只松鼠坚果礼盒', spec:'礼盒装 ×1', price:'89.90', status:'待自提', statusClass:'badge-success', store:'上海浦东店 · 浦东新区陆家嘴环路100号', time:'2026-08-14 16:32', payment:'支付宝' },
+    'SO20260813005': { icon:'🧴', name:'蓝月亮洗衣液', spec:'3kg装 ×1', price:'39.90', status:'已完成', statusClass:'badge-muted', store:'北京朝阳店 · 朝阳区建国路88号', time:'2026-08-13 09:15', payment:'微信支付' },
+    'SO20260813008': { icon:'💧', name:'农夫山泉天然水', spec:'550ml×24瓶 ×3', price:'6.00', status:'退款中', statusClass:'badge-warning', store:'北京朝阳店 · 朝阳区建国路88号', time:'2026-08-13 18:40', payment:'微信支付' }
+  };
+
+  window.viewOrderDetailFromList = function(orderNo) {
+    var order = mockOrders[orderNo];
+    if (!order) { alert('订单数据未找到'); return; }
+    document.getElementById('orderDetailIcon').textContent = order.icon;
+    document.getElementById('orderDetailName').textContent = order.name;
+    document.getElementById('orderDetailSpec').textContent = order.spec;
+    document.getElementById('orderDetailPrice').textContent = '¥' + order.price;
+    document.getElementById('orderDetailNo').textContent = orderNo;
+    document.getElementById('orderDetailTime').textContent = order.time;
+    document.getElementById('orderDetailPaid').textContent = '¥' + order.price;
+    document.getElementById('orderDetailStatus').textContent = order.status;
+    var storeEl = document.getElementById('orderDetailStore');
+    if (storeEl) storeEl.innerHTML = '<div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:4px">自提门店</div><div style="font-size:var(--font-size-sm);color:var(--text-muted)">' + order.store + '</div>';
+    navigateAPP('page-app-order-detail');
+  };
+
   window.navigateAPP = function(pageId, skipHistory) {
     var currentPage = document.querySelector('#prototypeRootAPP .app-page.active');
     if (currentPage && !skipHistory) {
