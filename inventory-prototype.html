@@ -3233,6 +3233,250 @@ body.text-mode .text-mode-doc { display: block; }
               <tr><td>残次品</td><td>门店退货区</td><td>否</td><td>收货残次/退货残次</td></tr>
             </table>
           </div>
+          <div class="doc-section">
+            <h2>系统建模图</h2>
+
+            <h3>核心业务流程图</h3>
+            <div style="margin-top:16px;padding:16px;background:#fff;border:1px solid var(--border);border-radius:10px">
+              <svg viewBox="0 0 720 530" style="width:100%;max-width:720px;margin:0 auto;display:block;font-family:inherit">
+                <defs>
+                  <marker id="bfArrHead" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1 L7 4 L1 7 Z" fill="#94a3b8"/></marker>
+                  <marker id="bfArrHeadB" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1 L7 4 L1 7 Z" fill="#0d9488"/></marker>
+                  <marker id="bfArrHeadG" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1 L7 4 L1 7 Z" fill="#22c55e"/></marker>
+                  <marker id="bfArrHeadW" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1 L7 4 L1 7 Z" fill="#f59e0b"/></marker>
+                </defs>
+                <rect x="230" y="34" width="260" height="48" rx="8" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.5"/>
+                <text x="360" y="63" text-anchor="middle" font-size="13" fill="#0d9488" font-weight="600">① 用户APP下单</text>
+                <line x1="360" y1="82" x2="360" y2="106" marker-end="url(#bfArrHeadB)" stroke="#0d9488" stroke-width="1.5" stroke-linecap="round"/>
+                <rect x="230" y="108" width="260" height="48" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <text x="360" y="137" text-anchor="middle" font-size="13" fill="#334155" font-weight="600">② 自动生成采购订单</text>
+                <line x1="360" y1="156" x2="360" y2="180" marker-end="url(#bfArrHead)" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/>
+                <rect x="230" y="182" width="260" height="48" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <text x="360" y="211" text-anchor="middle" font-size="13" fill="#334155" font-weight="600">③ 供应商整批发货</text>
+                <line x1="360" y1="230" x2="360" y2="254" marker-end="url(#bfArrHead)" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/>
+                <rect x="230" y="256" width="260" height="48" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <text x="360" y="285" text-anchor="middle" font-size="13" fill="#334155" font-weight="600">④ 门店批量收货验收</text>
+                <text x="360" y="300" text-anchor="middle" font-size="10" fill="#64748b">自动拆解为正常入库 + 异常冻结</text>
+                <path d="M 280 304 Q 200 324 115 344" stroke="#22c55e" stroke-width="1.5" fill="none" marker-end="url(#bfArrHeadG)" stroke-linecap="round"/>
+                <path d="M 440 304 Q 520 324 605 344" stroke="#f59e0b" stroke-width="1.5" fill="none" marker-end="url(#bfArrHeadW)" stroke-linecap="round"/>
+                <rect x="20" y="346" width="190" height="48" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+                <text x="115" y="366" text-anchor="middle" font-size="13" fill="#22c55e" font-weight="600">正常件</text>
+                <text x="115" y="384" text-anchor="middle" font-size="10" fill="#64748b">门店可用库存 → 通知自提</text>
+                <path d="M 115 394 Q 180 420 250 440" stroke="#22c55e" stroke-width="1.5" fill="none" marker-end="url(#bfArrHeadG)" stroke-linecap="round"/>
+                <rect x="510" y="346" width="190" height="48" rx="8" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+                <text x="605" y="366" text-anchor="middle" font-size="13" fill="#f59e0b" font-weight="600">退款对冲件</text>
+                <text x="605" y="384" text-anchor="middle" font-size="10" fill="#64748b">异常冻结池 → 归集退供</text>
+                <path d="M 605 394 Q 540 420 470 440" stroke="#f59e0b" stroke-width="1.5" fill="none" marker-end="url(#bfArrHeadW)" stroke-linecap="round"/>
+                <rect x="230" y="442" width="260" height="48" rx="8" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.5"/>
+                <text x="360" y="471" text-anchor="middle" font-size="13" fill="#0d9488" font-weight="600">⑤ 用户到店自提核销</text>
+                <line x1="360" y1="490" x2="360" y2="510" marker-end="url(#bfArrHeadB)" stroke="#0d9488" stroke-width="1.5" stroke-linecap="round"/>
+                <rect x="280" y="507" width="160" height="28" rx="14" fill="#0d9488" stroke="none"/>
+                <text x="360" y="526" text-anchor="middle" font-size="12" fill="#fff" font-weight="600">订单完成</text>
+              </svg>
+            </div>
+
+            <h3>用例图</h3>
+            <div style="margin-top:16px;padding:16px;background:#fff;border:1px solid var(--border);border-radius:10px">
+              <svg viewBox="0 0 720 440" style="width:100%;max-width:720px;margin:0 auto;display:block;font-family:inherit">
+                <rect x="180" y="28" width="400" height="380" rx="12" fill="none" stroke="#cbd5e1" stroke-dasharray="8 4" stroke-width="1.5"/>
+                <text x="380" y="44" text-anchor="middle" font-size="11" fill="#94a3b8">进销存系统</text>
+                <ellipse cx="265" cy="80" rx="62" ry="18" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.5"/>
+                <text x="265" y="84" text-anchor="middle" font-size="11" fill="#0d9488" font-weight="500">商品浏览下单</text>
+                <ellipse cx="265" cy="130" rx="62" ry="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="265" y="134" text-anchor="middle" font-size="11" fill="#334155">订单管理</text>
+                <ellipse cx="265" cy="180" rx="62" ry="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="265" y="184" text-anchor="middle" font-size="11" fill="#334155">自提核销</text>
+                <ellipse cx="265" cy="230" rx="62" ry="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="265" y="234" text-anchor="middle" font-size="11" fill="#334155">售后/退款</text>
+                <ellipse cx="395" cy="80" rx="62" ry="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="395" y="84" text-anchor="middle" font-size="11" fill="#334155">商品管理</text>
+                <ellipse cx="395" cy="130" rx="62" ry="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="395" y="134" text-anchor="middle" font-size="11" fill="#334155">采购管理</text>
+                <ellipse cx="395" cy="180" rx="62" ry="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="395" y="184" text-anchor="middle" font-size="11" fill="#334155">库存管理</text>
+                <ellipse cx="395" cy="230" rx="62" ry="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="395" y="234" text-anchor="middle" font-size="11" fill="#334155">门店调拨</text>
+                <ellipse cx="395" cy="280" rx="62" ry="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="395" y="284" text-anchor="middle" font-size="11" fill="#334155">残次品/退供</text>
+                <ellipse cx="330" cy="330" rx="62" ry="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="330" y="334" text-anchor="middle" font-size="11" fill="#334155">财务结算</text>
+                <ellipse cx="330" cy="380" rx="62" ry="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="330" y="384" text-anchor="middle" font-size="11" fill="#334155">数据报表</text>
+                <!-- 普通消费者 -->
+                <line x1="80" y1="80" x2="203" y2="80" stroke="#94a3b8" stroke-width="1"/>
+                <g transform="translate(44,80)"><circle cx="0" cy="-10" r="8" fill="none" stroke="#94a3b8" stroke-width="1.5"/><line x1="0" y1="-2" x2="0" y2="12" stroke="#94a3b8" stroke-width="1.5"/><line x1="-12" y1="6" x2="12" y2="6" stroke="#94a3b8" stroke-width="1.5"/><line x1="0" y1="12" x2="-8" y2="22" stroke="#94a3b8" stroke-width="1.5"/><line x1="0" y1="12" x2="8" y2="22" stroke="#94a3b8" stroke-width="1.5"/></g>
+                <text x="80" y="116" text-anchor="middle" font-size="11" fill="#334155" font-weight="500">普通消费者</text>
+                <!-- 门店店员 -->
+                <line x1="80" y1="146" x2="203" y2="146" stroke="#94a3b8" stroke-width="1"/>
+                <g transform="translate(44,146)"><circle cx="0" cy="-10" r="8" fill="none" stroke="#94a3b8" stroke-width="1.5"/><line x1="0" y1="-2" x2="0" y2="12" stroke="#94a3b8" stroke-width="1.5"/><line x1="-12" y1="6" x2="12" y2="6" stroke="#94a3b8" stroke-width="1.5"/><line x1="0" y1="12" x2="-8" y2="22" stroke="#94a3b8" stroke-width="1.5"/><line x1="0" y1="12" x2="8" y2="22" stroke="#94a3b8" stroke-width="1.5"/></g>
+                <text x="80" y="182" text-anchor="middle" font-size="11" fill="#334155" font-weight="500">门店店员</text>
+                <!-- 门店店长 -->
+                <line x1="80" y1="212" x2="203" y2="212" stroke="#94a3b8" stroke-width="1"/>
+                <g transform="translate(44,212)"><circle cx="0" cy="-10" r="8" fill="none" stroke="#94a3b8" stroke-width="1.5"/><line x1="0" y1="-2" x2="0" y2="12" stroke="#94a3b8" stroke-width="1.5"/><line x1="-12" y1="6" x2="12" y2="6" stroke="#94a3b8" stroke-width="1.5"/><line x1="0" y1="12" x2="-8" y2="22" stroke="#94a3b8" stroke-width="1.5"/><line x1="0" y1="12" x2="8" y2="22" stroke="#94a3b8" stroke-width="1.5"/></g>
+                <text x="80" y="248" text-anchor="middle" font-size="11" fill="#334155" font-weight="500">门店店长</text>
+                <!-- 采购专员 -->
+                <line x1="580" y1="80" x2="457" y2="80" stroke="#94a3b8" stroke-width="1"/>
+                <g transform="translate(640,80)"><circle cx="0" cy="-10" r="8" fill="none" stroke="#94a3b8" stroke-width="1.5"/><line x1="0" y1="-2" x2="0" y2="12" stroke="#94a3b8" stroke-width="1.5"/><line x1="-12" y1="6" x2="12" y2="6" stroke="#94a3b8" stroke-width="1.5"/><line x1="0" y1="12" x2="-8" y2="22" stroke="#94a3b8" stroke-width="1.5"/><line x1="0" y1="12" x2="8" y2="22" stroke="#94a3b8" stroke-width="1.5"/></g>
+                <text x="640" y="116" text-anchor="middle" font-size="11" fill="#334155" font-weight="500">采购专员</text>
+                <!-- 财务专员 -->
+                <line x1="580" y1="146" x2="457" y2="146" stroke="#94a3b8" stroke-width="1"/>
+                <g transform="translate(640,146)"><circle cx="0" cy="-10" r="8" fill="none" stroke="#94a3b8" stroke-width="1.5"/><line x1="0" y1="-2" x2="0" y2="12" stroke="#94a3b8" stroke-width="1.5"/><line x1="-12" y1="6" x2="12" y2="6" stroke="#94a3b8" stroke-width="1.5"/><line x1="0" y1="12" x2="-8" y2="22" stroke="#94a3b8" stroke-width="1.5"/><line x1="0" y1="12" x2="8" y2="22" stroke="#94a3b8" stroke-width="1.5"/></g>
+                <text x="640" y="182" text-anchor="middle" font-size="11" fill="#334155" font-weight="500">财务专员</text>
+                <!-- 总部运营 -->
+                <line x1="580" y1="212" x2="457" y2="212" stroke="#94a3b8" stroke-width="1"/>
+                <g transform="translate(640,212)"><circle cx="0" cy="-10" r="8" fill="none" stroke="#94a3b8" stroke-width="1.5"/><line x1="0" y1="-2" x2="0" y2="12" stroke="#94a3b8" stroke-width="1.5"/><line x1="-12" y1="6" x2="12" y2="6" stroke="#94a3b8" stroke-width="1.5"/><line x1="0" y1="12" x2="-8" y2="22" stroke="#94a3b8" stroke-width="1.5"/><line x1="0" y1="12" x2="8" y2="22" stroke="#94a3b8" stroke-width="1.5"/></g>
+                <text x="640" y="248" text-anchor="middle" font-size="11" fill="#334155" font-weight="500">总部运营</text>
+                <!-- 超级管理员 -->
+                <line x1="580" y1="278" x2="457" y2="278" stroke="#94a3b8" stroke-width="1"/>
+                <g transform="translate(640,278)"><circle cx="0" cy="-10" r="8" fill="none" stroke="#0d9488" stroke-width="1.5"/><line x1="0" y1="-2" x2="0" y2="12" stroke="#0d9488" stroke-width="1.5"/><line x1="-12" y1="6" x2="12" y2="6" stroke="#0d9488" stroke-width="1.5"/><line x1="0" y1="12" x2="-8" y2="22" stroke="#0d9488" stroke-width="1.5"/><line x1="0" y1="12" x2="8" y2="22" stroke="#0d9488" stroke-width="1.5"/></g>
+                <text x="640" y="314" text-anchor="middle" font-size="11" fill="#0d9488" font-weight="500">超级管理员</text>
+              </svg>
+            </div>
+
+            <h3>订单状态流转图</h3>
+            <div style="margin-top:16px;padding:16px;background:#fff;border:1px solid var(--border);border-radius:10px">
+              <svg viewBox="0 0 720 370" style="width:100%;max-width:720px;margin:0 auto;display:block;font-family:inherit">
+                <defs>
+                  <marker id="sdArr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1 L7 4 L1 7 Z" fill="#94a3b8"/></marker>
+                </defs>
+                <!-- 开始 -->
+                <ellipse cx="60" cy="62" rx="14" ry="14" fill="#334155" stroke="none"/>
+                <text x="60" y="66" text-anchor="middle" font-size="10" font-weight="500" fill="#fff">始</text>
+                <path d="M 74 62 L 100 62" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#sdArr)" fill="none"/>
+                <!-- 待付款 -->
+                <rect x="104" y="46" width="110" height="32" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <text x="159" y="66" text-anchor="middle" font-size="13" fill="#334155" font-weight="600">待付款</text>
+                <path d="M 214 62 L 244 62" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#sdArr)" fill="none"/>
+                <text x="229" y="56" text-anchor="middle" font-size="10" fill="#94a3b8">支付成功</text>
+                <!-- 备货中 -->
+                <rect x="248" y="46" width="110" height="32" rx="8" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.5"/>
+                <text x="303" y="66" text-anchor="middle" font-size="13" fill="#0d9488" font-weight="600">备货中</text>
+                <path d="M 303 78 Q 303 100 303 112" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#sdArr)" fill="none"/>
+                <text x="312" y="98" font-size="10" fill="#94a3b8">到货验收</text>
+                <!-- 待自提 -->
+                <rect x="248" y="116" width="110" height="32" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+                <text x="303" y="136" text-anchor="middle" font-size="13" fill="#334155" font-weight="600">待自提</text>
+                <path d="M 303 148 Q 303 168 303 180" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#sdArr)" fill="none"/>
+                <text x="312" y="167" font-size="10" fill="#94a3b8">核销完成</text>
+                <!-- 已完成 -->
+                <rect x="248" y="184" width="110" height="32" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <text x="303" y="204" text-anchor="middle" font-size="13" fill="#334155" font-weight="600">已完成</text>
+                <!-- 退款路径 -->
+                <path d="M 248 62 Q 200 62 200 100 Q 200 130 248 132" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#sdArr)" fill="none"/>
+                <text x="190" y="100" text-anchor="middle" font-size="10" fill="#f59e0b">退款</text>
+                <rect x="144" y="146" width="80" height="28" rx="8" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+                <text x="184" y="164" text-anchor="middle" font-size="12" fill="#334155" font-weight="600">退款中</text>
+                <path d="M 184 174 Q 184 194 184 200 Q 184 206 248 200" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#sdArr)" fill="none"/>
+                <text x="216" y="210" text-anchor="middle" font-size="10" fill="#f59e0b">退款完成</text>
+                <!-- 取消路径 -->
+                <path d="M 159 78 Q 159 200 164 200 Q 169 200 114 200" stroke="#ef4444" stroke-width="1.5" marker-end="url(#sdArr)" fill="none"/>
+                <text x="120" y="84" text-anchor="middle" font-size="10" fill="#ef4444">取消订单</text>
+                <!-- 结束 -->
+                <ellipse cx="114" cy="200" rx="14" ry="14" fill="#334155" stroke="none"/>
+                <text x="114" y="204" text-anchor="middle" font-size="10" font-weight="500" fill="#fff">终</text>
+
+                <!-- 库存状态区域 -->
+                <text x="540" y="30" text-anchor="middle" font-size="13" fill="#334155" font-weight="600">库存状态模型</text>
+                <rect x="370" y="40" width="340" height="2" rx="1" fill="#e2e8f0"/>
+                <rect x="380" y="56" width="150" height="30" rx="8" fill="#f0fdfa" stroke="#0d9488" stroke-width="1.5"/>
+                <text x="455" y="75" text-anchor="middle" font-size="12" fill="#0d9488" font-weight="600">销售预占</text>
+                <path d="M 530 71 L 566 71" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#sdArr)" fill="none"/>
+                <rect x="570" y="56" width="130" height="30" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <text x="635" y="75" text-anchor="middle" font-size="12" fill="#334155" font-weight="600">采购在途</text>
+                <path d="M 635 86 Q 635 110 635 122" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#sdArr)" fill="none"/>
+                <rect x="570" y="126" width="130" height="30" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+                <text x="635" y="145" text-anchor="middle" font-size="12" fill="#334155" font-weight="600">门店可用</text>
+                <text x="645" y="120" font-size="10" fill="#94a3b8">正常验收</text>
+                <path d="M 455 86 Q 455 110 380 126" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#sdArr)" fill="none"/>
+                <rect x="380" y="126" width="130" height="30" rx="8" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+                <text x="445" y="145" text-anchor="middle" font-size="12" fill="#334155" font-weight="600">异常冻结</text>
+                <text x="420" y="116" font-size="10" fill="#f59e0b">退款对冲</text>
+                <path d="M 445 156 Q 445 184 445 196" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#sdArr)" fill="none"/>
+                <rect x="380" y="200" width="130" height="30" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <text x="445" y="219" text-anchor="middle" font-size="12" fill="#334155" font-weight="600">残次品</text>
+                <text x="455" y="192" font-size="10" fill="#94a3b8">归集退供</text>
+                <path d="M 635 156 Q 635 184 580 200" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#sdArr)" fill="none"/>
+                <rect x="570" y="200" width="130" height="30" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <text x="635" y="219" text-anchor="middle" font-size="12" fill="#334155" font-weight="600">调拨在途</text>
+                <text x="610" y="192" font-size="10" fill="#94a3b8">调拨出库</text>
+                <!-- 图例 -->
+                <rect x="380" y="248" width="320" height="100" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+                <text x="400" y="268" font-size="12" fill="#334155" font-weight="600">图例</text>
+                <rect x="400" y="280" width="14" height="14" rx="3" fill="#f0fdfa" stroke="#0d9488" stroke-width="1"/>
+                <text x="420" y="292" font-size="11" fill="#64748b">品牌核心路径</text>
+                <rect x="520" y="280" width="14" height="14" rx="3" fill="#f0fdf4" stroke="#22c55e" stroke-width="1"/>
+                <text x="540" y="292" font-size="11" fill="#64748b">成功/正常</text>
+                <rect x="400" y="300" width="14" height="14" rx="3" fill="#fffbeb" stroke="#f59e0b" stroke-width="1"/>
+                <text x="420" y="312" font-size="11" fill="#64748b">退款/异常</text>
+                <rect x="520" y="300" width="14" height="14" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="540" y="312" font-size="11" fill="#64748b">中性/普通</text>
+                <text x="400" y="334" font-size="11" fill="#64748b">● 实心圆：开始/结束</text>
+              </svg>
+            </div>
+
+            <h3>消费者下单时序图</h3>
+            <div style="margin-top:16px;padding:16px;background:#fff;border:1px solid var(--border);border-radius:10px">
+              <svg viewBox="0 0 720 420" style="width:100%;max-width:720px;margin:0 auto;display:block;font-family:inherit">
+                <defs>
+                  <marker id="sqArr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1 L7 4 L1 7 Z" fill="#94a3b8"/></marker>
+                  <marker id="sqArrB" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1 L7 4 L1 7 Z" fill="#0d9488"/></marker>
+                </defs>
+                <!-- 参与者 -->
+                <rect x="60" y="32" width="64" height="24" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="92" y="48" text-anchor="middle" font-size="11" fill="#334155" font-weight="500">消费者</text>
+                <rect x="176" y="32" width="72" height="24" rx="4" fill="#f0fdfa" stroke="#0d9488" stroke-width="1"/>
+                <text x="212" y="48" text-anchor="middle" font-size="11" fill="#0d9488" font-weight="500">进销存系统</text>
+                <rect x="300" y="32" width="64" height="24" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="332" y="48" text-anchor="middle" font-size="11" fill="#334155" font-weight="500">供应商</text>
+                <rect x="416" y="32" width="64" height="24" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="448" y="48" text-anchor="middle" font-size="11" fill="#334155" font-weight="500">门店店员</text>
+                <rect x="532" y="32" width="64" height="24" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="564" y="48" text-anchor="middle" font-size="11" fill="#334155" font-weight="500">支付网关</text>
+                <rect x="648" y="32" width="48" height="24" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                <text x="672" y="48" text-anchor="middle" font-size="11" fill="#334155" font-weight="500">用户</text>
+                <!-- 生命线 -->
+                <line x1="92" y1="56" x2="92" y2="400" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="6 4"/>
+                <line x1="212" y1="56" x2="212" y2="400" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="6 4"/>
+                <line x1="332" y1="56" x2="332" y2="400" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="6 4"/>
+                <line x1="448" y1="56" x2="448" y2="400" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="6 4"/>
+                <line x1="564" y1="56" x2="564" y2="400" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="6 4"/>
+                <line x1="672" y1="56" x2="672" y2="400" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="6 4"/>
+                <rect x="206" y="72" width="12" height="320" rx="2" fill="#f0fdfa" stroke="#0d9488" stroke-width="1"/>
+                <!-- 消息 -->
+                <path d="M 92 80 L 206 80" marker-end="url(#sqArr)" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                <text x="149" y="74" text-anchor="middle" font-size="10" fill="#334155">1. 浏览商品</text>
+                <path d="M 92 108 L 206 108" marker-end="url(#sqArr)" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                <text x="149" y="102" text-anchor="middle" font-size="10" fill="#334155">2. 选择规格 → 下单</text>
+                <path d="M 212 136 L 558 136" marker-end="url(#sqArrB)" stroke="#0d9488" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                <text x="385" y="130" text-anchor="middle" font-size="10" fill="#0d9488">3. 发起支付请求</text>
+                <path d="M 564 164 L 218 164" marker-end="url(#sqArr)" stroke="#94a3b8" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-dasharray="6 3"/>
+                <text x="391" y="158" text-anchor="middle" font-size="10" fill="#94a3b8">4. 支付成功回调</text>
+                <path d="M 212 192 L 326 192" marker-end="url(#sqArr)" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                <text x="269" y="186" text-anchor="middle" font-size="10" fill="#334155">5. 发送采购订单</text>
+                <path d="M 332 220 L 218 220" marker-end="url(#sqArr)" stroke="#94a3b8" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-dasharray="6 3"/>
+                <text x="275" y="214" text-anchor="middle" font-size="10" fill="#94a3b8">6. 确认发货（含物流单号）</text>
+                <path d="M 212 248 L 442 248" marker-end="url(#sqArr)" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                <text x="327" y="242" text-anchor="middle" font-size="10" fill="#334155">7. 通知门店收货</text>
+                <path d="M 448 276 L 218 276" marker-end="url(#sqArr)" stroke="#94a3b8" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-dasharray="6 3"/>
+                <text x="333" y="270" text-anchor="middle" font-size="10" fill="#94a3b8">8. 确认入库（含拆解结果）</text>
+                <path d="M 212 304 L 666 304" marker-end="url(#sqArrB)" stroke="#0d9488" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                <text x="439" y="298" text-anchor="middle" font-size="10" fill="#0d9488">9. 推送自提通知</text>
+                <path d="M 672 332 L 442 332" marker-end="url(#sqArr)" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                <text x="557" y="326" text-anchor="middle" font-size="10" fill="#334155">10. 出示取货码</text>
+                <path d="M 448 360 L 218 360" marker-end="url(#sqArr)" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                <text x="333" y="354" text-anchor="middle" font-size="10" fill="#334155">11. 扫码核销 → 扣减库存</text>
+                <path d="M 212 388 L 666 388" marker-end="url(#sqArr)" stroke="#94a3b8" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-dasharray="6 3"/>
+                <text x="439" y="382" text-anchor="middle" font-size="10" fill="#94a3b8">12. 返回核销结果 → 订单完成</text>
+                <!-- 阶段标签 -->
+                <rect x="4" y="76" width="48" height="20" rx="4" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/><text x="28" y="90" text-anchor="middle" font-size="10" fill="#94a3b8">下单</text>
+                <rect x="4" y="132" width="48" height="20" rx="4" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/><text x="28" y="146" text-anchor="middle" font-size="10" fill="#94a3b8">支付</text>
+                <rect x="4" y="188" width="48" height="20" rx="4" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/><text x="28" y="202" text-anchor="middle" font-size="10" fill="#94a3b8">采购</text>
+                <rect x="4" y="244" width="48" height="20" rx="4" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/><text x="28" y="258" text-anchor="middle" font-size="10" fill="#94a3b8">收货</text>
+                <rect x="4" y="300" width="48" height="20" rx="4" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/><text x="28" y="314" text-anchor="middle" font-size="10" fill="#94a3b8">自提</text>
+                <rect x="4" y="356" width="48" height="20" rx="4" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/><text x="28" y="370" text-anchor="middle" font-size="10" fill="#94a3b8">核销</text>
+              </svg>
+            </div>
+          </div>
         </div>
 
         <!-- Feature Tab -->
