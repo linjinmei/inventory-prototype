@@ -1833,7 +1833,7 @@ body.text-mode .text-mode-doc { display: block; }
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               <input type="text" id="homeSearch" placeholder="搜索商品" oninput="filterHomeProducts(this.value)" style="border:none;background:none;outline:none;flex:1;font-size:var(--font-size-sm);color:var(--text-main)" />
             </div>
-            <div class="product-card-app home-product" onclick="navigateAPP('page-app-detail')" data-link="feature-home" data-name="有机红富士苹果">
+            <div class="product-card-app home-product" onclick="navigateAPP('page-app-detail')" data-link="feature-home" data-name="有机红富士苹果" data-sku="SKU001">
               <div class="product-img">🍎</div>
               <div class="product-info">
                 <div class="product-name">有机红富士苹果</div>
@@ -1842,7 +1842,7 @@ body.text-mode .text-mode-doc { display: block; }
               </div>
               <button class="buy-btn" type="button" onclick="event.stopPropagation();openSpecPageFromCard(this)">购买</button>
             </div>
-            <div class="product-card-app home-product" onclick="navigateAPP('page-app-detail')" data-link="feature-home" data-name="农夫山泉天然水">
+            <div class="product-card-app home-product" onclick="navigateAPP('page-app-detail')" data-link="feature-home" data-name="农夫山泉天然水" data-sku="SKU002">
               <div class="product-img">💧</div>
               <div class="product-info">
                 <div class="product-name">农夫山泉天然水 550ml</div>
@@ -1851,7 +1851,7 @@ body.text-mode .text-mode-doc { display: block; }
               </div>
               <button class="buy-btn" type="button" onclick="event.stopPropagation();openSpecPageFromCard(this)">购买</button>
             </div>
-            <div class="product-card-app home-product" onclick="navigateAPP('page-app-detail')" data-link="feature-home" data-name="三只松鼠坚果礼盒">
+            <div class="product-card-app home-product" onclick="navigateAPP('page-app-detail')" data-link="feature-home" data-name="三只松鼠坚果礼盒" data-sku="SKU003">
               <div class="product-img">🥜</div>
               <div class="product-info">
                 <div class="product-name">三只松鼠坚果礼盒</div>
@@ -1860,7 +1860,7 @@ body.text-mode .text-mode-doc { display: block; }
               </div>
               <button class="buy-btn" type="button" onclick="event.stopPropagation();openSpecPageFromCard(this)">购买</button>
             </div>
-            <div class="product-card-app home-product" onclick="navigateAPP('page-app-detail')" data-link="feature-home" data-name="蓝月亮洗衣液">
+            <div class="product-card-app home-product" onclick="navigateAPP('page-app-detail')" data-link="feature-home" data-name="蓝月亮洗衣液" data-sku="SKU004">
               <div class="product-img">🧴</div>
               <div class="product-info">
                 <div class="product-name">蓝月亮洗衣液 2kg</div>
@@ -1869,7 +1869,7 @@ body.text-mode .text-mode-doc { display: block; }
               </div>
               <button class="buy-btn" type="button" onclick="event.stopPropagation();openSpecPageFromCard(this)">购买</button>
             </div>
-            <div class="product-card-app home-product" onclick="navigateAPP('page-app-detail')" data-link="feature-home" data-name="伊利纯牛奶">
+            <div class="product-card-app home-product" onclick="navigateAPP('page-app-detail')" data-link="feature-home" data-name="伊利纯牛奶" data-sku="SKU005">
               <div class="product-img">🥛</div>
               <div class="product-info">
                 <div class="product-name">伊利纯牛奶 250ml×12</div>
@@ -1905,32 +1905,32 @@ body.text-mode .text-mode-doc { display: block; }
           <div class="app-body">
             <div style="padding:8px" data-link="feature-home" id="categoryProductList">
               <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin:8px 0" id="categorySortLabel">按销量排序</div>
-              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="有机红富士苹果" data-category="生鲜水果" onclick="navigateAPP('page-app-detail')">
+              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="有机红富士苹果" data-category="生鲜水果" data-sku="SKU001" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">🍎</div>
                 <div class="product-info"><div class="product-name">有机红富士苹果</div><div class="product-eta">预计2天到货</div><div class="product-price">¥12.90</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
-              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="新疆和田大枣" data-category="生鲜水果" onclick="navigateAPP('page-app-detail')">
+              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="新疆和田大枣" data-category="生鲜水果" data-sku="SKU007" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">🌰</div>
                 <div class="product-info"><div class="product-name">新疆和田大枣</div><div class="product-eta">预计2天到货</div><div class="product-price">¥25.90</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
-              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="农夫山泉天然水" data-category="饮料饮品" onclick="navigateAPP('page-app-detail')">
+              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="农夫山泉天然水" data-category="饮料饮品" data-sku="SKU002" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">💧</div>
                 <div class="product-info"><div class="product-name">农夫山泉天然水 550ml</div><div class="product-eta">预计1天到货</div><div class="product-price">¥2.00</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
-              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="三只松鼠坚果礼盒" data-category="零食坚果" onclick="navigateAPP('page-app-detail')">
+              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="三只松鼠坚果礼盒" data-category="零食坚果" data-sku="SKU003" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">🥜</div>
                 <div class="product-info"><div class="product-name">三只松鼠坚果礼盒</div><div class="product-eta">预计3天到货</div><div class="product-price">¥89.90</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
-              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="蓝月亮洗衣液" data-category="日用百货" onclick="navigateAPP('page-app-detail')">
+              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="蓝月亮洗衣液" data-category="日用百货" data-sku="SKU004" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">🧴</div>
                 <div class="product-info"><div class="product-name">蓝月亮洗衣液 2kg</div><div class="product-eta">预计2天到货</div><div class="product-price">¥39.90</div></div>
                 <button class="buy-btn" type="button">购买</button>
               </div>
-              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="伊利纯牛奶" data-category="饮料饮品" onclick="navigateAPP('page-app-detail')">
+              <div class="product-card-app cat-product" style="margin:0 0 8px" data-name="伊利纯牛奶" data-category="饮料饮品" data-sku="SKU005" onclick="navigateAPP('page-app-detail')">
                 <div class="product-img">🥛</div>
                 <div class="product-info"><div class="product-name">伊利纯牛奶 250ml×12</div><div class="product-eta">预计1天到货</div><div class="product-price">¥49.90</div></div>
                 <button class="buy-btn" type="button">购买</button>
@@ -3918,7 +3918,44 @@ body.text-mode .text-mode-doc { display: block; }
     ],
     refundOrders: [],
     storeList: ['北京朝阳店','北京海淀店','上海浦东店'],
-    supplierList: ['绿源农业','鲜达供应链','品质优选','每日鲜配','优选生鲜']
+    supplierList: ['绿源农业','鲜达供应链','品质优选','每日鲜配','优选生鲜'],
+    products: [
+      { sku:'SKU001', name:'有机红富士苹果', category:'生鲜水果', isListed:true },
+      { sku:'SKU002', name:'农夫山泉天然水', category:'饮料饮品', isListed:true },
+      { sku:'SKU003', name:'三只松鼠坚果礼盒', category:'零食坚果', isListed:true },
+      { sku:'SKU004', name:'蓝月亮洗衣液', category:'日用百货', isListed:true },
+      { sku:'SKU005', name:'伊利纯牛奶', category:'饮料饮品', isListed:true },
+      { sku:'SKU006', name:'百草味猪肉脯', category:'零食坚果', isListed:false },
+      { sku:'SKU007', name:'新疆和田大枣', category:'生鲜水果', isListed:true },
+      { sku:'SKU008', name:'舒肤佳香皂', category:'日用百货', isListed:true },
+      { sku:'SKU009', name:'金龙鱼花生油', category:'日用百货', isListed:true },
+      { sku:'SKU010', name:'百岁山矿泉水', category:'饮料饮品', isListed:true },
+      { sku:'SKU011', name:'来伊份鸭舌', category:'零食坚果', isListed:true },
+      { sku:'SKU012', name:'智利车厘子', category:'生鲜水果', isListed:true },
+      { sku:'SKU013', name:'海飞丝洗发水', category:'日用百货', isListed:true },
+      { sku:'SKU014', name:'红牛维生素饮料', category:'饮料饮品', isListed:false },
+      { sku:'SKU015', name:'乐事薯片大礼包', category:'零食坚果', isListed:true },
+      { sku:'SKU016', name:'泰国金枕头榴莲', category:'生鲜水果', isListed:true },
+      { sku:'SKU017', name:'维达卷纸', category:'日用百货', isListed:true },
+      { sku:'SKU018', name:'可口可乐经典款', category:'饮料饮品', isListed:true },
+      { sku:'SKU019', name:'徐福记沙琪玛', category:'零食坚果', isListed:true },
+      { sku:'SKU020', name:'云南高山蓝莓', category:'生鲜水果', isListed:true },
+      { sku:'SKU021', name:'蒙牛纯甄酸奶', category:'饮料饮品', isListed:true },
+      { sku:'SKU022', name:'旺旺大礼包', category:'零食坚果', isListed:true },
+      { sku:'SKU023', name:'榴莲千层蛋糕', category:'生鲜水果', isListed:true },
+      { sku:'SKU024', name:'立白洗洁精', category:'日用百货', isListed:true },
+      { sku:'SKU025', name:'元气森林气泡水', category:'饮料饮品', isListed:true },
+      { sku:'SKU026', name:'良品铺子牛肉干', category:'零食坚果', isListed:true },
+      { sku:'SKU027', name:'海南芒果', category:'生鲜水果', isListed:true },
+      { sku:'SKU028', name:'威露士洗手液', category:'日用百货', isListed:true },
+      { sku:'SKU029', name:'康师傅冰红茶', category:'饮料饮品', isListed:true },
+      { sku:'SKU030', name:'洽洽香瓜子', category:'零食坚果', isListed:true },
+      { sku:'SKU031', name:'山东富士苹果', category:'生鲜水果', isListed:true },
+      { sku:'SKU032', name:'心相印抽纸', category:'日用百货', isListed:true },
+      { sku:'SKU033', name:'王老吉凉茶', category:'饮料饮品', isListed:false },
+      { sku:'SKU034', name:'周黑鸭鸭脖', category:'零食坚果', isListed:true },
+      { sku:'SKU035', name:'新西兰奇异果', category:'生鲜水果', isListed:true }
+    ]
   };
 
   function genOrderNo(prefix) {
@@ -4185,9 +4222,11 @@ body.text-mode .text-mode-doc { display: block; }
     var kw = keyword.trim().toLowerCase();
     products.forEach(function(p) {
       var name = (p.getAttribute('data-name') || '').toLowerCase();
+      var sku = p.getAttribute('data-sku') || '';
       var catMatch = !kw || name.indexOf(kw) > -1;
       var categoryVisible = currentCategory === 'all' || (p.getAttribute('data-category') || '') === currentCategory;
-      if (catMatch && categoryVisible) {
+      var listed = isProductListed(sku);
+      if (catMatch && categoryVisible && listed) {
         p.style.display = '';
         found++;
       } else {
@@ -4205,7 +4244,10 @@ body.text-mode .text-mode-doc { display: block; }
     var kw = keyword.trim().toLowerCase();
     products.forEach(function(p) {
       var name = (p.getAttribute('data-name') || '').toLowerCase();
-      if (!kw || name.indexOf(kw) > -1) {
+      var sku = p.getAttribute('data-sku') || '';
+      var nameMatch = !kw || name.indexOf(kw) > -1;
+      var listed = isProductListed(sku);
+      if (nameMatch && listed) {
         p.style.display = '';
         found++;
       } else {
@@ -4233,8 +4275,10 @@ body.text-mode .text-mode-doc { display: block; }
     var sortLabel = document.getElementById('categorySortLabel');
     var found = 0;
     products.forEach(function(p) {
+      var sku = p.getAttribute('data-sku') || '';
       var catMatch = cat === 'all' || (p.getAttribute('data-category') || '') === cat;
-      if (catMatch) {
+      var listed = isProductListed(sku);
+      if (catMatch && listed) {
         p.style.display = '';
         found++;
       } else {
@@ -4974,7 +5018,9 @@ body.text-mode .text-mode-doc { display: block; }
     var badge = row.querySelector('.badge');
     var shelfBtn = row.querySelectorAll('button')[1];
     var timestamp = now();
-    if (badge.textContent.trim() === '已上架') {
+    var isCurrentlyListed = badge.textContent.trim() === '已上架';
+    // 更新PC端UI
+    if (isCurrentlyListed) {
       badge.textContent = '已下架';
       badge.className = 'badge badge-gray';
       shelfBtn.textContent = '上架';
@@ -4984,7 +5030,34 @@ body.text-mode .text-mode-doc { display: block; }
       shelfBtn.textContent = '下架';
     }
     row.querySelectorAll('td')[8].textContent = timestamp;
+    // 同步到共享数据
+    for (var i = 0; i < mockSharedData.products.length; i++) {
+      if (mockSharedData.products[i].sku === sku) {
+        mockSharedData.products[i].isListed = !isCurrentlyListed;
+        break;
+      }
+    }
+    // 刷新APP端商品列表
+    refreshAppProductDisplay();
   };
+
+  function isProductListed(sku) {
+    for (var i = 0; i < mockSharedData.products.length; i++) {
+      if (mockSharedData.products[i].sku === sku) {
+        return mockSharedData.products[i].isListed;
+      }
+    }
+    return true; // 未在共享数据中的商品默认显示
+  }
+
+  function refreshAppProductDisplay() {
+    // 刷新首页
+    var homeSearch = document.getElementById('homeSearch');
+    if (homeSearch) filterHomeProducts(homeSearch.value);
+    // 刷新分类页
+    var catSearch = document.getElementById('categorySearch');
+    if (catSearch) filterCategoryProducts(catSearch.value);
+  }
 
   window.deleteProduct = function(sku) {
     pendingDeleteSku = sku;
