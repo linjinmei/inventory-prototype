@@ -3224,13 +3224,13 @@ body.text-mode .text-mode-doc { display: block; }
           <div class="doc-section">
             <h2>库存状态流转模型</h2>
             <table class="feature-table">
-              <tr><th>库存状态</th><th>物理位置</th><th>可售</th><th>触发场景</th></tr>
-              <tr><td>销售预占</td><td>虚拟（无实物）</td><td>否</td><td>用户下单后到货前</td></tr>
-              <tr><td>采购在途</td><td>物流途中</td><td>否</td><td>供应商已发货未收货</td></tr>
-              <tr><td>门店可用</td><td>门店货架</td><td><strong>是</strong></td><td>收货验收合格上架</td></tr>
-              <tr><td>调拨在途</td><td>调拨物流途中</td><td>否</td><td>调出门店已出库未收货</td></tr>
-              <tr><td>异常冻结</td><td>门店退货区</td><td>否</td><td>到货时匹配到已退款订单</td></tr>
-              <tr><td>残次品</td><td>门店退货区</td><td>否</td><td>收货残次/退货残次</td></tr>
+              <tr><th>库存状态</th><th>物理位置</th><th>可售</th><th>触发场景</th><th>状态转移条件</th><th>字段来源</th></tr>
+              <tr><td>销售预占</td><td>虚拟（无实物）</td><td>否</td><td>用户下单后到货前</td><td>→ 采购在途：支付成功后系统自动生成采购单；→ 释放：订单取消/退款时释放预占</td><td>stock_status = 'PREEMPTED'；关联 sales_order.order_no；创建时间 = 下单时的系统时间戳</td></tr>
+              <tr><td>采购在途</td><td>物流途中</td><td>否</td><td>供应商已发货未收货</td><td>→ 门店可用：正常验收合格；→ 异常冻结：匹配到已退款订单；→ 残次品：验收时发现残次</td><td>stock_status = 'PURCHASE_IN_TRANSIT'；关联 purchase_order.order_no + 物流单号；预计到达时间 = 发货时间 + 物流时效</td></tr>
+              <tr><td>门店可用</td><td>门店货架</td><td><strong>是</strong></td><td>收货验收合格上架</td><td>→ 销售预占：新订单生成；→ 调拨在途：调拨出库；→ 残次品：退货残次入库</td><td>stock_status = 'AVAILABLE'；数量 = 验收合格品数量；来源批次 = 采购批次号；可售校验 = quantity > 0 AND stock_status = 'AVAILABLE'</td></tr>
+              <tr><td>调拨在途</td><td>调拨物流途中</td><td>否</td><td>调出门店已出库未收货</td><td>→ 门店可用：调入门店验收合格；→ 残次品：调入门店验收残次</td><td>stock_status = 'TRANSFER_IN_TRANSIT'；关联 transfer_order.transfer_no；调出门店 = from_store；调入门店 = to_store</td></tr>
+              <tr><td>异常冻结</td><td>门店退货区</td><td>否</td><td>到货时匹配到已退款订单</td><td>→ 退供出库：打包退回供应商；滞留超7天自动预警</td><td>stock_status = 'FROZEN'；关联 refund_order.order_no；冻结时间 = 收货入库时间；滞留天数 = NOW() - created_at</td></tr>
+              <tr><td>残次品</td><td>门店退货区</td><td>否</td><td>收货残次/退货残次</td><td>→ 退供出库：打包退回供应商；数量积压超50件自动预警</td><td>stock_status = 'DEFECTIVE'；残次来源 = 收货残次/退货残次/调拨残次；退供状态 = 关联 purchase_return_order 表</td></tr>
             </table>
           </div>
           <div class="doc-section">
@@ -3486,74 +3486,95 @@ body.text-mode .text-mode-doc { display: block; }
             <div class="feature-section" id="feature-dashboard">
               <h3>数据概览 <span class="priority-tag priority-p0">P0</span></h3>
               <p>展示全平台核心运营指标：今日销售订单数、待自提订单、采购在途批次、异常冻结库存，以及近7日销售趋势、库存状态分布、各门店订单状态分布等图表。</p>
+              <table class="feature-table">
+                <tr><th>指标</th><th>取值来源 / 计算逻辑</th><th>刷新频率</th></tr>
+                <tr><td>今日销售订单</td><td>SELECT COUNT(*) FROM sales_order WHERE DATE(create_time) = CURDATE() — 从销售订单表按创建日期统计当日订单总数</td><td>实时</td></tr>
+                <tr><td>↑/↓ vs 昨日</td><td>(今日订单数 - 昨日订单数) / 昨日订单数 × 100%，正值显示↑，负值显示↓</td><td>实时</td></tr>
+                <tr><td>待自提订单</td><td>SELECT COUNT(*) FROM sales_order WHERE order_status = 'WAIT_PICKUP' — 统计所有状态为"待自提"的订单数</td><td>实时</td></tr>
+                <tr><td>采购在途批次</td><td>SELECT COUNT(DISTINCT batch_no) FROM purchase_order WHERE status IN ('SENT','IN_TRANSIT') — 已发送供应商但未完全收货的采购批次</td><td>实时</td></tr>
+                <tr><td>异常冻结库存</td><td>SELECT SUM(quantity) FROM inventory WHERE stock_status = 'FROZEN' — 所有门店异常冻结库存汇总</td><td>实时</td></tr>
+                <tr><td>近7日销售趋势</td><td>按日期 GROUP BY DATE(create_time)，取近7天每日订单数，数据源：sales_order 表</td><td>小时级</td></tr>
+                <tr><td>库存状态分布</td><td>按 stock_status 分组统计 SUM(quantity)，数据源：inventory 表，维度：可用/预占/在途/调拨/冻结/残次</td><td>小时级</td></tr>
+                <tr><td>各门店订单状态分布</td><td>按门店(store_code) + 订单状态(order_status) 双维度 GROUP BY 统计，数据源：sales_order 表</td><td>小时级</td></tr>
+              </table>
             </div>
             <div class="feature-section" id="feature-product">
               <h3>商品管理 <span class="priority-tag priority-p0">P0</span></h3>
               <table class="feature-table">
-                <tr><th>功能点</th><th>描述</th><th>优先级</th></tr>
-                <tr><td>商品档案管理</td><td>SKU、规格、价格、分类、预计到货天数等基础信息维护，支持新增和编辑</td><td>P0</td></tr>
-                <tr><td>商品分类管理</td><td>支持新增商品分类，分类列表联动筛选，按品类统计商品</td><td>P0</td></tr>
-                <tr><td>商品上架/下架</td><td>一键切换商品可售状态，已上架⇄已下架，更新操作时间</td><td>P0</td></tr>
-                <tr><td>商品删除</td><td>支持删除商品，删除前二次确认，删除后不可恢复</td><td>P0</td></tr>
-                <tr><td>商品时间追踪</td><td>列表展示创建时间（首次保存时间）和更新时间（最后编辑时间）</td><td>P0</td></tr>
-                <tr><td>批次管理</td><td>支持按采购批次追踪商品来源</td><td>P1</td></tr>
+                <tr><th>功能点</th><th>描述</th><th>字段来源 / 取值逻辑</th><th>优先级</th></tr>
+                <tr><td>商品档案管理</td><td>SKU、规格、价格、分类、预计到货天数等基础信息维护，支持新增和编辑</td><td>SKU编码 = 系统自动生成（规则：SP + 年月日 + 4位流水号，如 SP202608250001）；商品名称/规格/售价/预计到货天数 = 手动录入；分类 = 从 product_category 表下拉选择；创建时间 = 首次保存时的系统时间戳；更新时间 = 每次编辑保存时的系统时间戳</td><td>P0</td></tr>
+                <tr><td>商品分类管理</td><td>支持新增商品分类，分类列表联动筛选，按品类统计商品</td><td>分类名称 = 手动录入；分类编码 = 系统自动生成（CAT + 3位自增）；分类商品数 = SELECT COUNT(*) FROM product WHERE category_id = 当前分类ID</td><td>P0</td></tr>
+                <tr><td>商品上架/下架</td><td>一键切换商品可售状态，已上架⇄已下架，更新操作时间</td><td>上架状态 = 手动切换（is_listed: 1=上架, 0=下架）；更新时间 = 切换操作时的系统时间戳；操作人 = 当前登录用户 open_id</td><td>P0</td></tr>
+                <tr><td>商品删除</td><td>支持删除商品，删除前二次确认，删除后不可恢复</td><td>删除条件 = 仅当商品无关联进行中订单（order_status IN ('WAIT_PAY','PURCHASING','IN_TRANSIT','WAIT_PICKUP')）时允许删除；软删除标记 is_deleted = 1</td><td>P0</td></tr>
+                <tr><td>商品时间追踪</td><td>列表展示创建时间（首次保存时间）和更新时间（最后编辑时间）</td><td>创建时间 = created_at（首次 INSERT 时的 NOW()）；更新时间 = updated_at（每次 UPDATE 时的 NOW()），由数据库触发器或 ORM 自动维护</td><td>P0</td></tr>
+                <tr><td>批次管理</td><td>支持按采购批次追踪商品来源</td><td>批次号 = 采购订单号（PO + 年月日 + 流水）；关联商品 = 采购订单明细中的 SKU；数据源：purchase_order + purchase_order_item 表 JOIN</td><td>P1</td></tr>
               </table>
             </div>
             <div class="feature-section" id="feature-sales">
               <h3>销售管理 <span class="priority-tag priority-p0">P0</span></h3>
               <table class="feature-table">
-                <tr><th>功能点</th><th>描述</th><th>优先级</th></tr>
-                <tr><td>销售订单列表</td><td>全平台订单查询、筛选、导出</td><td>P0</td></tr>
-                <tr><td>订单状态跟踪</td><td>待采购→待发货→运输中→待自提→已完成</td><td>P0</td></tr>
-                <tr><td>销售退货审核</td><td>用户退货申请的审核与处理</td><td>P0</td></tr>
+                <tr><th>功能点</th><th>描述</th><th>字段来源 / 取值逻辑</th><th>优先级</th></tr>
+                <tr><td>销售订单列表</td><td>全平台订单查询、筛选、导出</td><td>订单号 = SO + 年月日 + 4位流水（系统自动生成）；商品名称/SKU/数量 = 来自 sales_order_item 表；会员信息 = 下单用户的 nickname + member_id，来自 user 表；订单金额 = item.price × item.quantity 求和；门店 = 用户所属门店 store_code；订单状态 = order_status 字段；数据源：sales_order + sales_order_item + user 三表 JOIN</td><td>P0</td></tr>
+                <tr><td>订单状态跟踪</td><td>待采购→待发货→运输中→待自提→已完成</td><td>订单状态 = order_status 字段，取值：WAIT_PAY(待付款) → PURCHASING(备货中) → IN_TRANSIT(运输中) → WAIT_PICKUP(待自提) → COMPLETED(已完成)；状态变更时同步更新 updated_at 时间戳；操作人 = 触发状态变更的角色ID</td><td>P0</td></tr>
+                <tr><td>销售退货审核</td><td>用户退货申请的审核与处理</td><td>退货申请 = 来自APP端退款/售后请求；审核结果 = 运营人员手动审核（通过/驳回）；退款金额 = 订单实付金额；退款路径 = 原路退回（微信支付/支付宝）；数据源：refund_order 表</td><td>P0</td></tr>
               </table>
             </div>
             <div class="feature-section" id="feature-purchase">
               <h3>采购管理 <span class="priority-tag priority-p0">P0</span></h3>
               <table class="feature-table">
-                <tr><th>功能点</th><th>描述</th><th>优先级</th></tr>
-                <tr><td>采购订单自动生成</td><td>销售订单审核通过后自动生成采购单</td><td>P0</td></tr>
-                <tr><td>采购订单管理</td><td>创建、审核、发送供应商、状态跟踪</td><td>P0</td></tr>
-                <tr><td>批量到货拆解引擎</td><td>整批到货时自动拆分为正常入库+异常冻结</td><td>P0</td></tr>
-                <tr><td>采购退货单管理</td><td>残次品/异常品退供应商全流程管理</td><td>P0</td></tr>
-                <tr><td>供应商管理</td><td>供应商档案、联系方式、交货周期维护</td><td>P0</td></tr>
+                <tr><th>功能点</th><th>描述</th><th>字段来源 / 取值逻辑</th><th>优先级</th></tr>
+                <tr><td>采购订单自动生成</td><td>销售订单审核通过后自动生成采购单</td><td>采购单号 = PO + 年月日 + 4位流水（系统自动生成）；关联销售订单 = 支付成功后的 sales_order.order_no；供应商 = 商品关联的默认供应商 supplier_id，来自 product 表；采购数量 = 销售订单中商品数量 × 1:1；预计到货时间 = 当前时间 + 商品预计到货天数；采购单价 = 商品采购价 cost_price，来自 product 表</td><td>P0</td></tr>
+                <tr><td>采购订单管理</td><td>创建、审核、发送供应商、状态跟踪</td><td>采购单状态 = purchase_status 字段：DRAFT(草稿) → APPROVED(已审核) → SENT(已发送) → IN_TRANSIT(运输中) → RECEIVED(已收货)；操作人 = 采购专员 open_id；审核时间 = 审核操作时的系统时间戳；发送方式 = 邮件/API推送给供应商</td><td>P0</td></tr>
+                <tr><td>批量到货拆解引擎</td><td>整批到货时自动拆分为正常入库+异常冻结</td><td>正常件数 = 实收总数 - 已退款订单数；异常件数 = 该批次下已申请仅退款且未处理的订单数；异常件关联 = 查询 refund_order WHERE batch_no = 当前批次号 AND status = 'APPROVED'；拆解日志 = 写入 inventory_split_log 表</td><td>P0</td></tr>
+                <tr><td>采购退货单管理</td><td>残次品/异常品退供应商全流程管理</td><td>退货单号 = PR + 年月日 + 4位流水；退货商品 = 从残次品池(defective_pool)或异常冻结池(frozen_pool)中选择；退货数量 = 手动指定；退货原因 = 下拉选择（收货残次/退货残次/异常冻结/过期）；供应商 = 原采购供应商</td><td>P0</td></tr>
+                <tr><td>供应商管理</td><td>供应商档案、联系方式、交货周期维护</td><td>供应商编码 = SUP + 3位自增（系统自动）；供应商名称/联系人/电话/地址 = 手动录入；交货周期 = 手动录入（天数）；合作状态 = 手动切换（合作中/已停用）；关联商品数 = COUNT product WHERE supplier_id = 当前供应商ID</td><td>P0</td></tr>
               </table>
             </div>
             <div class="feature-section" id="feature-inventory">
               <h3>库存管理（多状态台账） <span class="priority-tag priority-p0">P0</span></h3>
               <table class="feature-table">
-                <tr><th>功能点</th><th>描述</th><th>优先级</th></tr>
-                <tr><td>多状态库存台账</td><td>区分可用/预占/采购在途/调拨在途/异常冻结/残次</td><td>P0</td></tr>
-                <tr><td>门店库存明细</td><td>按门店分别查看各SKU的库存结构</td><td>P0</td></tr>
-                <tr><td>残次品池管理</td><td>归集各来源残次品，支持批量退供应商</td><td>P0</td></tr>
-                <tr><td>异常冻结池管理</td><td>查看因退款导致的冻结库存及滞留时长</td><td>P0</td></tr>
-                <tr><td>库存变动流水</td><td>所有出入库、调拨操作的明细流水</td><td>P1</td></tr>
-                <tr><td>库存预警</td><td>残次品/异常品达到阈值时自动提醒</td><td>P2</td></tr>
+                <tr><th>功能点</th><th>描述</th><th>字段来源 / 取值逻辑</th><th>优先级</th></tr>
+                <tr><td>多状态库存台账</td><td>区分可用/预占/采购在途/调拨在途/异常冻结/残次</td><td>库存状态 = stock_status 字段枚举：AVAILABLE(可用), PREEMPTED(预占), PURCHASE_IN_TRANSIT(采购在途), TRANSFER_IN_TRANSIT(调拨在途), FROZEN(异常冻结), DEFECTIVE(残次)；库存数量 = SUM(quantity) GROUP BY sku, store_code, stock_status；数据源：inventory 表，按门店+SKU+状态三维度汇总</td><td>P0</td></tr>
+                <tr><td>门店库存明细</td><td>按门店分别查看各SKU的库存结构</td><td>门店 = store_code（来自 store 表）；SKU列表 = 该门店下所有库存记录；可用库存 = stock_status='AVAILABLE' 的 quantity；预占库存 = stock_status='PREEMPTED' 的 quantity（关联销售订单但未发货）；门店筛选 = 当前用户权限范围（总部运营=全部门店，店长=仅本门店）</td><td>P0</td></tr>
+                <tr><td>残次品池管理</td><td>归集各来源残次品，支持批量退供应商</td><td>残次品来源 = 收货残次(receive_defective) / 退货残次(return_defective) / 调拨残次(transfer_defective)；残次品数量 = 按来源+SKU+门店汇总；滞留天数 = NOW() - 入库时间；退供状态 = 未退供 / 已创建退供单 / 已退供完成</td><td>P0</td></tr>
+                <tr><td>异常冻结池管理</td><td>查看因退款导致的冻结库存及滞留时长</td><td>冻结原因 = 到货时匹配到已退款订单（refund_order 关联）；冻结时间 = 收货入库时间（inventory.created_at）；滞留天数 = NOW() - 冻结时间；关联订单号 = refund_order.order_no；预警阈值 = 滞留超过7天自动标记为"超期"</td><td>P0</td></tr>
+                <tr><td>库存变动流水</td><td>所有出入库、调拨操作的明细流水</td><td>变动类型 = 采购入库/销售预占/调拨出库/调拨入库/异常冻结/残次入库/退供出库；变动数量 = ±quantity；变动前库存/变动后库存 = 快照记录；操作人 = 触发变动的用户ID；操作时间 = 系统时间戳；数据源：inventory_log 表，所有变动必须写入日志</td><td>P1</td></tr>
+                <tr><td>库存预警</td><td>残次品/异常品达到阈值时自动提醒</td><td>预警阈值 = 系统配置参数（默认：残次品>50件 或 异常冻结>7天）；预警对象 = 门店店长（APP Push）；预警内容 = "门店XX有X件残次品待处理 / X件异常库存滞留超7天"</td><td>P2</td></tr>
               </table>
             </div>
             <div class="feature-section" id="feature-transfer">
               <h3>门店调拨 <span class="priority-tag priority-p0">P0</span></h3>
               <table class="feature-table">
-                <tr><th>功能点</th><th>描述</th><th>优先级</th></tr>
-                <tr><td>调拨需求单管理</td><td>门店/总部发起调拨申请</td><td>P0</td></tr>
-                <tr><td>调拨出库确认</td><td>调出门店确认出库</td><td>P0</td></tr>
-                <tr><td>调拨入库验收</td><td>调入门店确认收货</td><td>P0</td></tr>
-                <tr><td>调拨差异处理</td><td>实收与实发不一致时责任判定</td><td>P1</td></tr>
+                <tr><th>功能点</th><th>描述</th><th>字段来源 / 取值逻辑</th><th>优先级</th></tr>
+                <tr><td>调拨需求单管理</td><td>门店/总部发起调拨申请</td><td>调拨单号 = TF + 年月日 + 4位流水（系统自动）；调出门店 = 当前用户所属门店 store_code；调入门店 = 从 store 表下拉选择；调拨商品 = 从调出门店可用库存中选择；调拨数量 = 手动输入（≤ 可用库存）；发起人 = 当前登录用户 open_id；发起时间 = 系统时间戳；调拨原因 = 手动选择（缺货调拨/总部调配/其他）</td><td>P0</td></tr>
+                <tr><td>调拨出库确认</td><td>调出门店确认出库</td><td>出库确认人 = 调出门店店员 open_id；确认时间 = 点击"确认出库"时的系统时间戳；出库后库存变动 = 调出门店可用库存 - 调拨数量，调拨在途库存 + 调拨数量；物流单号 = 手动录入；数据源更新：inventory 表（调出门店扣减），inventory_log 表（写入出库流水）</td><td>P0</td></tr>
+                <tr><td>调拨入库验收</td><td>调入门店确认收货</td><td>验收人 = 调入门店店员 open_id；验收时间 = 点击"确认收货"时的系统时间戳；实收合格品 = 手动输入；实收残次品 = 手动输入；合格品 → 可用库存 + 通知自提；残次品 → 残次品池；约束：实收合格品 + 实收残次品 = 调拨数量（不一致时触发差异处理）</td><td>P0</td></tr>
+                <tr><td>调拨差异处理</td><td>实收与实发不一致时责任判定</td><td>差异数量 = 调拨数量 - (实收合格品 + 实收残次品)；责任判定 = 手动选择（调出门店/物流方/调入门店）；成本承担 = 根据责任方决定；数据源：transfer_order + transfer_receipt 表</td><td>P1</td></tr>
               </table>
             </div>
             <div class="feature-section" id="feature-finance">
               <h3>财务结算 <span class="priority-tag priority-p0">P0</span></h3>
               <table class="feature-table">
-                <tr><th>功能点</th><th>描述</th><th>优先级</th></tr>
-                <tr><td>采购应付管理</td><td>采购订单的应付账款记录与对账</td><td>P0</td></tr>
-                <tr><td>销售应收管理</td><td>销售订单的应收账款记录</td><td>P0</td></tr>
-                <tr><td>退货财务冲销</td><td>退货时自动冲销采购成本和销售收入</td><td>P0</td></tr>
-                <tr><td>调拨内部结算</td><td>门店间调拨的成本归属与结算</td><td>P1</td></tr>
+                <tr><th>功能点</th><th>描述</th><th>字段来源 / 取值逻辑</th><th>优先级</th></tr>
+                <tr><td>采购应付管理</td><td>采购订单的应付账款记录与对账</td><td>应付金额 = SUM(purchase_order_item.cost_price × purchase_order_item.quantity) WHERE purchase_order.status IN ('RECEIVED')；供应商 = 采购订单关联的 supplier_id；对账状态 = 未对账/已对账/有差异；数据源：purchase_order + purchase_order_item + supplier 三表 JOIN</td><td>P0</td></tr>
+                <tr><td>销售应收管理</td><td>销售订单的应收账款记录</td><td>应收金额 = SUM(sales_order_item.price × sales_order_item.quantity) WHERE order_status = 'COMPLETED'；实收金额 = 来自支付网关回调（payment_gateway 表）；数据源：sales_order + sales_order_item + payment_record 表</td><td>P0</td></tr>
+                <tr><td>退货财务冲销</td><td>退货时自动冲销采购成本和销售收入</td><td>冲销金额 = 退货商品成本价 × 退货数量（采购成本冲销），退货商品售价 × 退货数量（销售收入冲销）；冲销时间 = 退供完成时自动触发；数据源：purchase_return_order + refund_order 表，关联 finance_writeoff 表</td><td>P0</td></tr>
+                <tr><td>调拨内部结算</td><td>门店间调拨的成本归属与结算</td><td>结算金额 = 调拨商品成本价 × 调拨数量；成本承担方 = 根据调拨原因和责任判定（总部承担/门店承担）；结算状态 = 待结算/已结算；数据源：transfer_order + transfer_cost 表</td><td>P1</td></tr>
               </table>
             </div>
             <div class="feature-section" id="feature-defective">
               <h3>残次品池 & 异常冻结池 <span class="priority-tag priority-p0">P0</span></h3>
               <p>归集收货残次、退货残次、异常冻结件，按门店维度独立管理。支持批量创建采购退货单退回供应商，异常冻结超7天自动提醒店长。</p>
+              <table class="feature-table">
+                <tr><th>数据字段</th><th>取值来源 / 计算逻辑</th></tr>
+                <tr><td>残次品SKU</td><td>来自入库验收时的商品SKU（inventory.sku），来源场景：收货残次/退货残次/调拨残次</td></tr>
+                <tr><td>残次品数量</td><td>SUM(inventory.quantity) WHERE stock_status = 'DEFECTIVE' AND store_code = 当前门店</td></tr>
+                <tr><td>异常冻结SKU</td><td>来自到货拆解时匹配到的已退款订单商品（关联 refund_order.order_no → sales_order_item.sku）</td></tr>
+                <tr><td>异常冻结数量</td><td>到货拆解时自动计算 = 该批次下已退款订单的对应商品数量之和</td></tr>
+                <tr><td>滞留天数</td><td>DATEDIFF(NOW(), inventory.created_at) — 从入库日期到当前日期的天数差</td></tr>
+                <tr><td>退供批次号</td><td>关联采购退货单号 PR + 年月日 + 流水，来自 purchase_return_order 表</td></tr>
+                <tr><td>预警状态</td><td>滞留天数 > 7 → "超期预警"；残次品数量 > 50 → "积压预警"；否则 → "正常"</td></tr>
+              </table>
             </div>
           </div>
           <div class="doc-section">
@@ -3561,40 +3582,48 @@ body.text-mode .text-mode-doc { display: block; }
             <div class="feature-section" id="feature-home">
       <h3>APP首页 <span class="priority-tag priority-p0">P0</span></h3>
       <table class="feature-table">
-        <tr><th>功能点</th><th>描述</th><th>优先级</th></tr>
-        <tr><td>固定门店信息展示</td><td>顶部搜索框下方固定展示当前门店名称、联系人姓名、联系电话，不可切换</td><td>P0</td></tr>
-        <tr><td>商品搜索</td><td>按名称/关键词搜索门店在售商品</td><td>P0</td></tr>
-        <tr><td>时效提示</td><td>首页顶部固定卡片提示"预计下单后X天到店自提"</td><td>P0</td></tr>
-        <tr><td>商品列表</td><td>显示商品图、名称、价格、预计到货天数</td><td>P0</td></tr>
-        <tr><td>下单购买</td><td>生成销售订单，触发采购流程</td><td>P0</td></tr>
+        <tr><th>功能点</th><th>描述</th><th>字段来源 / 取值逻辑</th><th>优先级</th></tr>
+        <tr><td>固定门店信息展示</td><td>顶部搜索框下方固定展示当前门店名称、联系人姓名、联系电话，不可切换</td><td>门店名称 = user.store_code → store.store_name（用户登录时通过 token 中的 store_code 关联查询）；联系人 = store.contact_name；联系电话 = store.contact_phone；门店归属 = 由账号注册时绑定，不可切换</td><td>P0</td></tr>
+        <tr><td>商品搜索</td><td>按名称/关键词搜索门店在售商品</td><td>搜索范围 = 当前门店的已上架商品（is_listed=1）；匹配规则 = product.name LIKE '%关键词%' OR product.keywords LIKE '%关键词%'；搜索结果 = 实时过滤前端商品列表</td><td>P0</td></tr>
+        <tr><td>时效提示</td><td>首页顶部固定卡片提示"预计下单后X天到店自提"</td><td>X = 商品预计到货天数（product.estimated_days），若购物车含多商品，取最大值 MAX(estimated_days)；展示位置 = 首页顶部固定区域</td><td>P0</td></tr>
+        <tr><td>商品列表</td><td>显示商品图、名称、价格、预计到货天数</td><td>商品图片 = product.image_url（默认占位图）；商品名称 = product.name；价格 = product.price（售价）；预计到货天数 = product.estimated_days；数据源：product 表 WHERE is_listed=1 AND is_deleted=0</td><td>P0</td></tr>
+        <tr><td>下单购买</td><td>生成销售订单，触发采购流程</td><td>订单号 = SO + 年月日 + 4位流水（系统自动）；下单用户 = 当前登录用户 member_id；商品SKU + 数量 = 来自购物车选择；订单金额 = 商品售价 × 数量；支付方式 = 微信支付/支付宝（用户选择）；支付状态 = 支付网关回调更新</td><td>P0</td></tr>
       </table>
     </div>
     <div class="feature-section" id="feature-category">
       <h3>APP分类页 <span class="priority-tag priority-p0">P0</span></h3>
       <table class="feature-table">
-        <tr><th>功能点</th><th>描述</th><th>优先级</th></tr>
-        <tr><td>商品名称搜索</td><td>分类页顶部新增搜索框，支持输入商品名称实时搜索筛选</td><td>P0</td></tr>
-        <tr><td>分类浏览</td><td>按商品分类浏览，左侧分类导航+右侧商品列表</td><td>P0</td></tr>
-        <tr><td>搜索无结果提示</td><td>无匹配商品时展示空状态提示</td><td>P1</td></tr>
+        <tr><th>功能点</th><th>描述</th><th>字段来源 / 取值逻辑</th><th>优先级</th></tr>
+        <tr><td>商品名称搜索</td><td>分类页顶部新增搜索框，支持输入商品名称实时搜索筛选</td><td>搜索输入 = 用户手动输入；匹配字段 = product.name LIKE '%输入%'；搜索范围 = 当前分类下所有已上架商品；前端实时过滤无需请求后端</td><td>P0</td></tr>
+        <tr><td>分类浏览</td><td>按商品分类浏览，左侧分类导航+右侧商品列表</td><td>分类列表 = SELECT * FROM product_category ORDER BY sort_order；默认分类 = 第一个分类或"全部商品"；商品列表 = SELECT * FROM product WHERE category_id = 当前分类ID AND is_listed=1；"全部商品"tab = 展示所有分类的已上架商品</td><td>P0</td></tr>
+        <tr><td>搜索无结果提示</td><td>无匹配商品时展示空状态提示</td><td>触发条件 = 过滤后商品列表长度为0；展示内容 = "未找到相关商品" 空状态图 + 建议更换关键词</td><td>P1</td></tr>
       </table>
     </div>
             <div class="feature-section" id="feature-pickup">
               <h3>取货码（动态活码） <span class="priority-tag priority-p0">P0</span></h3>
               <p>待自提订单生成动态取货二维码，<strong>60秒刷新一次</strong>，防止截图冒领。到店出示给店员扫码核销，核销时校验订单状态和异常冻结状态。</p>
+              <table class="feature-table">
+                <tr><th>数据字段</th><th>取值来源 / 计算逻辑</th></tr>
+                <tr><td>取货码内容</td><td>加密字符串 = AES(订单号 + 当前时间戳 + 用户ID + 随机盐)，每60秒重新生成</td></tr>
+                <tr><td>刷新间隔</td><td>60秒（系统配置参数 pickup_code.ttl = 60），由前端定时器触发刷新</td></tr>
+                <tr><td>核销校验</td><td>① 解密取货码 → ② 查询订单状态 = 'WAIT_PICKUP' → ③ 查询库存状态 ≠ 'FROZEN' → ④ 三步均通过则核销成功</td></tr>
+                <tr><td>核销后操作</td><td>订单状态 → COMPLETED；库存变动 = 可用库存 - 1；核销记录 = 写入 pickup_verify_log 表（核销时间、店员ID、订单号）</td></tr>
+                <tr><td>离线能力</td><td>本地缓存最近30分钟的取货码，网络恢复后同步核销结果</td></tr>
+              </table>
             </div>
             <div class="feature-section" id="feature-workbench">
       <h3>店员工作台 <span class="priority-tag priority-p0">P0</span></h3>
       <table class="feature-table">
-        <tr><th>功能点</th><th>描述</th><th>优先级</th></tr>
-        <tr><td>待入库收货</td><td>取消扫码操作，改为直接点击"确认入库"按钮完成收货，展示入库商品名称明细，自动拆解正常入库与异常冻结</td><td>P0</td></tr>
-        <tr><td>待核销自提</td><td>扫码用户取货码，核销完成自提</td><td>P0</td></tr>
-        <tr><td>异常包裹处理</td><td>查看异常冻结库存，打包退供</td><td>P0</td></tr>
-        <tr><td>店铺订单</td><td>店长可查看本门店全部会员订单（含会员昵称和ID），店员仅可查看归属自己的会员订单，支持角色切换</td><td>P0</td></tr>
-        <tr><td>发起调拨申请</td><td>门店间调拨申请发起，选择调入门店、商品（展示可用库存）、数量，提交后生成调拨单（待确认出库）</td><td>P0</td></tr>
-        <tr><td>调拨列表管理</td><td>查看本门店相关调拨单列表，按状态筛选（待出库/调拨在途/待验收/已完成），支持确认出库、物流追踪操作</td><td>P0</td></tr>
-        <tr><td>调拨物流追踪</td><td>查看调拨单详情、4步进度时间线（发起→出库→在途→收货）、物流轨迹</td><td>P0</td></tr>
-        <tr><td>调拨收货验收</td><td>调入门店确认收货，支持调整实收数量、质量检查（合格品→可用库存+通知自提；残次品→残次品池+责任判定）</td><td>P0</td></tr>
-        <tr><td>数据概览</td><td>当日待办任务数、门店库存概况</td><td>P1</td></tr>
+        <tr><th>功能点</th><th>描述</th><th>字段来源 / 取值逻辑</th><th>优先级</th></tr>
+        <tr><td>待入库收货</td><td>取消扫码操作，改为直接点击"确认入库"按钮完成收货，展示入库商品名称明细，自动拆解正常入库与异常冻结</td><td>待入库列表 = SELECT * FROM purchase_order WHERE store_code = 当前门店 AND status = 'IN_TRANSIT'；入库商品明细 = purchase_order_item 关联的 SKU + 数量；确认入库 = 点击按钮后触发拆解引擎，自动计算正常件/异常件分配；操作人 = 当前店员 open_id</td><td>P0</td></tr>
+        <tr><td>待核销自提</td><td>扫码用户取货码，核销完成自提</td><td>待核销列表 = SELECT * FROM sales_order WHERE order_status = 'WAIT_PICKUP' AND store_code = 当前门店；扫码内容 = 用户出示的取货码（动态活码）；核销校验 = 解密取货码 → 校验订单状态 → 校验库存状态 → 核销通过</td><td>P0</td></tr>
+        <tr><td>异常包裹处理</td><td>查看异常冻结库存，打包退供</td><td>异常列表 = SELECT * FROM inventory WHERE stock_status = 'FROZEN' AND store_code = 当前门店；打包退供 = 勾选异常件 → 生成退供单 → 推送供应商；退供单号 = PR + 年月日 + 流水</td><td>P0</td></tr>
+        <tr><td>店铺订单</td><td>店长可查看本门店全部会员订单（含会员昵称和ID），店员仅可查看归属自己的会员订单，支持角色切换</td><td>店长可见 = SELECT * FROM sales_order WHERE store_code = 当前门店（所有会员）；店员可见 = 上述查询结果 WHERE staff_id = 当前店员ID（仅自己会员）；订单列表字段 = 订单号、商品名、金额、会员昵称(member.nickname)、会员ID(member.member_id)、状态</td><td>P0</td></tr>
+        <tr><td>发起调拨申请</td><td>门店间调拨申请发起，选择调入门店、商品（展示可用库存）、数量，提交后生成调拨单（待确认出库）</td><td>调拨单号 = TF + 年月日 + 4位流水；调出门店 = 当前门店 store_code；调入门店 = 下拉选择（排除当前门店）；可选商品 = 当前门店可用库存（stock_status='AVAILABLE'）；数量限制 = 输入数量 ≤ 可用库存</td><td>P0</td></tr>
+        <tr><td>调拨列表管理</td><td>查看本门店相关调拨单列表，按状态筛选（待出库/调拨在途/待验收/已完成），支持确认出库、物流追踪操作</td><td>调拨列表 = SELECT * FROM transfer_order WHERE from_store = 当前门店 OR to_store = 当前门店；状态筛选 = transfer_status 字段过滤；状态取值：PENDING(待出库) → IN_TRANSIT(在途) → WAIT_RECEIVE(待验收) → COMPLETED(已完成)</td><td>P0</td></tr>
+        <tr><td>调拨物流追踪</td><td>查看调拨单详情、4步进度时间线（发起→出库→在途→收货）、物流轨迹</td><td>进度时间线 = 从 transfer_order 表读取各节点时间戳（created_at, outbound_at, shipped_at, received_at）；物流轨迹 = 手动录入的物流单号查询结果</td><td>P0</td></tr>
+        <tr><td>调拨收货验收</td><td>调入门店确认收货，支持调整实收数量、质量检查（合格品→可用库存+通知自提；残次品→残次品池+责任判定）</td><td>验收表单 = 调拨商品 SKU + 调拨数量 + 实收合格品（手动输入）+ 实收残次品（手动输入）；验收后操作 = 合格品 → inventory(stock_status='AVAILABLE')；残次品 → inventory(stock_status='DEFECTIVE')；差异 = 触发差异处理流程</td><td>P0</td></tr>
+        <tr><td>数据概览</td><td>当日待办任务数、门店库存概况</td><td>待入库数 = COUNT purchase_order WHERE status='IN_TRANSIT' AND store_code=当前门店；待核销数 = COUNT sales_order WHERE status='WAIT_PICKUP' AND store_code=当前门店；异常数 = COUNT inventory WHERE stock_status='FROZEN' AND store_code=当前门店</td><td>P1</td></tr>
       </table>
     </div>
           </div>
@@ -3672,23 +3701,23 @@ body.text-mode .text-mode-doc { display: block; }
           <div class="doc-section">
             <h2>订单状态流转及按钮规则</h2>
             <table class="feature-table">
-              <tr><th>前台展示</th><th>后台状态</th><th>页面操作按钮</th><th>说明</th></tr>
-              <tr><td>待付款</td><td>WAIT_PAY</td><td>取消订单 / 立即支付</td><td>倒计时提醒</td></tr>
-              <tr><td>备货中</td><td>PURCHASING / IN_TRANSIT</td><td>联系客服</td><td><strong>不显示"申请退款"</strong></td></tr>
-              <tr><td>待自提</td><td>WAIT_PICKUP</td><td>查看取货码（高亮）/ 申请售后</td><td>取货码动态刷新</td></tr>
-              <tr><td>已完成</td><td>COMPLETED</td><td>再次购买 / 删除订单</td><td>已完成不可售后</td></tr>
-              <tr><td>退款中</td><td>REFUNDING</td><td>撤销申请（仅限财务处理前）</td><td>展示退款进度条</td></tr>
+              <tr><th>前台展示</th><th>后台状态</th><th>页面操作按钮</th><th>说明</th><th>状态变更触发条件</th></tr>
+              <tr><td>待付款</td><td>WAIT_PAY</td><td>取消订单 / 立即支付</td><td>倒计时提醒</td><td>→ 备货中：支付网关回调成功 → 自动生成采购单 → 库存状态从"销售预占"转"采购在途"；→ 已取消：用户主动取消或超时未支付</td></tr>
+              <tr><td>备货中</td><td>PURCHASING / IN_TRANSIT</td><td>联系客服</td><td><strong>不显示"申请退款"</strong></td><td>→ 待自提：门店收货验收完成，库存状态转为"门店可用"；→ 退款中：客服介入处理退款（不拦截物流，后置到收货环节处理）</td></tr>
+              <tr><td>待自提</td><td>WAIT_PICKUP</td><td>查看取货码（高亮）/ 申请售后</td><td>取货码动态刷新</td><td>→ 已完成：店员扫码核销成功，库存扣减；→ 退款中：用户申请售后（仅限未核销），进入退款审核流程</td></tr>
+              <tr><td>已完成</td><td>COMPLETED</td><td>再次购买 / 删除订单</td><td>已完成不可售后</td><td>终态，不可回退；删除订单后仅在用户端隐藏，后台保留数据</td></tr>
+              <tr><td>退款中</td><td>REFUNDING</td><td>撤销申请（仅限财务处理前）</td><td>展示退款进度条</td><td>→ 退款完成：财务审核通过，资金原路退回；→ 恢复原状态：用户撤销申请或审核驳回</td></tr>
             </table>
           </div>
           <div class="doc-section">
             <h2>通知触发节点</h2>
             <table class="feature-table">
-              <tr><th>触发节点</th><th>通知对象</th><th>通知方式</th><th>通知内容</th></tr>
-              <tr><td>门店确认收货后</td><td>消费者</td><td>APP Push + 短信</td><td>"您的商品已到店，请前往自提"</td></tr>
-              <tr><td>核销成功后</td><td>消费者</td><td>APP站内信</td><td>"提货成功，感谢您的光临"</td></tr>
-              <tr><td>退款触发后</td><td>消费者</td><td>APP Push</td><td>"您的退款已处理，预计X日内到账"</td></tr>
-              <tr><td>调拨到货后</td><td>调入门店店员</td><td>APP Push</td><td>"调拨批次XXX已到货，请确认收货"</td></tr>
-              <tr><td>异常冻结超7天</td><td>门店店长</td><td>APP Push</td><td>"您有X件异常库存滞留超7天，请及时处理"</td></tr>
+              <tr><th>触发节点</th><th>通知对象</th><th>通知方式</th><th>通知内容</th><th>触发条件 / 数据来源</th></tr>
+              <tr><td>门店确认收货后</td><td>消费者</td><td>APP Push + 短信</td><td>"您的商品已到店，请前往自提"</td><td>触发条件 = purchase_order.status 变更为 RECEIVED 且拆解完成；通知对象 = 该批次下所有正常件的 sales_order.user_id（排除异常冻结件用户）；取货码 = 此时自动生成并推送给用户</td></tr>
+              <tr><td>核销成功后</td><td>消费者</td><td>APP站内信</td><td>"提货成功，感谢您的光临"</td><td>触发条件 = sales_order.status 变更为 COMPLETED；数据源 = pickup_verify_log 表写入成功时触发；通知内容 = 含订单号、提货时间、门店名称</td></tr>
+              <tr><td>退款触发后</td><td>消费者</td><td>APP Push</td><td>"您的退款已处理，预计X日内到账"</td><td>触发条件 = refund_order.status 变更为 COMPLETED；X = 支付渠道退款到账周期（微信支付=1天，支付宝=1-3天），来自 payment_channel 配置表；退款金额 = refund_order.amount</td></tr>
+              <tr><td>调拨到货后</td><td>调入门店店员</td><td>APP Push</td><td>"调拨批次XXX已到货，请确认收货"</td><td>触发条件 = transfer_order.status 变更为 IN_TRANSIT 且物流状态显示已签收；通知对象 = 调入门店(to_store)所有店员；调拨批次号 = transfer_order.transfer_no</td></tr>
+              <tr><td>异常冻结超7天</td><td>门店店长</td><td>APP Push</td><td>"您有X件异常库存滞留超7天，请及时处理"</td><td>触发条件 = 定时任务每日扫描 inventory WHERE stock_status='FROZEN' AND DATEDIFF(NOW(), created_at) > 7；X = 该门店异常冻结库存总数；通知对象 = 门店店长（通过 store 表关联）</td></tr>
             </table>
           </div>
         </div>
