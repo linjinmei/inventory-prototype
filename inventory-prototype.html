@@ -1337,9 +1337,9 @@ body.text-mode .text-mode-doc { display: block; }
               </div>
               <div class="pc-page-body">
                 <div class="filter-bar">
-                  <input class="filter-input" type="text" placeholder="搜索商品名称/SKU">
-                  <select class="filter-select" id="productCategoryFilter"><option>全部分类</option><option>生鲜水果</option><option>饮料饮品</option><option>零食坚果</option><option>日用百货</option></select>
-                  <select class="filter-select"><option>全部状态</option><option>已上架</option><option>已下架</option></select>
+                  <input class="filter-input" type="text" id="pcProductSearch" placeholder="搜索商品名称/SKU" oninput="filterPCProductTable()">
+                  <select class="filter-select" id="productCategoryFilter" onchange="filterPCProductTable()"><option value="">全部分类</option><option value="生鲜水果">生鲜水果</option><option value="饮料饮品">饮料饮品</option><option value="零食坚果">零食坚果</option><option value="日用百货">日用百货</option></select>
+                  <select class="filter-select" id="pcProductStatus" onchange="filterPCProductTable()"><option value="">全部状态</option><option value="已上架">已上架</option><option value="已下架">已下架</option></select>
                   <button class="btn btn-outline btn-sm" type="button" onclick="exportProducts()">导出</button>
                 </div>
                 <div class="table-scroll">
@@ -1406,21 +1406,13 @@ body.text-mode .text-mode-doc { display: block; }
               </div>
               <div class="pc-page-body">
                 <div class="filter-bar">
-                  <input class="filter-input" type="text" placeholder="搜索订单号/用户">
-                  <select class="filter-select"><option>全部状态</option><option>待付款</option><option>备货中</option><option>待自提</option><option>已完成</option><option>退款中</option></select>
-                  <select class="filter-select"><option>全部门店</option><option>北京朝阳店</option><option>北京海淀店</option><option>上海浦东店</option></select>
+                  <input class="filter-input" type="text" id="pcSalesSearch" placeholder="搜索订单号/商品/用户" oninput="filterPCSalesTable()">
+                  <select class="filter-select" id="pcSalesStatus" onchange="filterPCSalesTable()"><option value="">全部状态</option><option value="待自提">待自提</option><option value="备货中">备货中</option><option value="已完成">已完成</option><option value="退款中">退款中</option></select>
+                  <select class="filter-select" id="pcSalesStore" onchange="filterPCSalesTable()"><option value="">全部门店</option><option value="北京朝阳店">北京朝阳店</option><option value="北京海淀店">北京海淀店</option><option value="上海浦东店">上海浦东店</option></select>
                 </div>
                 <table class="pc-table">
                   <thead><tr><th>订单号</th><th>商品</th><th>门店</th><th>金额</th><th>下单时间</th><th>状态</th><th>操作</th></tr></thead>
-                  <tbody>
-                    <tr><td>SO20260814001</td><td>有机红富士苹果 ×2</td><td>北京朝阳店</td><td>¥25.80</td><td>08-14 09:30</td><td><span class="badge badge-success">待自提</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail(this)">详情</button></td></tr>
-                    <tr><td>SO20260814002</td><td>农夫山泉 ×24</td><td>北京朝阳店</td><td>¥48.00</td><td>08-14 10:15</td><td><span class="badge badge-info">备货中</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail(this)">详情</button></td></tr>
-                    <tr><td>SO20260814003</td><td>三只松鼠坚果礼盒 ×1</td><td>上海浦东店</td><td>¥89.90</td><td>08-14 11:00</td><td><span class="badge badge-success">待自提</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail(this)">详情</button></td></tr>
-                    <tr><td>SO20260814004</td><td>伊利纯牛奶 ×2</td><td>北京朝阳店</td><td>¥99.80</td><td>08-14 12:30</td><td><span class="badge badge-warning">退款中</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail(this)">详情</button></td></tr>
-                    <tr><td>SO20260813005</td><td>蓝月亮洗衣液 ×1</td><td>北京海淀店</td><td>¥39.90</td><td>08-13 14:00</td><td><span class="badge badge-gray">已完成</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail(this)">详情</button></td></tr>
-                    <tr><td>SO20260813006</td><td>新疆和田大枣 ×3</td><td>上海浦东店</td><td>¥77.70</td><td>08-13 15:20</td><td><span class="badge badge-info">备货中</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail(this)">详情</button></td></tr>
-                    <tr><td>SO20260813007</td><td>舒肤佳香皂 ×2</td><td>北京海淀店</td><td>¥39.80</td><td>08-13 16:45</td><td><span class="badge badge-gray">已完成</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showOrderDetail(this)">详情</button></td></tr>
-                  </tbody>
+                  <tbody id="pcSalesTbody"></tbody>
                 </table>
               </div>
             </div>
@@ -1475,7 +1467,7 @@ body.text-mode .text-mode-doc { display: block; }
               <div class="pc-page-header">
                 <div class="pc-page-title">多状态库存台账</div>
                 <div style="display:flex;gap:8px">
-                  <select class="filter-select"><option>全部门店</option><option>北京朝阳店</option><option>北京海淀店</option><option>上海浦东店</option></select>
+                  <select class="filter-select" id="pcInvStore" onchange="filterPCInventoryTable()"><option value="">全部门店</option><option value="朝阳店">北京朝阳店</option><option value="海淀店">北京海淀店</option><option value="浦东店">上海浦东店</option></select>
                   <button class="btn btn-outline btn-sm" type="button" onclick="exportInventory()">导出</button>
                 </div>
               </div>
@@ -3971,14 +3963,31 @@ body.text-mode .text-mode-doc { display: block; }
 
   // ==================== PC Table Render Functions ====================
   function renderPCSalesTable() {
-    var tbody = document.querySelector('#page-pc-sales .pc-table tbody');
+    var tbody = document.getElementById('pcSalesTbody');
     if (!tbody) return;
+    var keyword = (document.getElementById('pcSalesSearch')?.value || '').trim().toLowerCase();
+    var statusFilter = document.getElementById('pcSalesStatus')?.value || '';
+    var storeFilter = document.getElementById('pcSalesStore')?.value || '';
     var html = '';
+    var found = 0;
     mockSharedData.salesOrders.forEach(function(o) {
-      html += '<tr><td>' + o.orderNo + '</td><td>' + o.name + ' ×' + o.qty + '</td><td>' + o.store + '</td><td>¥' + o.price + '</td><td>' + o.time + '</td><td><span class="badge ' + o.statusClass + '">' + o.statusText + '</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showPCSalesOrderDetail(\'' + o.orderNo + '\')">详情</button></td></tr>';
+      var kwMatch = !keyword || o.orderNo.toLowerCase().indexOf(keyword) > -1 || o.name.toLowerCase().indexOf(keyword) > -1 || (o.memberName || '').toLowerCase().indexOf(keyword) > -1;
+      var stMatch = !statusFilter || o.statusText === statusFilter;
+      var storeMatch = !storeFilter || o.store === storeFilter;
+      if (kwMatch && stMatch && storeMatch) {
+        html += '<tr><td>' + o.orderNo + '</td><td>' + o.name + ' ×' + o.qty + '</td><td>' + o.store + '</td><td>¥' + o.price + '</td><td>' + o.time + '</td><td><span class="badge ' + o.statusClass + '">' + o.statusText + '</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showPCSalesOrderDetail(\'' + o.orderNo + '\')">详情</button></td></tr>';
+        found++;
+      }
     });
+    if (found === 0) {
+      html = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted)">未找到匹配的订单数据</td></tr>';
+    }
     tbody.innerHTML = html;
   }
+
+  window.filterPCSalesTable = function() {
+    renderPCSalesTable();
+  };
 
   function renderPCPurchaseTable() {
     var tbody = document.querySelector('#page-pc-purchase .pc-table tbody');
@@ -3993,19 +4002,32 @@ body.text-mode .text-mode-doc { display: block; }
   function renderPCInventoryTable() {
     var tbody = document.querySelector('#page-pc-inventory .pc-table tbody');
     if (!tbody) return;
+    var storeFilter = document.getElementById('pcInvStore')?.value || '';
     var html = '';
+    var found = 0;
     mockSharedData.inventory.forEach(function(r) {
-      html += '<tr><td>' + r.sku + '</td><td>' + r.name + '</td><td>' + r.store + '</td>';
-      html += '<td><span class="inv-chip inv-chip-avail">' + r.available + '</span></td>';
-      html += '<td><span class="inv-chip inv-chip-preempt">' + r.preempted + '</span></td>';
-      html += '<td><span class="inv-chip inv-chip-transit">' + r.purchaseTransit + '</span></td>';
-      html += '<td><span class="inv-chip ' + (r.transferTransit > 0 ? 'inv-chip-transfer' : 'inv-chip-0') + '">' + r.transferTransit + '</span></td>';
-      html += '<td><span class="inv-chip ' + (r.frozen > 0 ? 'inv-chip-frozen' : 'inv-chip-0') + '">' + r.frozen + '</span></td>';
-      html += '<td><span class="inv-chip ' + (r.defective > 0 ? 'inv-chip-defect' : 'inv-chip-0') + '">' + r.defective + '</span></td>';
-      html += '</tr>';
+      var storeMatch = !storeFilter || r.store === storeFilter;
+      if (storeMatch) {
+        html += '<tr><td>' + r.sku + '</td><td>' + r.name + '</td><td>' + r.store + '</td>';
+        html += '<td><span class="inv-chip inv-chip-avail">' + r.available + '</span></td>';
+        html += '<td><span class="inv-chip inv-chip-preempt">' + r.preempted + '</span></td>';
+        html += '<td><span class="inv-chip inv-chip-transit">' + r.purchaseTransit + '</span></td>';
+        html += '<td><span class="inv-chip ' + (r.transferTransit > 0 ? 'inv-chip-transfer' : 'inv-chip-0') + '">' + r.transferTransit + '</span></td>';
+        html += '<td><span class="inv-chip ' + (r.frozen > 0 ? 'inv-chip-frozen' : 'inv-chip-0') + '">' + r.frozen + '</span></td>';
+        html += '<td><span class="inv-chip ' + (r.defective > 0 ? 'inv-chip-defect' : 'inv-chip-0') + '">' + r.defective + '</span></td>';
+        html += '</tr>';
+        found++;
+      }
     });
+    if (found === 0) {
+      html = '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted)">未找到匹配的库存数据</td></tr>';
+    }
     tbody.innerHTML = html;
   }
+
+  window.filterPCInventoryTable = function() {
+    renderPCInventoryTable();
+  };
 
   function renderPCTransferTable() {
     var tbody = document.querySelector('#page-pc-transfer .pc-table tbody');
@@ -5058,6 +5080,41 @@ body.text-mode .text-mode-doc { display: block; }
     var catSearch = document.getElementById('categorySearch');
     if (catSearch) filterCategoryProducts(catSearch.value);
   }
+
+  window.filterPCProductTable = function() {
+    var keyword = (document.getElementById('pcProductSearch')?.value || '').trim().toLowerCase();
+    var catFilter = document.getElementById('productCategoryFilter')?.value || '';
+    var statusFilter = document.getElementById('pcProductStatus')?.value || '';
+    var rows = document.querySelectorAll('#productTableBody tr');
+    var found = 0;
+    rows.forEach(function(row) {
+      var cells = row.querySelectorAll('td');
+      if (cells.length < 9) return;
+      var sku = cells[0].textContent.trim().toLowerCase();
+      var name = cells[1].textContent.trim().toLowerCase();
+      var category = cells[2].textContent.trim();
+      var badge = row.querySelector('.badge');
+      var status = badge ? badge.textContent.trim() : '';
+      var kwMatch = !keyword || sku.indexOf(keyword) > -1 || name.indexOf(keyword) > -1;
+      var catMatch = !catFilter || category === catFilter;
+      var stMatch = !statusFilter || status === statusFilter;
+      if (kwMatch && catMatch && stMatch) {
+        row.style.display = '';
+        found++;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+    var noResult = document.getElementById('pcProductNoResult');
+    if (!noResult) {
+      noResult = document.createElement('tr');
+      noResult.id = 'pcProductNoResult';
+      noResult.innerHTML = '<td colspan="10" style="text-align:center;padding:40px;color:var(--text-muted)">未找到匹配的商品</td>';
+      var tbody = document.getElementById('productTableBody');
+      if (tbody) tbody.appendChild(noResult);
+    }
+    noResult.style.display = found === 0 ? '' : 'none';
+  };
 
   window.deleteProduct = function(sku) {
     pendingDeleteSku = sku;
