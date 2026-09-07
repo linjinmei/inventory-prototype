@@ -3784,6 +3784,10 @@ body.text-mode .text-mode-doc { display: block; }
     var addr = document.getElementById('addressBar');
     if (addr) addr.textContent = routeMap[pageId] || pageId;
     if (pageId === 'page-pc-products') { productPage = 1; renderPagination(); }
+    // E2E: Re-render all data tables when navigating to data pages
+    if (pageId === 'page-pc-dashboard' || pageId === 'page-pc-sales' || pageId === 'page-pc-purchase' || pageId === 'page-pc-inventory' || pageId === 'page-pc-transfer' || pageId === 'page-pc-defective' || pageId === 'page-pc-finance') {
+      renderAllPCTables();
+    }
   };
 
   window.pcGoBack = function(fallbackPage) {
@@ -3871,19 +3875,280 @@ body.text-mode .text-mode-doc { display: block; }
     'SO20260813008': { icon:'💧', name:'农夫山泉天然水', spec:'550ml×24瓶 ×3', price:'6.00', status:'退款中', statusClass:'badge-warning', store:'北京朝阳店 · 朝阳区建国路88号', time:'2026-08-13 18:40', payment:'微信支付' }
   };
 
+  // ==================== Shared Data Layer (E2E) ====================
+  var mockSharedData = {
+    salesOrders: [
+      { orderNo:'SO20260814001', icon:'🍎', name:'有机红富士苹果', spec:'500g/袋 ×2', qty:2, price:'25.80', status:'WAIT_PICKUP', statusText:'待自提', statusClass:'badge-success', store:'北京朝阳店', storeCode:'CY001', time:'2026-08-14 09:30', payment:'微信支付', memberName:'张三', memberId:'M001', pickupCode:null },
+      { orderNo:'SO20260814002', icon:'💧', name:'农夫山泉天然水', spec:'550ml×24瓶', qty:1, price:'48.00', status:'PURCHASING', statusText:'备货中', statusClass:'badge-info', store:'北京朝阳店', storeCode:'CY001', time:'2026-08-14 10:15', payment:'微信支付', memberName:'李四', memberId:'M002', pickupCode:null },
+      { orderNo:'SO20260814003', icon:'🥜', name:'三只松鼠坚果礼盒', spec:'礼盒装 ×1', qty:1, price:'89.90', status:'WAIT_PICKUP', statusText:'待自提', statusClass:'badge-success', store:'上海浦东店', storeCode:'PD001', time:'2026-08-14 11:00', payment:'支付宝', memberName:'王五', memberId:'M003', pickupCode:null },
+      { orderNo:'SO20260814004', icon:'🥛', name:'伊利纯牛奶', spec:'250ml×12盒 ×2', qty:2, price:'99.80', status:'REFUNDING', statusText:'退款中', statusClass:'badge-warning', store:'北京朝阳店', storeCode:'CY001', time:'2026-08-14 12:30', payment:'微信支付', memberName:'赵六', memberId:'M004', pickupCode:null },
+      { orderNo:'SO20260813005', icon:'🧴', name:'蓝月亮洗衣液', spec:'3kg装 ×1', qty:1, price:'39.90', status:'COMPLETED', statusText:'已完成', statusClass:'badge-gray', store:'北京海淀店', storeCode:'HD001', time:'2026-08-13 14:00', payment:'微信支付', memberName:'孙七', memberId:'M005', pickupCode:null },
+      { orderNo:'SO20260813006', icon:'🫐', name:'新疆和田大枣', spec:'500g ×3', qty:3, price:'77.70', status:'PURCHASING', statusText:'备货中', statusClass:'badge-info', store:'上海浦东店', storeCode:'PD001', time:'2026-08-13 15:20', payment:'支付宝', memberName:'周八', memberId:'M006', pickupCode:null },
+      { orderNo:'SO20260813007', icon:'🧼', name:'舒肤佳香皂', spec:'3块装 ×2', qty:2, price:'39.80', status:'COMPLETED', statusText:'已完成', statusClass:'badge-gray', store:'北京海淀店', storeCode:'HD001', time:'2026-08-13 16:45', payment:'微信支付', memberName:'吴九', memberId:'M007', pickupCode:null }
+    ],
+    purchaseOrders: [
+      { orderNo:'PO20260814001', supplier:'绿源农业', store:'北京朝阳店', storeCode:'CY001', items:'有机苹果 100件', status:'IN_TRANSIT', statusText:'运输中', statusClass:'badge-purple', eta:'08-15', relatedSO:'SO20260814001' },
+      { orderNo:'PO20260814002', supplier:'鲜达供应链', store:'北京朝阳店', storeCode:'CY001', items:'农夫山泉 200件', status:'PENDING', statusText:'待发货', statusClass:'badge-info', eta:'08-16', relatedSO:'SO20260814002' },
+      { orderNo:'PO20260813003', supplier:'品质优选', store:'上海浦东店', storeCode:'PD001', items:'三只松鼠礼盒 50件', status:'RECEIVED', statusText:'已到货', statusClass:'badge-gray', eta:'08-14', relatedSO:'SO20260814003' },
+      { orderNo:'PO20260813004', supplier:'绿源农业', store:'北京海淀店', storeCode:'HD001', items:'新疆大枣 80件', status:'IN_TRANSIT', statusText:'运输中', statusClass:'badge-purple', eta:'08-15', relatedSO:'SO20260813006' },
+      { orderNo:'PO20260812005', supplier:'品质优选', store:'北京朝阳店', storeCode:'CY001', items:'伊利牛奶 120件', status:'SPLITTING', statusText:'到货拆解中', statusClass:'badge-warning', eta:'08-14', relatedSO:'SO20260814004' }
+    ],
+    inventory: [
+      { sku:'SKU001', name:'有机红富士苹果', store:'朝阳店', storeCode:'CY001', available:8, preempted:3, purchaseTransit:20, transferTransit:0, frozen:2, defective:1 },
+      { sku:'SKU002', name:'农夫山泉天然水', store:'朝阳店', storeCode:'CY001', available:15, preempted:5, purchaseTransit:50, transferTransit:0, frozen:0, defective:0 },
+      { sku:'SKU003', name:'三只松鼠坚果礼盒', store:'海淀店', storeCode:'HD001', available:3, preempted:1, purchaseTransit:10, transferTransit:5, frozen:0, defective:0 },
+      { sku:'SKU004', name:'蓝月亮洗衣液', store:'浦东店', storeCode:'PD001', available:0, preempted:2, purchaseTransit:15, transferTransit:0, frozen:3, defective:0 },
+      { sku:'SKU005', name:'伊利纯牛奶', store:'朝阳店', storeCode:'CY001', available:12, preempted:4, purchaseTransit:0, transferTransit:0, frozen:0, defective:2 },
+      { sku:'SKU007', name:'新疆和田大枣', store:'浦东店', storeCode:'PD001', available:6, preempted:3, purchaseTransit:80, transferTransit:0, frozen:5, defective:1 },
+      { sku:'SKU008', name:'舒肤佳香皂', store:'海淀店', storeCode:'HD001', available:20, preempted:2, purchaseTransit:0, transferTransit:0, frozen:0, defective:0 }
+    ],
+    defectiveItems: [
+      { sku:'SKU001', name:'有机红富士苹果', store:'朝阳店', type:'defective', typeText:'残次品', qty:1, source:'收货残次', date:'08-12', days:2 },
+      { sku:'SKU005', name:'伊利纯牛奶', store:'朝阳店', type:'defective', typeText:'残次品', qty:2, source:'退货残次', date:'08-11', days:3 },
+      { sku:'SKU007', name:'新疆和田大枣', store:'浦东店', type:'defective', typeText:'残次品', qty:1, source:'收货残次', date:'08-10', days:4 },
+      { sku:'SKU001', name:'有机红富士苹果', store:'朝阳店', type:'frozen', typeText:'异常冻结', qty:2, source:'到货退款对冲', date:'08-07', days:7, frozen:true },
+      { sku:'SKU004', name:'蓝月亮洗衣液', store:'浦东店', type:'frozen', typeText:'异常冻结', qty:3, source:'到货退款对冲', date:'08-06', days:8, frozen:true },
+      { sku:'SKU007', name:'新疆和田大枣', store:'浦东店', type:'frozen', typeText:'异常冻结', qty:5, source:'到货退款对冲', date:'08-08', days:6, frozen:true }
+    ],
+    transferOrders: [
+      { transferNo:'TF20260814001', fromStore:'北京海淀店', toStore:'北京朝阳店', items:'三只松鼠礼盒 ×5', status:'IN_TRANSIT', statusText:'调拨在途', statusClass:'badge-purple', logistics:'顺丰 SF1234567' },
+      { transferNo:'TF20260813002', fromStore:'上海浦东店', toStore:'北京海淀店', items:'蓝月亮洗衣液 ×10', status:'RECEIVED', statusText:'已收货', statusClass:'badge-success', logistics:'京东 JD7654321' },
+      { transferNo:'TF20260812003', fromStore:'北京朝阳店', toStore:'上海浦东店', items:'伊利纯牛奶 ×20', status:'COMPLETED', statusText:'已完成', statusClass:'badge-gray', logistics:'顺丰 SF9876543' },
+      { transferNo:'TF20260814004', fromStore:'北京海淀店', toStore:'上海浦东店', items:'舒肤佳香皂 ×15', status:'PENDING_OUT', statusText:'待确认出库', statusClass:'badge-info', logistics:'-' }
+    ],
+    refundOrders: [],
+    storeList: ['北京朝阳店','北京海淀店','上海浦东店'],
+    supplierList: ['绿源农业','鲜达供应链','品质优选','每日鲜配','优选生鲜']
+  };
+
+  function genOrderNo(prefix) {
+    var now = new Date();
+    var pad = function(n) { return n < 10 ? '0' + n : n; };
+    return prefix + now.getFullYear() + pad(now.getMonth()+1) + pad(now.getDate()) + String(Math.floor(Math.random()*9000+1000));
+  }
+
+  function fmtDate(d) {
+    var pad = function(n) { return n < 10 ? '0' + n : n; };
+    return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  }
+
+  // ==================== PC Table Render Functions ====================
+  function renderPCSalesTable() {
+    var tbody = document.querySelector('#page-pc-sales .pc-table tbody');
+    if (!tbody) return;
+    var html = '';
+    mockSharedData.salesOrders.forEach(function(o) {
+      html += '<tr><td>' + o.orderNo + '</td><td>' + o.name + ' ×' + o.qty + '</td><td>' + o.store + '</td><td>¥' + o.price + '</td><td>' + o.time + '</td><td><span class="badge ' + o.statusClass + '">' + o.statusText + '</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="showPCSalesOrderDetail(\'' + o.orderNo + '\')">详情</button></td></tr>';
+    });
+    tbody.innerHTML = html;
+  }
+
+  function renderPCPurchaseTable() {
+    var tbody = document.querySelector('#page-pc-purchase .pc-table tbody');
+    if (!tbody) return;
+    var html = '';
+    mockSharedData.purchaseOrders.forEach(function(o) {
+      html += '<tr><td>' + o.orderNo + '</td><td>' + o.supplier + '</td><td>' + o.store + '</td><td>' + o.items + '</td><td><span class="badge ' + o.statusClass + '">' + o.statusText + '</span></td><td>' + o.eta + '</td><td><button class="btn btn-outline btn-sm" type="button" onclick="viewPCPurchase(\'' + o.orderNo + '\')">查看</button></td></tr>';
+    });
+    tbody.innerHTML = html;
+  }
+
+  function renderPCInventoryTable() {
+    var tbody = document.querySelector('#page-pc-inventory .pc-table tbody');
+    if (!tbody) return;
+    var html = '';
+    mockSharedData.inventory.forEach(function(r) {
+      html += '<tr><td>' + r.sku + '</td><td>' + r.name + '</td><td>' + r.store + '</td>';
+      html += '<td><span class="inv-chip inv-chip-avail">' + r.available + '</span></td>';
+      html += '<td><span class="inv-chip inv-chip-preempt">' + r.preempted + '</span></td>';
+      html += '<td><span class="inv-chip inv-chip-transit">' + r.purchaseTransit + '</span></td>';
+      html += '<td><span class="inv-chip ' + (r.transferTransit > 0 ? 'inv-chip-transfer' : 'inv-chip-0') + '">' + r.transferTransit + '</span></td>';
+      html += '<td><span class="inv-chip ' + (r.frozen > 0 ? 'inv-chip-frozen' : 'inv-chip-0') + '">' + r.frozen + '</span></td>';
+      html += '<td><span class="inv-chip ' + (r.defective > 0 ? 'inv-chip-defect' : 'inv-chip-0') + '">' + r.defective + '</span></td>';
+      html += '</tr>';
+    });
+    tbody.innerHTML = html;
+  }
+
+  function renderPCTransferTable() {
+    var tbody = document.querySelector('#page-pc-transfer .pc-table tbody');
+    if (!tbody) return;
+    var html = '';
+    mockSharedData.transferOrders.forEach(function(o) {
+      var btnHtml = '';
+      if (o.status === 'PENDING_OUT') btnHtml = '<button class="btn btn-primary btn-sm" type="button" onclick="confirmTransferOutPCE2E(\'' + o.transferNo + '\')">确认出库</button>';
+      else if (o.status === 'IN_TRANSIT') btnHtml = '<button class="btn btn-outline btn-sm" type="button" onclick="trackTransferE2E(\'' + o.transferNo + '\')">追踪</button>';
+      else btnHtml = '<button class="btn btn-outline btn-sm" type="button" onclick="viewTransferE2E(\'' + o.transferNo + '\')">查看</button>';
+      html += '<tr><td>' + o.transferNo + '</td><td>' + o.fromStore + '</td><td>' + o.toStore + '</td><td>' + o.items + '</td><td><span class="badge ' + o.statusClass + '">' + o.statusText + '</span></td><td>' + o.logistics + '</td><td>' + btnHtml + '</td></tr>';
+    });
+    tbody.innerHTML = html;
+  }
+
+  function renderPCDefectiveTable() {
+    var tbody = document.querySelector('#page-pc-defective .pc-table tbody');
+    if (!tbody) return;
+    var html = '';
+    mockSharedData.defectiveItems.forEach(function(d) {
+      var badgeClass = d.type === 'frozen' ? 'badge-warning' : 'badge-danger';
+      var daysHtml = d.days >= 7 ? '<span style="color:var(--danger);font-weight:600">' + d.days + '天</span>' : (d.days >= 6 ? '<span style="color:var(--accent-2);font-weight:600">' + d.days + '天</span>' : d.days + '天');
+      html += '<tr><td>' + d.sku + '</td><td>' + d.name + '</td><td>' + d.store + '</td><td><span class="badge ' + badgeClass + '">' + d.typeText + '</span></td><td>' + d.qty + '</td><td>' + d.source + '</td><td>' + d.date + '</td><td>' + daysHtml + '</td></tr>';
+    });
+    tbody.innerHTML = html;
+  }
+
+  function renderPCFinanceTable() {
+    var tbody = document.querySelector('#page-pc-finance .pc-table tbody');
+    if (!tbody) return;
+    var finances = [
+      { orderNo:'PO20260812005', supplier:'品质优选', amount:5988, paid:0, status:'待付款', statusClass:'badge-warning' },
+      { orderNo:'PO20260810006', supplier:'绿源农业', amount:12900, paid:12900, status:'已结清', statusClass:'badge-success' },
+      { orderNo:'PO20260808007', supplier:'鲜达供应链', amount:8400, paid:4200, status:'部分付款', statusClass:'badge-info' },
+      { orderNo:'PO20260813003', supplier:'品质优选', amount:4495, paid:0, status:'待付款', statusClass:'badge-warning' }
+    ];
+    var html = '';
+    finances.forEach(function(f) {
+      var btnHtml = f.status === '待付款' || f.status === '部分付款' ? '<button class="btn btn-outline btn-sm" type="button" onclick="reconcileFinanceE2E(this)">对账</button>' : '<button class="btn btn-outline btn-sm" type="button" onclick="viewFinanceE2E(this)">查看</button>';
+      html += '<tr><td>' + f.orderNo + '</td><td>' + f.supplier + '</td><td>¥' + f.amount.toLocaleString() + '</td><td>¥' + f.paid.toLocaleString() + '</td><td><span class="badge ' + f.statusClass + '">' + f.status + '</span></td><td>' + btnHtml + '</td></tr>';
+    });
+    tbody.innerHTML = html;
+  }
+
+  function renderPCDashboard() {
+    var orders = mockSharedData.salesOrders;
+    var today = new Date().toISOString().slice(0,10);
+    var todayOrders = orders.filter(function(o) { return o.time.slice(0,10) === today; });
+    var waitPickup = orders.filter(function(o) { return o.status === 'WAIT_PICKUP'; });
+    var inTransit = mockSharedData.purchaseOrders.filter(function(o) { return o.status === 'IN_TRANSIT'; });
+    var frozenTotal = 0;
+    mockSharedData.inventory.forEach(function(r) { frozenTotal += r.frozen; });
+    var kpiGrid = document.querySelector('#page-pc-dashboard .kpi-grid');
+    if (kpiGrid) {
+      kpiGrid.innerHTML = '<div class="kpi-card"><div class="label">今日销售订单</div><div class="value">' + todayOrders.length + '</div><div class="delta up">实时更新</div></div>' +
+        '<div class="kpi-card"><div class="label">待自提订单</div><div class="value">' + waitPickup.length + '</div><div class="delta">' + mockSharedData.storeList.length + '个门店合计</div></div>' +
+        '<div class="kpi-card"><div class="label">采购在途批次</div><div class="value">' + inTransit.length + '</div><div class="delta down">↓ 2个延迟</div></div>' +
+        '<div class="kpi-card"><div class="label">异常冻结库存</div><div class="value">' + frozenTotal + '</div><div class="delta down">↑ 5件 滞留超7天</div></div>';
+    }
+    // Also update defective pool KPI
+    var defKpi = document.querySelector('#page-pc-defective .kpi-grid');
+    if (defKpi) {
+      var defCount = 0, frozCount = 0;
+      mockSharedData.defectiveItems.forEach(function(d) {
+        if (d.type === 'defective') defCount += d.qty;
+        else frozCount += d.qty;
+      });
+      var overdue = mockSharedData.defectiveItems.filter(function(d) { return d.frozen && d.days >= 7; }).reduce(function(s, d) { return s + d.qty; }, 0);
+      defKpi.innerHTML = '<div class="kpi-card"><div class="label">残次品总数</div><div class="value" style="color:var(--danger)">' + defCount + '</div><div class="delta">含收货残次+退货残次</div></div>' +
+        '<div class="kpi-card"><div class="label">异常冻结总数</div><div class="value" style="color:var(--accent-2)">' + frozCount + '</div><div class="delta down">' + overdue + '件滞留超7天</div></div>' +
+        '<div class="kpi-card"><div class="label">待退供批次</div><div class="value">2</div><div class="delta">含残次+异常冻结</div></div>';
+    }
+  }
+
+  function renderAllPCTables() {
+    renderPCSalesTable();
+    renderPCPurchaseTable();
+    renderPCInventoryTable();
+    renderPCTransferTable();
+    renderPCDefectiveTable();
+    renderPCFinanceTable();
+    renderPCDashboard();
+  }
+
+  // ==================== PC Order Detail from Shared Data ====================
+  window.showPCSalesOrderDetail = function(orderNo) {
+    var order = null;
+    for (var i = 0; i < mockSharedData.salesOrders.length; i++) {
+      if (mockSharedData.salesOrders[i].orderNo === orderNo) { order = mockSharedData.salesOrders[i]; break; }
+    }
+    if (!order) { alert('订单未找到'); return; }
+    var detailDiv = document.getElementById('pcSalesOrderDetail');
+    if (!detailDiv) {
+      detailDiv = document.createElement('div');
+      detailDiv.id = 'pcSalesOrderDetail';
+      detailDiv.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:100;display:flex;align-items:center;justify-content:center';
+      detailDiv.innerHTML = '<div id="pcSalesOrderDetailInner" style="background:var(--bg);border-radius:12px;padding:24px;width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2)"></div>';
+      detailDiv.addEventListener('click', function(e) { if (e.target === detailDiv) closePCSalesOrderDetail(); });
+      document.querySelector('#prototypeRootPC').appendChild(detailDiv);
+    }
+    var inner = document.getElementById('pcSalesOrderDetailInner');
+    inner.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px"><h3 style="margin:0">订单详情</h3><button type="button" onclick="closePCSalesOrderDetail()" style="border:none;background:none;font-size:20px;cursor:pointer;color:var(--text-muted)">&times;</button></div>' +
+      '<div style="margin-bottom:16px"><div style="font-size:var(--font-size-sm);color:var(--text-muted)">订单号</div><div style="font-weight:600">' + order.orderNo + '</div></div>' +
+      '<div style="margin-bottom:16px"><div style="font-size:var(--font-size-sm);color:var(--text-muted)">商品信息</div><div>' + order.icon + ' ' + order.name + ' ×' + order.qty + '</div><div style="font-size:var(--font-size-sm);color:var(--text-muted)">' + order.spec + '</div></div>' +
+      '<div style="margin-bottom:16px"><div style="font-size:var(--font-size-sm);color:var(--text-muted)">金额</div><div style="font-weight:600;color:var(--primary)">¥' + order.price + '</div></div>' +
+      '<div style="margin-bottom:16px"><div style="font-size:var(--font-size-sm);color:var(--text-muted)">下单门店</div><div>' + order.store + '</div></div>' +
+      '<div style="margin-bottom:16px"><div style="font-size:var(--font-size-sm);color:var(--text-muted)">下单时间</div><div>' + order.time + '</div></div>' +
+      '<div style="margin-bottom:16px"><div style="font-size:var(--font-size-sm);color:var(--text-muted)">支付方式</div><div>' + order.payment + '</div></div>' +
+      '<div style="margin-bottom:16px"><div style="font-size:var(--font-size-sm);color:var(--text-muted)">会员信息</div><div>' + (order.memberName || 'N/A') + ' (' + (order.memberId || 'N/A') + ')</div></div>' +
+      '<div style="margin-bottom:16px"><div style="font-size:var(--font-size-sm);color:var(--text-muted)">订单状态</div><span class="badge ' + order.statusClass + '">' + order.statusText + '</span></div>' +
+      (order.pickupCode ? '<div style="margin-bottom:16px"><div style="font-size:var(--font-size-sm);color:var(--text-muted)">取货码</div><div style="font-weight:600;font-size:18px;letter-spacing:2px">' + order.pickupCode + '</div></div>' : '');
+    detailDiv.style.display = 'flex';
+  };
+
+  window.closePCSalesOrderDetail = function() {
+    var d = document.getElementById('pcSalesOrderDetail');
+    if (d) d.style.display = 'none';
+  };
+
+  window.viewPCPurchase = function(orderNo) {
+    var order = null;
+    for (var i = 0; i < mockSharedData.purchaseOrders.length; i++) {
+      if (mockSharedData.purchaseOrders[i].orderNo === orderNo) { order = mockSharedData.purchaseOrders[i]; break; }
+    }
+    if (!order) { alert('采购单未找到'); return; }
+    alert('采购单详情\n采购单号: ' + order.orderNo + '\n供应商: ' + order.supplier + '\n门店: ' + order.store + '\n商品: ' + order.items + '\n状态: ' + order.statusText + '\n预计到货: ' + order.eta + '\n关联销售单: ' + order.relatedSO);
+  };
+
+  window.confirmTransferOutPCE2E = function(transferNo) {
+    for (var i = 0; i < mockSharedData.transferOrders.length; i++) {
+      if (mockSharedData.transferOrders[i].transferNo === transferNo) {
+        mockSharedData.transferOrders[i].status = 'IN_TRANSIT';
+        mockSharedData.transferOrders[i].statusText = '调拨在途';
+        mockSharedData.transferOrders[i].statusClass = 'badge-purple';
+        mockSharedData.transferOrders[i].logistics = '顺丰 SF' + String(Math.floor(Math.random()*9000000+1000000));
+        break;
+      }
+    }
+    renderPCTransferTable();
+    alert('调拨单 ' + transferNo + ' 已确认出库，物流单号已生成');
+  };
+
+  window.trackTransferE2E = function(transferNo) { alert('调拨追踪\n调拨单号: ' + transferNo + '\n状态: 调拨在途'); };
+  window.viewTransferE2E = function(transferNo) { alert('调拨详情\n调拨单号: ' + transferNo); };
+  window.reconcileFinanceE2E = function(el) { alert('对账功能已触发'); };
+  window.viewFinanceE2E = function(el) { alert('财务详情已触发'); };
+
   window.viewOrderDetailFromList = function(orderNo) {
-    var order = mockOrders[orderNo];
-    if (!order) { alert('订单数据未找到'); return; }
-    document.getElementById('orderDetailIcon').textContent = order.icon;
-    document.getElementById('orderDetailName').textContent = order.name;
-    document.getElementById('orderDetailSpec').textContent = order.spec;
-    document.getElementById('orderDetailPrice').textContent = '¥' + order.price;
+    // Try shared data first
+    var order = null;
+    for (var i = 0; i < mockSharedData.salesOrders.length; i++) {
+      if (mockSharedData.salesOrders[i].orderNo === orderNo) { order = mockSharedData.salesOrders[i]; break; }
+    }
+    if (order) {
+      document.getElementById('orderDetailIcon').textContent = order.icon;
+      document.getElementById('orderDetailName').textContent = order.name;
+      document.getElementById('orderDetailSpec').textContent = order.spec;
+      document.getElementById('orderDetailPrice').textContent = '¥' + order.price;
+      document.getElementById('orderDetailNo').textContent = orderNo;
+      document.getElementById('orderDetailTime').textContent = order.time;
+      document.getElementById('orderDetailPaid').textContent = '¥' + order.price;
+      document.getElementById('orderDetailStatus').textContent = order.statusText;
+      var storeEl = document.getElementById('orderDetailStore');
+      if (storeEl) storeEl.innerHTML = '<div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:4px">自提门店</div><div style="font-size:var(--font-size-sm);color:var(--text-muted)">' + order.store + '</div>';
+      navigateAPP('page-app-order-detail');
+      return;
+    }
+    // Fallback to old mockOrders
+    var oldOrder = mockOrders[orderNo];
+    if (!oldOrder) { alert('订单数据未找到'); return; }
+    document.getElementById('orderDetailIcon').textContent = oldOrder.icon;
+    document.getElementById('orderDetailName').textContent = oldOrder.name;
+    document.getElementById('orderDetailSpec').textContent = oldOrder.spec;
+    document.getElementById('orderDetailPrice').textContent = '¥' + oldOrder.price;
     document.getElementById('orderDetailNo').textContent = orderNo;
-    document.getElementById('orderDetailTime').textContent = order.time;
-    document.getElementById('orderDetailPaid').textContent = '¥' + order.price;
-    document.getElementById('orderDetailStatus').textContent = order.status;
-    var storeEl = document.getElementById('orderDetailStore');
-    if (storeEl) storeEl.innerHTML = '<div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:4px">自提门店</div><div style="font-size:var(--font-size-sm);color:var(--text-muted)">' + order.store + '</div>';
+    document.getElementById('orderDetailTime').textContent = oldOrder.time;
+    document.getElementById('orderDetailPaid').textContent = '¥' + oldOrder.price;
+    document.getElementById('orderDetailStatus').textContent = oldOrder.status;
+    var oldStoreEl = document.getElementById('orderDetailStore');
+    if (oldStoreEl) oldStoreEl.innerHTML = '<div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:4px">自提门店</div><div style="font-size:var(--font-size-sm);color:var(--text-muted)">' + oldOrder.store + '</div>';
     navigateAPP('page-app-order-detail');
   };
 
@@ -4946,29 +5211,105 @@ body.text-mode .text-mode-doc { display: block; }
     var total = currentSpecData.price * currentSpecData.qty;
     var now = new Date();
     var pad = function(n) { return n < 10 ? '0' + n : n; };
-    var orderNo = 'SO' + now.getFullYear() + pad(now.getMonth()+1) + pad(now.getDate()) + String(Math.floor(Math.random()*900+100));
-    var timeStr = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+    var orderNo = genOrderNo('SO');
+    var timeStr = fmtDate(now);
+    var storeName = '北京朝阳店'; // Default store for mock user
+    var supplier = mockSharedData.supplierList[Math.floor(Math.random() * mockSharedData.supplierList.length)];
+
+    // Add to shared sales orders
+    var newOrder = {
+      orderNo: orderNo,
+      icon: currentSpecData.icon,
+      name: currentSpecData.name,
+      spec: currentSpecData.spec + ' ×' + currentSpecData.qty,
+      qty: currentSpecData.qty,
+      price: total.toFixed(2),
+      status: 'PURCHASING',
+      statusText: '备货中',
+      statusClass: 'badge-info',
+      store: storeName,
+      storeCode: 'CY001',
+      time: timeStr,
+      payment: '微信支付',
+      memberName: '当前用户',
+      memberId: 'M' + String(Math.floor(Math.random()*900+100)),
+      pickupCode: null
+    };
+    mockSharedData.salesOrders.unshift(newOrder);
+
+    // Auto-generate purchase order
+    var poNo = genOrderNo('PO');
+    var eta = new Date(now);
+    eta.setDate(eta.getDate() + 3);
+    var etaStr = (eta.getMonth()+1 < 10 ? '0' : '') + (eta.getMonth()+1) + '-' + (eta.getDate() < 10 ? '0' : '') + eta.getDate();
+    mockSharedData.purchaseOrders.unshift({
+      orderNo: poNo,
+      supplier: supplier,
+      store: storeName,
+      storeCode: 'CY001',
+      items: currentSpecData.name + ' ' + currentSpecData.qty + '件',
+      status: 'PENDING',
+      statusText: '待发货',
+      statusClass: 'badge-info',
+      eta: etaStr,
+      relatedSO: orderNo
+    });
+
+    // Update inventory - add preempted
+    var invFound = false;
+    for (var i = 0; i < mockSharedData.inventory.length; i++) {
+      if (mockSharedData.inventory[i].storeCode === 'CY001' && mockSharedData.inventory[i].name === currentSpecData.name) {
+        mockSharedData.inventory[i].preempted += currentSpecData.qty;
+        mockSharedData.inventory[i].purchaseTransit += currentSpecData.qty;
+        invFound = true;
+        break;
+      }
+    }
+
+    // Update view
     document.getElementById('paySuccessAmount').textContent = '已支付 ¥' + total.toFixed(2);
     document.getElementById('paySuccessOrderNo').textContent = orderNo;
     currentSpecData.orderNo = orderNo;
     currentSpecData.orderTime = timeStr;
     currentSpecData.paid = total.toFixed(2);
     navigateAPP('page-app-pay-success');
+
+    // Refresh all PC tables in background
+    renderAllPCTables();
   };
 
   window.viewOrderDetail = function() {
-    document.getElementById('orderDetailIcon').textContent = currentSpecData.icon;
-    document.getElementById('orderDetailName').textContent = currentSpecData.name;
-    document.getElementById('orderDetailSpec').textContent = currentSpecData.spec + ' ×' + currentSpecData.qty;
-    document.getElementById('orderDetailPrice').textContent = '¥' + currentSpecData.paid;
-    document.getElementById('orderDetailNo').textContent = currentSpecData.orderNo;
-    document.getElementById('orderDetailTime').textContent = currentSpecData.orderTime;
-    document.getElementById('orderDetailPaid').textContent = '¥' + currentSpecData.paid;
-    document.getElementById('orderDetailStatus').textContent = '备货中';
+    var orderNo = currentSpecData.orderNo;
+    var order = null;
+    for (var i = 0; i < mockSharedData.salesOrders.length; i++) {
+      if (mockSharedData.salesOrders[i].orderNo === orderNo) { order = mockSharedData.salesOrders[i]; break; }
+    }
+    if (order) {
+      document.getElementById('orderDetailIcon').textContent = order.icon;
+      document.getElementById('orderDetailName').textContent = order.name;
+      document.getElementById('orderDetailSpec').textContent = order.spec;
+      document.getElementById('orderDetailPrice').textContent = '¥' + order.price;
+      document.getElementById('orderDetailNo').textContent = order.orderNo;
+      document.getElementById('orderDetailTime').textContent = order.time;
+      document.getElementById('orderDetailPaid').textContent = '¥' + order.price;
+      document.getElementById('orderDetailStatus').textContent = order.statusText;
+    } else {
+      // Fallback to currentSpecData
+      document.getElementById('orderDetailIcon').textContent = currentSpecData.icon;
+      document.getElementById('orderDetailName').textContent = currentSpecData.name;
+      document.getElementById('orderDetailSpec').textContent = currentSpecData.spec + ' ×' + currentSpecData.qty;
+      document.getElementById('orderDetailPrice').textContent = '¥' + currentSpecData.paid;
+      document.getElementById('orderDetailNo').textContent = currentSpecData.orderNo;
+      document.getElementById('orderDetailTime').textContent = currentSpecData.orderTime;
+      document.getElementById('orderDetailPaid').textContent = '¥' + currentSpecData.paid;
+      document.getElementById('orderDetailStatus').textContent = '备货中';
+    }
     navigateAPP('page-app-order-detail');
   };
 
   // Initialize pagination on first product page visit
+  // E2E: Initial render of all PC tables from shared data
+  renderAllPCTables();
 })();
 </script>
 </body>
