@@ -1223,24 +1223,24 @@ body.text-mode .text-mode-doc { display: block; }
 
 /* ==================== Toast Notification ==================== */
 .toast-container {
-  position: fixed; top: 24px; left: 50%; transform: translateX(-50%);
-  z-index: 99999; display: flex; flex-direction: column; gap: 8px;
-  pointer-events: none;
+  position: absolute; top: 0; left: 0; right: 0;
+  z-index: 99999; display: flex; flex-direction: column; align-items: center;
+  padding-top: 16px; pointer-events: none;
 }
 .toast-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 20px; border-radius: 8px;
-  background: #fff; box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-  font-size: 14px; color: #1e293b; line-height: 1.5;
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px; border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  font-size: 14px; line-height: 1.5;
   pointer-events: auto; white-space: nowrap;
   animation: toastIn 0.3s ease, toastOut 0.3s ease forwards;
   animation-delay: 0s, 2.5s;
-  max-width: 90vw;
+  max-width: 90%;
 }
 .toast-item.toast-detail {
   white-space: normal; max-width: 420px; min-width: 280px;
   animation-delay: 0s, 4s; flex-direction: column; align-items: flex-start;
-  gap: 6px; padding: 16px 20px;
+  gap: 6px; padding: 12px 16px;
 }
 .toast-item.toast-detail .toast-body {
   font-size: 13px; line-height: 1.8; color: #475569; width: 100%;
@@ -1248,14 +1248,26 @@ body.text-mode .text-mode-doc { display: block; }
 .toast-item.toast-detail .toast-title {
   font-weight: 600; font-size: 14px; color: #1e293b;
 }
-.toast-icon {
-  width: 20px; height: 20px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; font-size: 11px; color: #fff; font-weight: 700;
+.toast-item.toast-success {
+  background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a;
 }
-.toast-icon.toast-success { background: #22c55e; }
-.toast-icon.toast-error { background: #ef4444; }
-.toast-icon.toast-warning { background: #f59e0b; }
+.toast-item.toast-error {
+  background: #fff2f0; border: 1px solid #ffccc7; color: #ff4d4f;
+}
+.toast-item.toast-warning {
+  background: #fffbe6; border: 1px solid #ffe58f; color: #faad14;
+}
+.toast-item.toast-info {
+  background: #fff; border: 1px solid #e2e8f0; color: #1e293b;
+}
+.toast-icon {
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 10px; color: #fff; font-weight: 700;
+}
+.toast-icon.toast-success { background: #52c41a; }
+.toast-icon.toast-error { background: #ff4d4f; }
+.toast-icon.toast-warning { background: #faad14; }
 .toast-icon.toast-info { background: #3b82f6; }
 @keyframes toastIn {
   from { opacity: 0; transform: translateY(-12px); }
@@ -3776,10 +3788,18 @@ body.text-mode .text-mode-doc { display: block; }
   // ==================== Toast Notification System ====================
   var toastContainer = null;
   function getToastContainer() {
-    if (!toastContainer) {
+    var root = document.getElementById('prototypeRootPC');
+    if (!root || root.offsetParent === null) {
+      root = document.getElementById('prototypeRootAPP');
+    }
+    if (!root) return document.body;
+    if (!toastContainer || toastContainer.parentNode !== root) {
+      if (toastContainer && toastContainer.parentNode) {
+        toastContainer.parentNode.removeChild(toastContainer);
+      }
       toastContainer = document.createElement('div');
       toastContainer.className = 'toast-container';
-      document.body.appendChild(toastContainer);
+      root.appendChild(toastContainer);
     }
     return toastContainer;
   }
@@ -3791,9 +3811,8 @@ body.text-mode .text-mode-doc { display: block; }
     duration = duration || 3000;
     var container = getToastContainer();
     var item = document.createElement('div');
-    item.className = 'toast-item';
+    item.className = 'toast-item toast-' + type;
     if (msg.indexOf('\n') > -1) {
-      // Multi-line detail message
       item.className += ' toast-detail';
       var lines = msg.split('\n');
       var title = lines[0].replace(/[━\s]+/g, '').trim();
