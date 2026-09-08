@@ -3801,30 +3801,6 @@ body.text-mode .text-mode-doc { display: block; }
     navigatePC('page-pc-product-new');
   };
 
-  window.editProduct = function(sku) {
-    document.getElementById('productPageTitle').textContent = '编辑商品';
-    document.getElementById('productEditSku').value = sku;
-    document.getElementById('prodSku').value = sku;
-    var row = document.getElementById('row-' + sku);
-    if (row) {
-      var cells = row.querySelectorAll('td');
-      document.getElementById('prodName').value = cells[1].textContent.trim();
-      document.getElementById('prodCategory').value = cells[2].textContent.trim();
-      document.getElementById('prodSpec').value = cells[3].textContent.trim();
-      document.getElementById('prodPrice').value = cells[4].textContent.replace('¥','').trim();
-      document.getElementById('prodDays').value = cells[5].textContent.trim();
-      document.getElementById('prodDesc').value = '';
-    } else {
-      document.getElementById('prodName').value = '';
-      document.getElementById('prodCategory').value = '生鲜水果';
-      document.getElementById('prodSpec').value = '';
-      document.getElementById('prodPrice').value = '';
-      document.getElementById('prodDays').value = '';
-      document.getElementById('prodDesc').value = '';
-    }
-    navigatePC('page-pc-product-new');
-  };
-
   window.saveProductPage = function() {
     var sku = document.getElementById('prodSku').value.trim();
     var name = document.getElementById('prodName').value.trim();
@@ -3841,9 +3817,28 @@ body.text-mode .text-mode-doc { display: block; }
     if (editSku) {
       var row = document.getElementById('row-' + editSku);
       if (row) {
-        var now = new Date().toISOString().slice(0, 10);
-        row.innerHTML = '<td>' + sku + '</td><td>' + name + '</td><td>' + category + '</td><td>' + spec + '</td><td>¥' + parseFloat(price).toFixed(2) + '</td><td>' + days + '</td><td><span class="badge badge-success">已上架</span></td><td>' + now + '</td><td>' + now + '</td><td><button class="btn btn-outline btn-sm" type="button" onclick="editProduct(\'' + sku + '\')">编辑</button><button class="btn btn-outline btn-sm" type="button" onclick="toggleShelf(\'' + sku + '\')">下架</button><button class="btn btn-outline btn-sm" type="button" onclick="deleteProduct(\'' + sku + '\')">删除</button></td>';
+        var cells = row.querySelectorAll('td');
+        var oldBadge = row.querySelector('.badge');
+        var badgeHtml = oldBadge ? oldBadge.outerHTML : '<span class="badge badge-success">已上架</span>';
+        var oldCreateTime = cells[7] ? cells[7].textContent.trim() : new Date().toISOString().slice(0, 10);
+        var updateTime = new Date().toISOString().slice(0, 10);
+        cells[0].textContent = sku;
+        cells[1].textContent = name;
+        cells[2].textContent = category;
+        cells[3].textContent = spec;
+        cells[4].textContent = '¥' + parseFloat(price).toFixed(2);
+        cells[5].textContent = days + '天';
+        cells[8].textContent = updateTime;
         row.id = 'row-' + sku;
+        var btns = row.querySelectorAll('button');
+        if (btns.length >= 3) {
+          btns[0].setAttribute('onclick', "editProduct('" + sku + "')");
+          var badge = row.querySelector('.badge');
+          var isListed = badge && badge.textContent.trim() === '已上架';
+          btns[1].setAttribute('onclick', "toggleShelf('" + sku + "')");
+          btns[1].textContent = isListed ? '下架' : '上架';
+          btns[2].setAttribute('onclick', "deleteProduct('" + sku + "')");
+        }
         alert('商品更新成功！');
       }
     } else {
@@ -5049,7 +5044,29 @@ body.text-mode .text-mode-doc { display: block; }
     closeProductModal();
   };
 
-  window.editProduct = function(sku) { showProductModal(sku); };
+  window.editProduct = function(sku) {
+    document.getElementById('productPageTitle').textContent = '编辑商品';
+    document.getElementById('productEditSku').value = sku;
+    document.getElementById('prodSku').value = sku;
+    var row = document.getElementById('row-' + sku);
+    if (row) {
+      var cells = row.querySelectorAll('td');
+      document.getElementById('prodName').value = cells[1].textContent.trim();
+      document.getElementById('prodCategory').value = cells[2].textContent.trim();
+      document.getElementById('prodSpec').value = cells[3].textContent.trim();
+      document.getElementById('prodPrice').value = cells[4].textContent.replace('¥','').trim();
+      document.getElementById('prodDays').value = cells[5].textContent.replace('天','').trim();
+      document.getElementById('prodDesc').value = '';
+    } else {
+      document.getElementById('prodName').value = '';
+      document.getElementById('prodCategory').value = '生鲜水果';
+      document.getElementById('prodSpec').value = '';
+      document.getElementById('prodPrice').value = '';
+      document.getElementById('prodDays').value = '';
+      document.getElementById('prodDesc').value = '';
+    }
+    navigatePC('page-pc-product-new');
+  };
 
   window.toggleShelf = function(sku) {
     var row = document.getElementById('row-' + sku);
