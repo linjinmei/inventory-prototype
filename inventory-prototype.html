@@ -4265,7 +4265,44 @@ body.text-mode .text-mode-doc { display: block; }
       if (mockSharedData.purchaseOrders[i].orderNo === orderNo) { order = mockSharedData.purchaseOrders[i]; break; }
     }
     if (!order) { showToast('采购单未找到', 'error'); return; }
-    showToast('采购单详情\n采购单号: ' + order.orderNo + '\n供应商: ' + order.supplier + '\n门店: ' + order.store + '\n商品: ' + order.items + '\n状态: ' + order.statusText + '\n预计到货: ' + order.eta + '\n关联销售单: ' + order.relatedSO, 'info');
+    var detailDiv = document.getElementById('pcPurchaseOrderDetail');
+    if (!detailDiv) {
+      detailDiv = document.createElement('div');
+      detailDiv.id = 'pcPurchaseOrderDetail';
+      detailDiv.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:100;display:flex;align-items:center;justify-content:center';
+      detailDiv.innerHTML = '<div id="pcPurchaseOrderDetailInner" style="background:#ffffff;border-radius:12px;padding:28px;width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25)"></div>';
+      detailDiv.addEventListener('click', function(e) { if (e.target === detailDiv) closePCPurchaseOrderDetail(); });
+      document.querySelector('#prototypeRootPC').appendChild(detailDiv);
+    }
+    var inner = document.getElementById('pcPurchaseOrderDetailInner');
+    inner.innerHTML =
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #e2e8f0">' +
+        '<h3 style="margin:0;font-size:18px;color:#1e293b">采购单详情</h3>' +
+        '<button type="button" onclick="closePCPurchaseOrderDetail()" style="border:none;background:none;font-size:24px;cursor:pointer;color:#94a3b8;line-height:1;padding:0">&times;</button>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding:16px;background:#f8fafc;border-radius:8px">' +
+        '<div><div style="font-size:12px;color:#64748b;margin-bottom:4px">采购单号</div><div style="font-weight:600;font-size:14px;color:#1e293b">' + order.orderNo + '</div></div>' +
+        '<span class="badge ' + order.statusClass + '" style="font-size:13px;padding:4px 12px">' + order.statusText + '</span>' +
+      '</div>' +
+      '<div style="margin-bottom:20px">' +
+        '<div style="font-size:12px;color:#64748b;margin-bottom:8px;font-weight:500">商品信息</div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:#f8fafc;border-radius:8px">' +
+          '<div style="display:flex;align-items:center;gap:10px"><span style="font-size:24px">' + (order.icon || '📦') + '</span><div><div style="font-weight:500;color:#1e293b">' + order.items + '</div><div style="font-size:12px;color:#64748b">SKU: ' + (order.sku || '-') + '</div></div></div>' +
+          '<div style="font-weight:600;font-size:18px;color:#0d9488">¥' + (order.amount || 0).toLocaleString() + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">' +
+        '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">供应商</div><div style="font-weight:500;color:#1e293b">' + order.supplier + '</div></div>' +
+        '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">目标门店</div><div style="font-weight:500;color:#1e293b">' + order.store + '</div></div>' +
+        '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">预计到货</div><div style="font-weight:500;color:#1e293b">' + order.eta + '</div></div>' +
+        '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">关联销售单</div><div style="font-weight:500;color:#1e293b">' + (order.relatedSO || '-') + '</div></div>' +
+        (order.logistics ? '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">物流公司</div><div style="font-weight:500;color:#1e293b">' + order.logistics + '</div></div>' : '') +
+        (order.paid ? '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">已付金额</div><div style="font-weight:500;color:#1e293b">¥' + order.paid.toLocaleString() + '</div></div>' : '') +
+      '</div>' +
+      '<div style="text-align:right;padding-top:12px;border-top:1px solid #e2e8f0">' +
+        '<button type="button" onclick="closePCPurchaseOrderDetail()" style="border:1px solid #e2e8f0;background:#fff;padding:8px 20px;border-radius:6px;cursor:pointer;font-size:13px;color:#64748b">关闭</button>' +
+      '</div>';
+    detailDiv.style.display = 'flex';
   };
 
   window.confirmTransferOutPCE2E = function(transferNo) {
@@ -4583,9 +4620,9 @@ body.text-mode .text-mode-doc { display: block; }
       if (mockSharedData.purchaseOrders[i].orderNo === poNo) { order = mockSharedData.purchaseOrders[i]; break; }
     }
     var statusClass = order ? order.statusClass : 'badge-info';
-    var amount = order ? order.amount : 0;
+    var amount = order ? (order.amount || 0) : 0;
     var paid = order ? (order.paid || 0) : 0;
-    var logistics = order ? (order.logistics || '-') : '-';
+    var logistics = order ? order.logistics : null;
     var relatedSO = order ? (order.relatedSO || '-') : '-';
     var detailDiv = document.getElementById('pcPurchaseOrderDetail');
     if (!detailDiv) {
@@ -4603,22 +4640,22 @@ body.text-mode .text-mode-doc { display: block; }
         '<button type="button" onclick="closePCPurchaseOrderDetail()" style="border:none;background:none;font-size:24px;cursor:pointer;color:#94a3b8;line-height:1;padding:0">&times;</button>' +
       '</div>' +
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding:16px;background:#f8fafc;border-radius:8px">' +
-        '<div><div style="font-size:12px;color:#64748b;margin-bottom:4px">采购单号</div><div style="font-weight:600;font-size:14px;color:#1e293b">' + poNo + '</div></div>' +
-        '<span class="badge ' + statusClass + '" style="font-size:13px;padding:4px 12px">' + statusText + '</span>' +
+        '<div><div style="font-size:12px;color:#64748b;margin-bottom:4px">采购单号</div><div style="font-weight:600;font-size:14px;color:#1e293b">' + (order ? order.orderNo : poNo) + '</div></div>' +
+        '<span class="badge ' + statusClass + '" style="font-size:13px;padding:4px 12px">' + (order ? order.statusText : statusText) + '</span>' +
       '</div>' +
       '<div style="margin-bottom:20px">' +
         '<div style="font-size:12px;color:#64748b;margin-bottom:8px;font-weight:500">商品信息</div>' +
         '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:#f8fafc;border-radius:8px">' +
-          '<div style="display:flex;align-items:center;gap:10px"><span style="font-size:24px">📦</span><div><div style="font-weight:500;color:#1e293b">' + items + '</div></div></div>' +
-          (amount > 0 ? '<div style="font-weight:600;font-size:18px;color:#0d9488">¥' + amount.toLocaleString() + '</div>' : '') +
+          '<div style="display:flex;align-items:center;gap:10px"><span style="font-size:24px">' + (order && order.icon ? order.icon : '📦') + '</span><div><div style="font-weight:500;color:#1e293b">' + (order ? order.items : items) + '</div><div style="font-size:12px;color:#64748b">SKU: ' + (order && order.sku ? order.sku : '-') + '</div></div></div>' +
+          '<div style="font-weight:600;font-size:18px;color:#0d9488">¥' + amount.toLocaleString() + '</div>' +
         '</div>' +
       '</div>' +
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">' +
-        '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">供应商</div><div style="font-weight:500;color:#1e293b">' + supplier + '</div></div>' +
-        '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">目标门店</div><div style="font-weight:500;color:#1e293b">' + store + '</div></div>' +
-        '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">预计到货</div><div style="font-weight:500;color:#1e293b">' + eta + '</div></div>' +
+        '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">供应商</div><div style="font-weight:500;color:#1e293b">' + (order ? order.supplier : supplier) + '</div></div>' +
+        '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">目标门店</div><div style="font-weight:500;color:#1e293b">' + (order ? order.store : store) + '</div></div>' +
+        '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">预计到货</div><div style="font-weight:500;color:#1e293b">' + (order ? order.eta : eta) + '</div></div>' +
         '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">关联销售单</div><div style="font-weight:500;color:#1e293b">' + relatedSO + '</div></div>' +
-        (logistics !== '-' ? '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">物流公司</div><div style="font-weight:500;color:#1e293b">' + logistics + '</div></div>' : '') +
+        (logistics ? '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">物流公司</div><div style="font-weight:500;color:#1e293b">' + logistics + '</div></div>' : '') +
         (paid > 0 ? '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">已付金额</div><div style="font-weight:500;color:#1e293b">¥' + paid.toLocaleString() + '</div></div>' : '') +
       '</div>' +
       '<div style="text-align:right;padding-top:12px;border-top:1px solid #e2e8f0">' +
