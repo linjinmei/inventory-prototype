@@ -1327,7 +1327,7 @@ body.text-mode .text-mode-doc { display: block; }
             </button>
             <button class="pc-nav-item" type="button" onclick="navigatePC('page-pc-sales')" data-link="feature-sales">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-              销售管理
+              订单管理
             </button>
             <button class="pc-nav-item" type="button" onclick="navigatePC('page-pc-purchase')" data-link="feature-purchase">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
@@ -1458,7 +1458,7 @@ body.text-mode .text-mode-doc { display: block; }
             <!-- Sales Orders -->
             <div class="pc-page" id="page-pc-sales">
               <div class="pc-page-header">
-                <div class="pc-page-title">销售订单管理</div>
+                <div class="pc-page-title">订单管理</div>
                 <button class="btn btn-outline btn-sm" type="button" onclick="exportOrders()">导出订单</button>
               </div>
               <div class="pc-page-body">
@@ -3560,7 +3560,7 @@ body.text-mode .text-mode-doc { display: block; }
               </table>
             </div>
             <div class="feature-section" id="feature-sales">
-              <h3>销售管理 <span class="priority-tag priority-p0">P0</span></h3>
+              <h3>订单管理 <span class="priority-tag priority-p0">P0</span></h3>
               <table class="feature-table">
                 <tr><th>功能点</th><th>描述</th><th>字段来源 / 取值逻辑</th><th>优先级</th></tr>
                 <tr><td>销售订单列表</td><td>全平台订单查询、筛选、导出</td><td>订单号 = SO + 年月日 + 4位流水（系统自动生成）；商品名称/SKU/数量 = 来自 sales_order_item 表；会员信息 = 下单用户的 nickname + member_id，来自 user 表；订单金额 = item.price × item.quantity 求和；门店 = 用户所属门店 store_code；订单状态 = order_status 字段；数据源：sales_order + sales_order_item + user 三表 JOIN</td><td>P0</td></tr>
@@ -3831,7 +3831,7 @@ body.text-mode .text-mode-doc { display: block; }
   var routeMap = {
     'page-pc-dashboard': 'admin.store.com/dashboard',
     'page-pc-products': 'admin.store.com/products',
-    'page-pc-sales': 'admin.store.com/sales',
+    'page-pc-sales': 'admin.store.com/orders',
     'page-pc-purchase': 'admin.store.com/purchase',
     'page-pc-inventory': 'admin.store.com/inventory',
     'page-pc-transfer': 'admin.store.com/transfer',
@@ -3846,7 +3846,7 @@ body.text-mode .text-mode-doc { display: block; }
   var featureNames = {
     'feature-dashboard': '数据概览',
     'feature-product': '商品管理',
-    'feature-sales': '销售管理',
+    'feature-sales': '订单管理',
     'feature-purchase': '采购管理',
     'feature-inventory': '库存管理',
     'feature-transfer': '门店调拨',
@@ -4574,10 +4574,62 @@ body.text-mode .text-mode-doc { display: block; }
     var poNo = cells[0].textContent.trim();
     var supplier = cells[1].textContent.trim();
     var store = cells[2].textContent.trim();
-    var product = cells[3].textContent.trim();
-    var status = cells[4].textContent.trim();
+    var items = cells[3].textContent.trim();
+    var statusText = cells[4].textContent.trim();
     var eta = cells[5].textContent.trim();
-    showToast('采购单详情\n━━━━━━━━━━\n采购单号：' + poNo + '\n供应商：' + supplier + '\n门店：' + store + '\n商品：' + product + '\n状态：' + status + '\n预计到货：' + eta, 'info');
+    // Look up full data from shared data
+    var order = null;
+    for (var i = 0; i < mockSharedData.purchaseOrders.length; i++) {
+      if (mockSharedData.purchaseOrders[i].orderNo === poNo) { order = mockSharedData.purchaseOrders[i]; break; }
+    }
+    var statusClass = order ? order.statusClass : 'badge-info';
+    var amount = order ? order.amount : 0;
+    var paid = order ? (order.paid || 0) : 0;
+    var logistics = order ? (order.logistics || '-') : '-';
+    var relatedSO = order ? (order.relatedSO || '-') : '-';
+    var detailDiv = document.getElementById('pcPurchaseOrderDetail');
+    if (!detailDiv) {
+      detailDiv = document.createElement('div');
+      detailDiv.id = 'pcPurchaseOrderDetail';
+      detailDiv.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:100;display:flex;align-items:center;justify-content:center';
+      detailDiv.innerHTML = '<div id="pcPurchaseOrderDetailInner" style="background:#ffffff;border-radius:12px;padding:28px;width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25)"></div>';
+      detailDiv.addEventListener('click', function(e) { if (e.target === detailDiv) closePCPurchaseOrderDetail(); });
+      document.querySelector('#prototypeRootPC').appendChild(detailDiv);
+    }
+    var inner = document.getElementById('pcPurchaseOrderDetailInner');
+    inner.innerHTML =
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #e2e8f0">' +
+        '<h3 style="margin:0;font-size:18px;color:#1e293b">采购单详情</h3>' +
+        '<button type="button" onclick="closePCPurchaseOrderDetail()" style="border:none;background:none;font-size:24px;cursor:pointer;color:#94a3b8;line-height:1;padding:0">&times;</button>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding:16px;background:#f8fafc;border-radius:8px">' +
+        '<div><div style="font-size:12px;color:#64748b;margin-bottom:4px">采购单号</div><div style="font-weight:600;font-size:14px;color:#1e293b">' + poNo + '</div></div>' +
+        '<span class="badge ' + statusClass + '" style="font-size:13px;padding:4px 12px">' + statusText + '</span>' +
+      '</div>' +
+      '<div style="margin-bottom:20px">' +
+        '<div style="font-size:12px;color:#64748b;margin-bottom:8px;font-weight:500">商品信息</div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:#f8fafc;border-radius:8px">' +
+          '<div style="display:flex;align-items:center;gap:10px"><span style="font-size:24px">📦</span><div><div style="font-weight:500;color:#1e293b">' + items + '</div></div></div>' +
+          (amount > 0 ? '<div style="font-weight:600;font-size:18px;color:#0d9488">¥' + amount.toLocaleString() + '</div>' : '') +
+        '</div>' +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">' +
+        '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">供应商</div><div style="font-weight:500;color:#1e293b">' + supplier + '</div></div>' +
+        '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">目标门店</div><div style="font-weight:500;color:#1e293b">' + store + '</div></div>' +
+        '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">预计到货</div><div style="font-weight:500;color:#1e293b">' + eta + '</div></div>' +
+        '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">关联销售单</div><div style="font-weight:500;color:#1e293b">' + relatedSO + '</div></div>' +
+        (logistics !== '-' ? '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">物流公司</div><div style="font-weight:500;color:#1e293b">' + logistics + '</div></div>' : '') +
+        (paid > 0 ? '<div style="padding:12px;background:#f8fafc;border-radius:8px"><div style="font-size:12px;color:#64748b;margin-bottom:4px">已付金额</div><div style="font-weight:500;color:#1e293b">¥' + paid.toLocaleString() + '</div></div>' : '') +
+      '</div>' +
+      '<div style="text-align:right;padding-top:12px;border-top:1px solid #e2e8f0">' +
+        '<button type="button" onclick="closePCPurchaseOrderDetail()" style="border:1px solid #e2e8f0;background:#fff;padding:8px 20px;border-radius:6px;cursor:pointer;font-size:13px;color:#64748b">关闭</button>' +
+      '</div>';
+    detailDiv.style.display = 'flex';
+  };
+
+  window.closePCPurchaseOrderDetail = function() {
+    var d = document.getElementById('pcPurchaseOrderDetail');
+    if (d) d.style.display = 'none';
   };
 
   window.createTransfer = function() {
