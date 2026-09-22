@@ -310,6 +310,8 @@ body {
   font-weight: 600;
 }
 .pc-nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+.pc-tab-btn.active { background: var(--primary) !important; color: #fff !important; border-color: var(--primary) !important; }
+.pc-tab-btn.active:hover { background: var(--primary) !important; color: #fff !important; }
 .pc-content-area {
   flex: 1;
   overflow-y: auto;
@@ -424,6 +426,7 @@ body {
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   padding: 6px 14px;
   border-radius: 6px;
@@ -439,6 +442,8 @@ body {
 .btn-outline { background: #fff; color: var(--text-main); border: 1px solid var(--border); }
 .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
 .btn-sm { padding: 4px 10px; font-size: var(--font-size-xs); }
+.aftersale-type-btn.active { background: var(--primary) !important; color: #fff !important; border-color: var(--primary) !important; }
+.aftersale-type-btn.active:hover { background: var(--primary) !important; color: #fff !important; }
 
 .filter-bar {
   display: flex;
@@ -1329,6 +1334,10 @@ body.text-mode .text-mode-doc { display: block; }
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
               订单管理
             </button>
+            <button class="pc-nav-item" type="button" onclick="navigatePC('page-pc-aftersales')" data-link="feature-aftersales">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              售后管理
+            </button>
             <button class="pc-nav-item" type="button" onclick="navigatePC('page-pc-purchase')" data-link="feature-purchase">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
               采购管理
@@ -1365,6 +1374,10 @@ body.text-mode .text-mode-doc { display: block; }
                   <div class="kpi-card"><div class="label">待自提订单</div><div class="value">56</div><div class="delta">3个门店合计</div></div>
                   <div class="kpi-card"><div class="label">采购在途批次</div><div class="value">8</div><div class="delta down">↓ 2个延迟</div></div>
                   <div class="kpi-card"><div class="label">异常冻结库存</div><div class="value">23</div><div class="delta down">↑ 5件 滞留超7天</div></div>
+                  <div class="kpi-card"><div class="label">即将超时自提</div><div class="value" style="color:var(--warning)">3</div><div class="delta">&lt;24h未自提</div></div>
+                  <div class="kpi-card"><div class="label">待审核售后</div><div class="value" style="color:var(--warning)">3</div><div class="delta">含1笔超时</div></div>
+                  <div class="kpi-card"><div class="label">待退供批次</div><div class="value">2</div><div class="delta">含残次+异常冻结</div></div>
+                  <div class="kpi-card"><div class="label">本月售后退款</div><div class="value" style="color:var(--danger)">¥219.50</div><div class="delta">含垫付¥120</div></div>
                 </div>
                 <div class="chart-grid">
                   <div class="chart-card">
@@ -1464,7 +1477,7 @@ body.text-mode .text-mode-doc { display: block; }
               <div class="pc-page-body">
                 <div class="filter-bar">
                   <input class="filter-input" type="text" id="pcSalesSearch" placeholder="搜索订单号/商品/用户" oninput="filterPCSalesTable()">
-                  <select class="filter-select" id="pcSalesStatus" onchange="filterPCSalesTable()"><option value="">全部状态</option><option value="待自提">待自提</option><option value="备货中">备货中</option><option value="已完成">已完成</option><option value="退款中">退款中</option></select>
+                  <select class="filter-select" id="pcSalesStatus" onchange="filterPCSalesTable()"><option value="">全部状态</option><option value="待自提">待自提</option><option value="备货中">备货中</option><option value="已完成">已完成</option><option value="退款中">退款中</option><option value="已超时取消">已超时取消</option></select>
                   <select class="filter-select" id="pcSalesStore" onchange="filterPCSalesTable()"><option value="">全部门店</option><option value="北京朝阳店">北京朝阳店</option><option value="北京海淀店">北京海淀店</option><option value="上海浦东店">上海浦东店</option></select>
                 </div>
                 <table class="pc-table">
@@ -1595,6 +1608,17 @@ body.text-mode .text-mode-doc { display: block; }
                     <tr><td>SKU007</td><td>新疆和田大枣</td><td>浦东店</td><td><span class="badge badge-warning">异常冻结</span></td><td>5</td><td>到货退款对冲</td><td>08-08</td><td><span style="color:var(--accent-2);font-weight:600">6天</span></td></tr>
                   </tbody>
                 </table>
+
+                <div class="chart-card-title" style="margin:16px 0 8px">退供单列表</div>
+                <table class="pc-table">
+                  <thead><tr><th>退供单号</th><th>供应商</th><th>门店</th><th>件数</th><th>金额</th><th>物流</th><th>状态</th><th>操作</th></tr></thead>
+                  <tbody>
+                    <tr><td>PR20260814001</td><td>绿源农业</td><td>朝阳+浦东</td><td>7</td><td>¥210</td><td>—</td><td><span class="badge badge-purple">待出库</span></td><td><button class="btn btn-primary btn-sm" type="button" onclick="alert('请打包出库并录入物流单号')">出库</button></td></tr>
+                    <tr><td>PR20260813002</td><td>品质优选</td><td>浦东店</td><td>3</td><td>¥1,200</td><td>顺丰 SF1234567</td><td><span class="badge badge-info">退供在途</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="alert('物流追踪：顺丰 SF1234567，预计08-16到达')">追踪</button></td></tr>
+                    <tr><td>PR20260812003</td><td>鲜达供应链</td><td>朝阳店</td><td>5</td><td>¥350</td><td>京东 JD7654321</td><td><span class="badge badge-success">已完成</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="alert('退供已完成，库存已清零，财务已冲销')">查看</button></td></tr>
+                    <tr><td>PR20260811004</td><td>绿源农业</td><td>海淀店</td><td>12</td><td>¥890</td><td>顺丰 SF9876543</td><td><span class="badge badge-danger">有差异</span></td><td><button class="btn btn-danger btn-sm" type="button" onclick="alert('供应商实收10件（发出12件），差异2件需采购专员处理')">处理</button></td></tr>
+                  </tbody>
+                </table>
               </div>
             </div>
 
@@ -1620,6 +1644,143 @@ body.text-mode .text-mode-doc { display: block; }
                     <tr><td>PO20260813003</td><td>品质优选</td><td>¥4,495</td><td>¥0</td><td><span class="badge badge-warning">待付款</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="reconcileFinance(this)">对账</button></td></tr>
                   </tbody>
                 </table>
+
+                <div class="chart-card-title" style="margin:16px 0 8px">售后退款明细</div>
+                <table class="pc-table">
+                  <thead><tr><th>售后单号</th><th>原订单</th><th>用户</th><th>退款金额</th><th>垫付状态</th><th>抵扣状态</th><th>操作</th></tr></thead>
+                  <tbody>
+                    <tr><td>AS20260811006</td><td>SO20260809020</td><td>孙八</td><td>¥25.80</td><td><span class="badge badge-success">已垫付</span></td><td><span class="badge badge-info">待抵扣</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="alert('待残次品退供后冲减供应商应付')">详情</button></td></tr>
+                    <tr><td>AS20260810007</td><td>SO20260808025</td><td>周九</td><td>¥12.90</td><td><span class="badge badge-success">已垫付</span></td><td><span class="badge badge-success">已抵扣</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="alert('已从绿源农业采购应付中冲抵')">查看</button></td></tr>
+                    <tr><td>AS20260809008</td><td>SO20260807030</td><td>吴十</td><td>¥10.00</td><td><span class="badge badge-success">已垫付</span></td><td><span class="badge badge-neutral">平台自担</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="alert('仅退款补偿，平台承担')">查看</button></td></tr>
+                  </tbody>
+                </table>
+
+                <div class="chart-card-title" style="margin:16px 0 8px">退供对账明细</div>
+                <table class="pc-table">
+                  <thead><tr><th>退供单号</th><th>供应商</th><th>冲减金额</th><th>原采购单</th><th>状态</th><th>操作</th></tr></thead>
+                  <tbody>
+                    <tr><td>PR20260812003</td><td>鲜达供应链</td><td>¥350</td><td>PO20260808007</td><td><span class="badge badge-warning">待冲销</span></td><td><button class="btn btn-primary btn-sm" type="button" onclick="alert('确认冲销采购应付¥350')">对账</button></td></tr>
+                    <tr><td>PR20260811004</td><td>绿源农业</td><td>¥890</td><td>PO20260810006</td><td><span class="badge badge-success">已冲销</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="alert('已冲销完成')">查看</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- After-Sale Management -->
+            <div class="pc-page" id="page-pc-aftersales">
+              <div class="pc-page-header">
+                <div class="pc-page-title">售后管理</div>
+                <div style="font-size:var(--font-size-sm);color:var(--text-muted)">消费者售后单全链路管理</div>
+              </div>
+              <div class="pc-page-body">
+                <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+                  <div class="kpi-card"><div class="label">待审核售后</div><div class="value" style="color:var(--warning)">3</div><div class="delta">含1笔超时预警</div></div>
+                  <div class="kpi-card"><div class="label">本月售后单</div><div class="value">7</div><div class="delta">退货退款5 + 仅退款1 + 换货1</div></div>
+                  <div class="kpi-card"><div class="label">争议处理中</div><div class="value" style="color:var(--danger)">1</div><div class="delta">需平台介入</div></div>
+                  <div class="kpi-card"><div class="label">本月售后退款</div><div class="value" style="color:var(--danger)">¥219.50</div><div class="delta">含平台垫付¥120</div></div>
+                </div>
+
+                <div style="margin:16px 0 8px;display:flex;gap:8px;flex-wrap:wrap" id="pcAftersalesTabs">
+                  <button class="btn btn-outline btn-sm pc-tab-btn active" type="button" onclick="filterPCAftersalesTable('all', this)">全部状态 (7)</button>
+                  <button class="btn btn-outline btn-sm pc-tab-btn" type="button" onclick="filterPCAftersalesTable('待审核', this)">待审核 (1)</button>
+                  <button class="btn btn-outline btn-sm pc-tab-btn" type="button" onclick="filterPCAftersalesTable('审核中', this)">审核中 (1)</button>
+                  <button class="btn btn-outline btn-sm pc-tab-btn" type="button" onclick="filterPCAftersalesTable('待寄回', this)">待寄回 (1)</button>
+                  <button class="btn btn-outline btn-sm pc-tab-btn" type="button" onclick="filterPCAftersalesTable('待验收', this)">待验收 (1)</button>
+                  <button class="btn btn-outline btn-sm pc-tab-btn" style="color:var(--danger)" type="button" onclick="filterPCAftersalesTable('争议处理', this)">争议处理 (1)</button>
+                  <button class="btn btn-outline btn-sm pc-tab-btn" type="button" onclick="filterPCAftersalesTable('已完成', this)">已完成 (2)</button>
+                </div>
+
+                <table class="pc-table">
+                  <thead><tr><th>售后单号</th><th>关联订单</th><th>用户</th><th>门店</th><th>商品</th><th>类型</th><th>金额</th><th>状态</th><th>操作</th></tr></thead>
+                  <tbody id="pcAftersalesTableBody">
+                    <tr data-status="待审核"><td>AS20260814001</td><td>SO20260813005</td><td>张三</td><td>北京朝阳店</td><td>蓝月亮洗衣液 ×1</td><td><span class="badge badge-info">退货退款</span></td><td>¥39.90</td><td><span class="badge badge-warning">待审核</span></td><td><button class="btn btn-primary btn-sm" type="button" onclick="navigatePC('page-pc-aftersales-detail')">审核</button></td></tr>
+                    <tr data-status="审核中"><td>AS20260814002</td><td>SO20260813007</td><td>李四</td><td>北京海淀店</td><td>舒肤佳香皂 ×2</td><td><span class="badge badge-purple">仅退款</span></td><td>¥10.00</td><td><span class="badge badge-info">审核中</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="navigatePC('page-pc-aftersales-detail')">详情</button></td></tr>
+                    <tr data-status="待寄回"><td>AS20260813003</td><td>SO20260811009</td><td>王五</td><td>上海浦东店</td><td>新疆和田大枣 ×1</td><td><span class="badge badge-success">换货</span></td><td>补差¥15</td><td><span class="badge badge-info">双向在途</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="navigatePC('page-pc-aftersales-detail')">追踪</button></td></tr>
+                    <tr data-status="待验收"><td>AS20260813004</td><td>SO20260811012</td><td>赵六</td><td>北京朝阳店</td><td>三只松鼠坚果礼盒 ×1</td><td><span class="badge badge-info">退货退款</span></td><td>¥89.90</td><td><span class="badge badge-purple">待验收</span></td><td><button class="btn btn-primary btn-sm" type="button" onclick="navigatePC('page-pc-aftersales-detail')">验收</button></td></tr>
+                    <tr data-status="争议处理"><td>AS20260812005</td><td>SO20260810015</td><td>钱七</td><td>上海浦东店</td><td>智利车厘子 ×1</td><td><span class="badge badge-info">退货退款</span></td><td>¥59.90</td><td><span class="badge badge-danger">争议处理</span></td><td><button class="btn btn-danger btn-sm" type="button" onclick="navigatePC('page-pc-aftersales-detail')">处理</button></td></tr>
+                    <tr data-status="已完成"><td>AS20260811006</td><td>SO20260809020</td><td>孙八</td><td>北京海淀店</td><td>有机红富士苹果 ×2</td><td><span class="badge badge-info">退货退款</span></td><td>¥25.80</td><td><span class="badge badge-success">已完成</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="navigatePC('page-pc-aftersales-detail')">查看</button></td></tr>
+                    <tr data-status="已完成"><td>AS20260810007</td><td>SO20260808025</td><td>周九</td><td>北京朝阳店</td><td>农夫山泉天然水 ×1</td><td><span class="badge badge-purple">仅退款</span></td><td>¥12.90</td><td><span class="badge badge-success">已完成</span></td><td><button class="btn btn-outline btn-sm" type="button" onclick="navigatePC('page-pc-aftersales-detail')">查看</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- After-Sale Detail Page -->
+            <div class="pc-page" id="page-pc-aftersales-detail">
+              <div class="pc-page-header">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="btn btn-outline btn-sm" type="button" onclick="pcGoBack('page-pc-aftersales')">&larr; 返回</button>
+                  <div class="pc-page-title">售后单详情</div>
+                </div>
+              </div>
+              <div class="pc-page-body">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px">
+                  <div style="background:var(--bg-tertiary);border-radius:var(--card-radius);padding:16px">
+                    <div style="font-weight:600;margin-bottom:8px;color:var(--primary)">基本信息</div>
+                    <div style="font-size:var(--font-size-sm);line-height:2">
+                      <div><span style="color:var(--text-muted)">售后单号：</span>AS20260813004</div>
+                      <div><span style="color:var(--text-muted)">关联订单：</span>SO20260811012</div>
+                      <div><span style="color:var(--text-muted)">用户：</span>赵六</div>
+                      <div><span style="color:var(--text-muted)">门店：</span>北京朝阳店</div>
+                      <div><span style="color:var(--text-muted)">售后类型：</span><span class="badge badge-info">退货退款</span></div>
+                      <div><span style="color:var(--text-muted)">退款金额：</span>¥89.90</div>
+                      <div><span style="color:var(--text-muted)">当前状态：</span><span class="badge badge-purple">待验收</span></div>
+                    </div>
+                  </div>
+                  <div style="background:var(--bg-tertiary);border-radius:var(--card-radius);padding:16px">
+                    <div style="font-weight:600;margin-bottom:8px;color:var(--primary)">流程信息</div>
+                    <div style="font-size:var(--font-size-sm);line-height:2">
+                      <div><span style="color:var(--text-muted)">申请时间：</span>2026-08-13 09:15</div>
+                      <div><span style="color:var(--text-muted)">问题描述：</span>礼盒外包装破损，内含坚果受潮</div>
+                      <div><span style="color:var(--text-muted)">凭证照片：</span>3张（已上传）</div>
+                      <div><span style="color:var(--text-muted)">审核结果：</span>店长已通过（一级审核）</div>
+                      <div><span style="color:var(--text-muted)">退回物流：</span>顺丰 SF9876543 · 已签收</div>
+                      <div><span style="color:var(--text-muted)">运费承担：</span><span class="badge badge-danger">平台承担</span></div>
+                      <div><span style="color:var(--text-muted)">验收人：</span>—（待验收）</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="chart-card-title" style="margin-bottom:8px">售后商品明细</div>
+                <table class="pc-table" style="margin-bottom:16px">
+                  <thead><tr><th>SKU</th><th>商品名称</th><th>数量</th><th>原售价</th><th>退款小计</th><th>验收结果</th><th>库存去向</th></tr></thead>
+                  <tbody>
+                    <tr><td>SKU003</td><td>三只松鼠坚果礼盒</td><td>1</td><td>¥89.90</td><td>¥89.90</td><td><span class="badge badge-warning">待验收</span></td><td>—</td></tr>
+                  </tbody>
+                </table>
+
+                <div class="chart-card-title" style="margin-bottom:8px">全链路追溯</div>
+                <div style="background:var(--bg-tertiary);border-radius:var(--card-radius);padding:16px;font-size:var(--font-size-sm);color:var(--text-muted);line-height:1.8">
+                  采购单 PO20260813003 → 供应商发货 → 门店收货 → 用户自提(SO20260811012) → 售后退货(AS20260813004) → 门店验收 → <span style="color:var(--primary);font-weight:600">残次品池 → 退供单 PR20260814001 → 供应商确认 → 财务冲销</span>
+                </div>
+
+                <div class="chart-card-title" style="margin:16px 0 8px">审核操作</div>
+                <div style="background:var(--bg-tertiary);border-radius:var(--card-radius);padding:16px">
+                  <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
+                    <span style="font-size:var(--font-size-sm);color:var(--text-muted);min-width:80px">审核层级</span>
+                    <span class="badge badge-info">一级审核（门店店长）</span>
+                  </div>
+                  <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
+                    <span style="font-size:var(--font-size-sm);color:var(--text-muted);min-width:80px">运费承担方</span>
+                    <button class="btn btn-outline btn-sm" style="background:var(--danger-light);color:var(--danger);border-color:var(--danger)">平台承担</button>
+                    <button class="btn btn-outline btn-sm">用户承担</button>
+                  </div>
+                  <div style="display:flex;gap:8px;margin-top:16px">
+                    <button class="btn btn-success" type="button" onclick="alert('审核通过，已生成退回物流单')">审核通过</button>
+                    <button class="btn btn-outline" style="color:var(--danger);border-color:var(--danger)" type="button" onclick="alert('已拒绝售后申请')">审核拒绝</button>
+                    <button class="btn btn-outline" type="button" onclick="alert('已升级至总部运营审核')">升级审核</button>
+                  </div>
+                </div>
+
+                <div class="chart-card-title" style="margin:16px 0 8px">验收操作（门店店员）</div>
+                <div style="background:var(--bg-tertiary);border-radius:var(--card-radius);padding:16px">
+                  <div style="display:flex;gap:8px">
+                    <button class="btn btn-success btn-sm" style="flex:1" type="button" onclick="alert('验收合格 → 转可用库存')">验收合格<br><span style="font-size:var(--font-size-xs);opacity:0.8">转可用库存</span></button>
+                    <button class="btn btn-danger btn-sm" style="flex:1" type="button" onclick="alert('验收不合格 → 入残次品池')">验收不合格<br><span style="font-size:var(--font-size-xs);opacity:0.8">入残次品池</span></button>
+                    <button class="btn btn-outline btn-sm" style="flex:1;color:var(--warning);border-color:var(--warning)" type="button" onclick="alert('部分合格，逐件分类入库')">部分合格<br><span style="font-size:var(--font-size-xs);opacity:0.8">逐件分类</span></button>
+                    <button class="btn btn-outline btn-sm" style="flex:1;color:var(--danger);border-color:var(--danger)" type="button" onclick="alert('商品与订单不符，拒绝入库')">验收不通过<br><span style="font-size:var(--font-size-xs);opacity:0.8">商品不符</span></button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -2118,51 +2279,124 @@ body.text-mode .text-mode-doc { display: block; }
             <div style="width:20px"></div>
           </div>
           <div class="order-tabs">
-            <button class="order-tab" type="button">待付款</button>
-            <button class="order-tab" type="button">备货中</button>
-            <button class="order-tab active" type="button">待自提</button>
-            <button class="order-tab" type="button">已完成</button>
-            <button class="order-tab" type="button">退款中</button>
+            <button class="order-tab" type="button" data-status="待付款" onclick="filterAppOrders('待付款', this)">待付款</button>
+            <button class="order-tab" type="button" data-status="备货中" onclick="filterAppOrders('备货中', this)">备货中</button>
+            <button class="order-tab active" type="button" data-status="待自提" onclick="filterAppOrders('待自提', this)">待自提</button>
+            <button class="order-tab" type="button" data-status="已完成" onclick="filterAppOrders('已完成', this)">已完成</button>
+            <button class="order-tab" type="button" data-status="退款中" onclick="filterAppOrders('退款中', this)">退款中</button>
           </div>
-          <div class="app-body" data-link="feature-sales">
-            <div class="order-card-app" style="cursor:pointer" onclick="viewOrderDetailFromList('SO20260814001')">
-              <div class="order-card-header">
-                <span class="order-no">SO20260814001</span>
-                <span class="badge badge-success">待自提</span>
-              </div>
-              <div class="order-card-body">
-                <div class="product-img">🍎</div>
-                <div style="flex:1">
-                  <div style="font-size:var(--font-size-base);font-weight:600">有机红富士苹果 ×2</div>
-                  <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin-top:4px">北京朝阳店</div>
+          <div class="app-body" data-link="feature-sales" id="appOrdersContainer">
+            <!-- 待自提 orders -->
+            <div class="order-group" data-order-status="待自提" style="display:block">
+              <div class="order-card-app" style="cursor:pointer" onclick="viewOrderDetailFromList('SO20260814001')">
+                <div class="order-card-header">
+                  <span class="order-no">SO20260814001</span>
+                  <span class="badge badge-success">待自提</span>
                 </div>
-                <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥25.80</div>
+                <div class="order-card-body">
+                  <div class="product-img">🍎</div>
+                  <div style="flex:1">
+                    <div style="font-size:var(--font-size-base);font-weight:600">有机红富士苹果 ×2</div>
+                    <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin-top:4px">北京朝阳店</div>
+                  </div>
+                  <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥25.80</div>
+                </div>
+                <div class="order-card-footer">
+                  <button class="order-btn" type="button" onclick="event.stopPropagation();navigateAPP('page-app-pickup')">查看取货码</button>
+                  <button class="order-btn" type="button" onclick="event.stopPropagation();applyAftersaleFromList('SO20260814001')">申请售后</button>
+                </div>
               </div>
-              <div class="order-card-footer">
-                <button class="order-btn" type="button" onclick="event.stopPropagation()">申请售后</button>
-                <button class="order-btn highlight" type="button" onclick="event.stopPropagation();navigateAPP('page-app-pickup')">查看取货码</button>
+              <div class="order-card-app" style="cursor:pointer" onclick="viewOrderDetailFromList('SO20260814003')">
+                <div class="order-card-header">
+                  <span class="order-no">SO20260814003</span>
+                  <span class="badge badge-success">待自提</span>
+                </div>
+                <div class="order-card-body">
+                  <div class="product-img">🥜</div>
+                  <div style="flex:1">
+                    <div style="font-size:var(--font-size-base);font-weight:600">三只松鼠坚果礼盒 ×1</div>
+                    <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin-top:4px">上海浦东店</div>
+                  </div>
+                  <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥89.90</div>
+                </div>
+                <div class="order-card-footer">
+                  <button class="order-btn" type="button" onclick="event.stopPropagation();navigateAPP('page-app-pickup')">查看取货码</button>
+                  <button class="order-btn" type="button" onclick="event.stopPropagation();applyAftersaleFromList('SO20260814003')">申请售后</button>
+                </div>
               </div>
             </div>
-            <div class="order-card-app" style="cursor:pointer" onclick="viewOrderDetailFromList('SO20260814003')">
-              <div class="order-card-header">
-                <span class="order-no">SO20260814003</span>
-                <span class="badge badge-success">待自提</span>
-              </div>
-              <div class="order-card-body">
-                <div class="product-img">🥜</div>
-                <div style="flex:1">
-                  <div style="font-size:var(--font-size-base);font-weight:600">三只松鼠坚果礼盒 ×1</div>
-                  <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin-top:4px">上海浦东店</div>
+            <!-- 已完成 orders -->
+            <div class="order-group" data-order-status="已完成" style="display:none">
+              <div class="order-card-app" style="cursor:pointer" onclick="viewOrderDetailFromList('SO20260813005')">
+                <div class="order-card-header">
+                  <span class="order-no">SO20260813005</span>
+                  <span class="badge badge-gray">已完成</span>
                 </div>
-                <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥89.90</div>
+                <div class="order-card-body">
+                  <div class="product-img">🧴</div>
+                  <div style="flex:1">
+                    <div style="font-size:var(--font-size-base);font-weight:600">蓝月亮洗衣液 ×1</div>
+                    <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin-top:4px">北京海淀店</div>
+                  </div>
+                  <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥39.90</div>
+                </div>
+                <div class="order-card-footer">
+                  <button class="order-btn highlight" type="button" onclick="event.stopPropagation();applyAftersaleFromList('SO20260813005')">申请售后</button>
+                  <button class="order-btn" type="button" onclick="event.stopPropagation()">再次购买</button>
+                </div>
               </div>
-              <div class="order-card-footer">
-                <button class="order-btn" type="button" onclick="event.stopPropagation()">申请售后</button>
-                <button class="order-btn highlight" type="button" onclick="event.stopPropagation();navigateAPP('page-app-pickup')">查看取货码</button>
+              <div class="order-card-app" style="cursor:pointer" onclick="viewOrderDetailFromList('SO20260813007')">
+                <div class="order-card-header">
+                  <span class="order-no">SO20260813007</span>
+                  <span class="badge badge-gray">已完成</span>
+                </div>
+                <div class="order-card-body">
+                  <div class="product-img">🧼</div>
+                  <div style="flex:1">
+                    <div style="font-size:var(--font-size-base);font-weight:600">舒肤佳香皂 ×2</div>
+                    <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin-top:4px">北京海淀店</div>
+                  </div>
+                  <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥39.80</div>
+                </div>
+                <div class="order-card-footer">
+                  <button class="order-btn highlight" type="button" onclick="event.stopPropagation();applyAftersaleFromList('SO20260813007')">申请售后</button>
+                  <button class="order-btn" type="button" onclick="event.stopPropagation()">再次购买</button>
+                </div>
               </div>
             </div>
-            <div style="margin:12px 16px;padding:10px 14px;background:var(--info-light);border-radius:8px;font-size:var(--font-size-xs);color:var(--info)">
-              备货中订单不显示"申请退款"按钮，如需退款请联系客服
+            <!-- 待付款 orders (empty) -->
+            <div class="order-group" data-order-status="待付款" style="display:none">
+              <div style="margin:40px 16px;text-align:center;color:var(--text-muted);font-size:var(--font-size-sm)">
+                <div style="font-size:48px;margin-bottom:8px">📋</div>
+                <div>暂无待付款订单</div>
+              </div>
+            </div>
+            <!-- 备货中 orders -->
+            <div class="order-group" data-order-status="备货中" style="display:none">
+              <div class="order-card-app" style="cursor:pointer" onclick="viewOrderDetailFromList('SO20260814002')">
+                <div class="order-card-header">
+                  <span class="order-no">SO20260814002</span>
+                  <span class="badge badge-info">备货中</span>
+                </div>
+                <div class="order-card-body">
+                  <div class="product-img">🥛</div>
+                  <div style="flex:1">
+                    <div style="font-size:var(--font-size-base);font-weight:600">伊利纯牛奶 ×2</div>
+                    <div style="font-size:var(--font-size-sm);color:var(--text-muted);margin-top:4px">北京朝阳店</div>
+                  </div>
+                  <div style="font-size:var(--font-size-lg);font-weight:700;color:var(--danger)">¥15.80</div>
+                </div>
+                <div class="order-card-footer">
+                  <button class="order-btn" type="button" onclick="event.stopPropagation();applyAftersaleFromList('SO20260814002')">申请售后</button>
+                </div>
+              </div>
+            </div>
+            <!-- 退款中 orders (empty) -->
+            <div class="order-group" data-order-status="退款中" style="display:none">
+              <div style="margin:40px 16px;text-align:center;color:var(--text-muted);font-size:var(--font-size-sm)">
+                <div style="font-size:48px;margin-bottom:8px">💰</div>
+                <div>暂无退款中订单</div>
+              </div>
             </div>
           </div>
         </div>
@@ -3061,9 +3295,121 @@ body.text-mode .text-mode-doc { display: block; }
               <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:var(--font-size-xs);font-weight:600"><span>实付金额</span><span style="color:var(--danger)" id="orderDetailPaid">¥12.90</span></div>
             </div>
           </div>
-          <div style="padding:10px 16px;background:#fff;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0">
+          <div id="orderDetailActions" style="padding:10px 16px;background:#fff;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0">
             <button class="btn btn-outline" type="button" style="flex:1" onclick="goBackAPP()">返回</button>
-            <button class="btn btn-primary" type="button" style="flex:1" onclick="navigateAPP('page-app-home',true);appNavHistory=['page-app-home']">返回首页</button>
+          </div>
+          <div id="orderDetailAftersaleAction" style="padding:10px 16px;background:#fff;border-top:1px solid var(--border);display:none;gap:8px;flex-shrink:0">
+            <button class="btn btn-outline" type="button" style="flex:1" onclick="goBackAPP()">返回</button>
+            <button class="btn btn-outline" type="button" style="flex:1;color:var(--warning);border-color:var(--warning)" onclick="navigateToAftersaleApply()">申请售后</button>
+          </div>
+        </div>
+
+        <!-- APP After-Sale Apply Page -->
+        <div class="app-page" id="page-app-aftersale-apply">
+          <div class="app-status-bar"><span>9:41</span><span>5G ●●●●</span></div>
+          <div class="app-header">
+            <button type="button" onclick="goBackAPP()" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-main)">‹</button>
+            <div class="app-header-title">申请售后</div>
+            <div style="width:20px"></div>
+          </div>
+          <div class="app-body" style="background:var(--bg-tertiary)">
+            <!-- Order Info -->
+            <div style="background:#fff;margin:10px 16px;border-radius:10px;padding:14px">
+              <div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:10px;color:var(--text-muted)">订单信息</div>
+              <div style="display:flex;gap:10px;align-items:center">
+                <div id="aftersaleApplyIcon" style="font-size:36px;width:48px;height:48px;background:var(--bg-tertiary);border-radius:8px;display:flex;align-items:center;justify-content:center">🍎</div>
+                <div style="flex:1">
+                  <div id="aftersaleApplyName" style="font-size:var(--font-size-sm);font-weight:500">有机红富士苹果</div>
+                  <div id="aftersaleApplySpec" style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:2px">500g/袋 ×2</div>
+                </div>
+                <div id="aftersaleApplyPrice" style="font-size:var(--font-size-base);font-weight:600;color:var(--danger)">¥25.80</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px solid var(--border-light);font-size:var(--font-size-xs);color:var(--text-muted)">
+                <span>订单编号：<span id="aftersaleApplyOrderNo">SO20260813005</span></span>
+                <span id="aftersaleApplyQty">购买数量：2</span>
+              </div>
+            </div>
+
+            <!-- After-Sale Type -->
+            <div style="background:#fff;margin:0 16px 10px;border-radius:10px;padding:14px">
+              <div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:10px">售后类型</div>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-outline btn-sm aftersale-type-btn active" type="button" style="flex:1" onclick="selectAftersaleType('退货退款', this)">退货退款</button>
+                <button class="btn btn-outline btn-sm aftersale-type-btn" type="button" style="flex:1" onclick="selectAftersaleType('仅退款', this)">仅退款</button>
+                <button class="btn btn-outline btn-sm aftersale-type-btn" type="button" style="flex:1" onclick="selectAftersaleType('换货', this)">换货</button>
+              </div>
+              <div id="aftersaleTypeDesc" style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:8px">将商品寄回门店，全额退款到原支付账户</div>
+            </div>
+
+            <!-- Refund Amount (for refund types) -->
+            <div id="refundAmountSection" style="background:#fff;margin:0 16px 10px;border-radius:10px;padding:14px">
+              <div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:10px">退款金额</div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:var(--font-size-base);color:var(--text-muted)">¥</span>
+                <input type="number" id="aftersaleRefundAmount" style="flex:1;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:var(--font-size-base)" placeholder="请输入退款金额" step="0.01" min="0" />
+              </div>
+              <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:6px">最多可退 <span id="aftersaleMaxRefund">¥25.80</span>（订单实付金额）</div>
+              <div id="aftersaleUsedRefund" style="display:none;font-size:var(--font-size-xs);color:var(--warning);margin-top:4px">该订单已退 <span id="aftersaleUsedAmount">¥0.00</span>，本次最多可退 <span id="aftersaleRemainingAmount">¥25.80</span></div>
+            </div>
+
+            <!-- Refund Reason -->
+            <div style="background:#fff;margin:0 16px 10px;border-radius:10px;padding:14px">
+              <div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:10px">退款原因 <span style="color:var(--danger)">*</span></div>
+              <select id="aftersaleRefundReason" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:var(--font-size-sm);background:#fff;appearance:none;-webkit-appearance:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23999%22 stroke-width=%222%22><path d=%22M6 9l6 6 6-6%22/></svg>');background-repeat:no-repeat;background-position:right 10px center;cursor:pointer">
+                <option value="">请选择退款原因</option>
+                <option value="商品质量问题">商品质量问题</option>
+                <option value="商品与描述不符">商品与描述不符</option>
+                <option value="商品破损/包装损坏">商品破损/包装损坏</option>
+                <option value="商品过期/临期">商品过期/临期</option>
+                <option value="少件/漏发">少件/漏发</option>
+                <option value="不喜欢/不想要">不喜欢/不想要</option>
+                <option value="拍错/多拍">拍错/多拍</option>
+                <option value="其他原因">其他原因</option>
+              </select>
+            </div>
+
+            <!-- Quantity (for return/exchange) -->
+            <div id="returnQtySection" style="background:#fff;margin:0 16px 10px;border-radius:10px;padding:14px">
+              <div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:10px">退货数量</div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <button type="button" onclick="adjustReturnQty(-1)" style="width:32px;height:32px;border:1px solid var(--border);border-radius:6px;background:#fff;font-size:16px;cursor:pointer">−</button>
+                <input type="number" id="aftersaleReturnQty" value="1" min="1" style="width:60px;text-align:center;border:1px solid var(--border);border-radius:6px;padding:6px;font-size:var(--font-size-base)" />
+                <button type="button" onclick="adjustReturnQty(1)" style="width:32px;height:32px;border:1px solid var(--border);border-radius:6px;background:#fff;font-size:16px;cursor:pointer">+</button>
+                <span style="font-size:var(--font-size-xs);color:var(--text-muted);margin-left:8px">最多可退 <span id="aftersaleMaxQty">2</span> 件</span>
+              </div>
+              <div id="aftersaleUsedQty" style="display:none;font-size:var(--font-size-xs);color:var(--warning);margin-top:4px">该订单已退 <span id="aftersaleUsedQtyNum">0</span> 件，本次最多可退 <span id="aftersaleRemainingQty">2</span> 件</div>
+            </div>
+
+            <!-- Reason -->
+            <div style="background:#fff;margin:0 16px 10px;border-radius:10px;padding:14px">
+              <div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:10px">问题描述</div>
+              <textarea id="aftersaleReason" style="width:100%;min-height:80px;border:1px solid var(--border);border-radius:6px;padding:10px;font-size:var(--font-size-sm);resize:none;box-sizing:border-box" placeholder="请补充问题描述（选填）"></textarea>
+              <div style="text-align:right;font-size:var(--font-size-xs);color:var(--text-muted);margin-top:4px"><span id="reasonCharCount">0</span>/200</div>
+            </div>
+
+            <!-- Photos -->
+            <div style="background:#fff;margin:0 16px 10px;border-radius:10px;padding:14px">
+              <div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:10px">上传凭证</div>
+              <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-bottom:8px">支持jpg/png，最多9张</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <div id="photoPreviewArea" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+                <button type="button" id="addPhotoBtn" onclick="addAftersalePhoto()" style="width:72px;height:72px;border:1px dashed var(--border);border-radius:8px;background:var(--bg-tertiary);cursor:pointer;font-size:24px;color:var(--text-muted);display:flex;align-items:center;justify-content:center">+</button>
+              </div>
+              <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:6px">已上传 <span id="photoCount">0</span> 张</div>
+            </div>
+
+            <!-- Tips -->
+            <div style="margin:0 16px 16px;padding:12px;background:var(--warning-light);border-radius:8px;font-size:var(--font-size-xs);color:var(--text-muted);line-height:1.6">
+              <strong style="color:var(--warning)">温馨提示</strong><br>
+              1. 退货退款：商品寄回门店验收合格后全额退款<br>
+              2. 仅退款：无需寄回商品，平台审核后部分补偿退款<br>
+              3. 换货：寄回原商品+门店寄出换货商品，差额多退少补<br>
+              4. 同一订单同一时间仅允许1个进行中的售后单，需处理完成后方可再次申请<br>
+              5. 同一订单可多次申请售后，但退款总额不超过订单实付金额，退货总数不超过购买数量
+            </div>
+          </div>
+          <div style="padding:10px 16px;background:#fff;border-top:1px solid var(--border);flex-shrink:0">
+            <button class="btn btn-primary" type="button" style="width:100%" onclick="submitAftersaleApply()">提交申请</button>
           </div>
         </div>
       </div>
@@ -3625,6 +3971,21 @@ body.text-mode .text-mode-doc { display: block; }
                 <tr><td>预警状态</td><td>滞留天数 > 7 → "超期预警"；残次品数量 > 50 → "积压预警"；否则 → "正常"</td></tr>
               </table>
             </div>
+            <div class="feature-section" id="feature-aftersales">
+              <h3>售后管理 <span class="priority-tag priority-p0">P0</span></h3>
+              <p>消费者售后单全链路管理，覆盖退货退款、仅退款、换货三种售后类型。售后退货产生的残次品通过残次品池流转到退供流程退回供应商，形成"消费者端→供应商端"完整逆向闭环。</p>
+              <table class="feature-table">
+                <tr><th>功能点</th><th>描述</th><th>字段来源 / 取值逻辑</th><th>优先级</th></tr>
+                <tr><td>售后申请</td><td>用户在订单上发起售后，选择类型+上传凭证</td><td>售后单号 = AS + 年月日 + 3位流水；前置条件 = order_status IN ('PURCHASING','WAIT_PICKUP','COMPLETED')；售后类型 = RETURN_REFUND(退货退款) / REFUND_ONLY(仅退款) / EXCHANGE(换货)；类型限制 = COMPLETED状态支持全部三种 / WAIT_PICKUP和PURCHASING状态仅支持仅退款（商品未到店或未核销，无法退货）；窗口期 = 退货退款7天 / 仅退款7天 / 换货3天（生鲜24小时）；凭证要求 = ≥3张照片 + 描述≥10字；频次限制 = 同一订单同一SKU仅允许1次</td><td>P0</td></tr>
+                <tr><td>三级审核</td><td>门店店长初审→总部运营复审→超管裁定</td><td>一级审核 = 店长（APP端），4小时响应；二级审核 = 总部运营（PC端），退款&gt;¥500或店长升级触发，8小时响应；平台审核 = 超管，超窗/争议/金额&gt;¥2000触发，24小时响应；超时自动升级</td><td>P0</td></tr>
+                <tr><td>退回物流</td><td>用户寄回商品到门店</td><td>物流方式 = 用户自行寄回(默认) / 门店上门取件(¥200+) / 到店退回；运费承担 = 商品质量问题→平台承担，用户原因→用户承担；退回单号 = 关联 logistics_tracking 表</td><td>P0</td></tr>
+                <tr><td>门店验收</td><td>店员质检分类：合格品/残次品/部分合格/不通过</td><td>验收结果 = PASSED / FAILED / PARTIAL / REJECTED；合格品 → stock_status='AVAILABLE' + source_tag='RETURNED_GOOD'；残次品 → stock_status='DEFECTIVE' + defect_source='RETURN_DEFECTIVE'（退货残次）；不通过 = 商品与订单不符，拒绝入库</td><td>P0</td></tr>
+                <tr><td>换货双向物流</td><td>用户寄回原商品+门店寄出换货商品</td><td>换货前校验 = 门店同SKU可用库存 &gt; 0，无库存则自动转为退货退款；换货商品预占 = stock_status='PREEMPTED'，用户签收后正常扣减；差额 = 换货价-原价，多退少补</td><td>P1</td></tr>
+                <tr><td>退款资金处理</td><td>平台垫付退款，后续抵扣</td><td>退款金额 = 订单实付金额(退货退款) / 部分补偿(仅退款)；资金来源 = 平台先行垫付；抵扣路径 = 残次品退供时冲减供应商应付 / 合格品二次销售时新订单收入冲抵 / 仅退款平台自担；退款通道 = ALIPAY / WECHAT / BANK 原路退回</td><td>P0</td></tr>
+                <tr><td>售后→退供联动</td><td>退货残次品归集退供</td><td>残次品来源 = RETURN_DEFECTIVE(退货残次)，归集维度 = supplier_id + store_id；退供明细 defect_type 新增 RETURN_DEFECTIVE 枚举；全链路追溯 = after_sale_no → stock → defective_pool → purchase_return_order</td><td>P1</td></tr>
+                <tr><td>售后超时管理</td><td>售后单各阶段超时自动处理</td><td>审核超时 = 一级4h/二级8h自动升级；寄回超时 = 审核通过后7天未录入物流单号→T+3提醒，T+7自动关闭；物流超时 = 退回物流7天未签收→提醒，14天自动关闭</td><td>P1</td></tr>
+              </table>
+            </div>
           </div>
           <div class="doc-section">
             <h2>APP端功能详情</h2>
@@ -3673,6 +4034,22 @@ body.text-mode .text-mode-doc { display: block; }
         <tr><td>调拨物流追踪</td><td>查看调拨单详情、4步进度时间线（发起→出库→在途→收货）、物流轨迹</td><td>进度时间线 = 从 transfer_order 表读取各节点时间戳（created_at, outbound_at, shipped_at, received_at）；物流轨迹 = 手动录入的物流单号查询结果</td><td>P0</td></tr>
         <tr><td>调拨收货验收</td><td>调入门店确认收货，支持调整实收数量、质量检查（合格品→可用库存+通知自提；残次品→残次品池+责任判定）</td><td>验收表单 = 调拨商品 SKU + 调拨数量 + 实收合格品（手动输入）+ 实收残次品（手动输入）；验收后操作 = 合格品 → inventory(stock_status='AVAILABLE')；残次品 → inventory(stock_status='DEFECTIVE')；差异 = 触发差异处理流程</td><td>P0</td></tr>
         <tr><td>数据概览</td><td>当日待办任务数、门店库存概况</td><td>待入库数 = COUNT purchase_order WHERE status='IN_TRANSIT' AND store_code=当前门店；待核销数 = COUNT sales_order WHERE status='WAIT_PICKUP' AND store_code=当前门店；异常数 = COUNT inventory WHERE stock_status='FROZEN' AND store_code=当前门店</td><td>P1</td></tr>
+      </table>
+    </div>
+    <div class="feature-section" id="feature-app-aftersale">
+      <h3>APP端售后申请 <span class="priority-tag priority-p0">P0</span></h3>
+      <p>消费者在已完成订单详情页点击"申请售后"进入售后申请页面，支持退货退款、仅退款、换货三种类型。</p>
+      <table class="feature-table">
+        <tr><th>功能点</th><th>描述</th><th>字段来源 / 取值逻辑</th><th>优先级</th></tr>
+        <tr><td>售后入口</td><td>订单详情页底部按钮，仅已完成订单可见</td><td>显示条件 = sales_order.order_status = 'COMPLETED'；按钮位置 = 订单详情底部操作栏；点击跳转 = page-app-aftersale-apply</td><td>P0</td></tr>
+        <tr><td>售后类型选择</td><td>退货退款 / 仅退款 / 换货 三选一</td><td>售后类型 = RETURN_REFUND(退货退款) / REFUND_ONLY(仅退款) / EXCHANGE(换货)；切换类型时动态显示/隐藏退款金额和退货数量区域</td><td>P0</td></tr>
+        <tr><td>退款金额</td><td>退货退款和仅退款需填写退款金额</td><td>退款金额 = 用户输入，最大值 = 订单实付金额 - 已退金额；已退金额 = SUM(after_sale_order.refund_amount) WHERE order_no = 当前订单 AND status IN ('已完成','已关闭')；剩余可退 = 实付金额 - 已退金额</td><td>P0</td></tr>
+        <tr><td>退货数量</td><td>退货退款和换货需填写退货数量</td><td>退货数量 = 用户输入，最大值 = 订单购买数量 - 已退数量；已退数量 = SUM(after_sale_order.return_qty) WHERE order_no = 当前订单 AND status IN ('已完成','已关闭')；剩余可退 = 购买数量 - 已退数量</td><td>P0</td></tr>
+        <tr><td>问题描述</td><td>文本输入，最少10字，最多200字</td><td>问题描述 = textarea，前端校验长度 10 ≤ len ≤ 200；实时字数计数</td><td>P0</td></tr>
+        <tr><td>凭证上传</td><td>至少上传3张照片</td><td>凭证照片 = 图片上传组件，支持jpg/png；最小数量 = 3张；上传后可删除和重新上传</td><td>P0</td></tr>
+        <tr><td>多次售后支持</td><td>同一订单支持多次售后申请</td><td>判断维度1 = 退货退款/换货：累计退货数量 ≤ 订单购买数量；判断维度2 = 退货退款/仅退款：累计退款金额 ≤ 订单实付金额；额度用完时禁止再次申请</td><td>P0</td></tr>
+        <tr><td>进行中售后拦截</td><td>同一订单同一时间仅允许1个进行中的售后单</td><td>进行中状态 = status NOT IN ('已完成','已关闭','已拒绝')；拦截逻辑 = 查询该订单是否有进行中售后单，有则Toast提示并阻止跳转；需处理完成后方可再次申请</td><td>P0</td></tr>
+        <tr><td>售后单生成</td><td>提交后生成售后单号，进入待审核状态</td><td>售后单号 = AS + 年月日 + 3位流水；初始状态 = '待审核'；关联订单 = sales_order.order_no；创建时间 = 系统当前时间</td><td>P0</td></tr>
       </table>
     </div>
           </div>
@@ -3753,8 +4130,9 @@ body.text-mode .text-mode-doc { display: block; }
               <tr><th>前台展示</th><th>后台状态</th><th>页面操作按钮</th><th>说明</th><th>状态变更触发条件</th></tr>
               <tr><td>待付款</td><td>WAIT_PAY</td><td>取消订单 / 立即支付</td><td>倒计时提醒</td><td>→ 备货中：支付网关回调成功 → 自动生成采购单 → 库存状态从"销售预占"转"采购在途"；→ 已取消：用户主动取消或超时未支付</td></tr>
               <tr><td>备货中</td><td>PURCHASING / IN_TRANSIT</td><td>联系客服</td><td><strong>不显示"申请退款"</strong></td><td>→ 待自提：门店收货验收完成，库存状态转为"门店可用"；→ 退款中：客服介入处理退款（不拦截物流，后置到收货环节处理）</td></tr>
-              <tr><td>待自提</td><td>WAIT_PICKUP</td><td>查看取货码（高亮）/ 申请售后</td><td>取货码动态刷新</td><td>→ 已完成：店员扫码核销成功，库存扣减；→ 退款中：用户申请售后（仅限未核销），进入退款审核流程</td></tr>
-              <tr><td>已完成</td><td>COMPLETED</td><td>再次购买 / 删除订单</td><td>已完成不可售后</td><td>终态，不可回退；删除订单后仅在用户端隐藏，后台保留数据</td></tr>
+              <tr><td>待自提</td><td>WAIT_PICKUP</td><td>查看取货码（高亮）/ 申请售后</td><td>取货码动态刷新</td><td>→ 已完成：店员扫码核销成功，库存扣减；→ 退款中：用户申请售后（仅限未核销），进入退款审核流程；→ 已超时取消：T+3（普通）/ T+1（生鲜）未自提，系统自动取消+库存释放+发起退款</td></tr>
+              <tr><td>已完成</td><td>COMPLETED</td><td>再次购买 / 删除订单 / 申请售后</td><td>支持售后（7天内，生鲜24h）</td><td>终态，不可回退；删除订单后仅在用户端隐藏，后台保留数据；售后申请走售后管理模块</td></tr>
+              <tr><td>已超时取消</td><td>TIMEOUT_CANCELLED</td><td>重新下单</td><td>展示退款进度</td><td>终态；自提超时自动取消，库存释放（优先匹配同SKU订单/跨门店调拨/转可用库存），退款由平台垫付后从供应商应付抵扣</td></tr>
               <tr><td>退款中</td><td>REFUNDING</td><td>撤销申请（仅限财务处理前）</td><td>展示退款进度条</td><td>→ 退款完成：财务审核通过，资金原路退回；→ 恢复原状态：用户撤销申请或审核驳回</td></tr>
             </table>
           </div>
@@ -3782,7 +4160,114 @@ body.text-mode .text-mode-doc { display: block; }
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
-<script src="assets/charts.js"></script>
+<script>
+(function() {
+  var style = getComputedStyle(document.documentElement);
+  var primary = style.getPropertyValue('--primary').trim() || '#0d9488';
+  var primaryDark = style.getPropertyValue('--primary-dark').trim() || '#0f766e';
+  var accent2 = style.getPropertyValue('--accent-2').trim() || '#f59e0b';
+  var ink = style.getPropertyValue('--text-main').trim() || '#1e293b';
+  var muted = style.getPropertyValue('--text-muted').trim() || '#64748b';
+  var rule = style.getPropertyValue('--border').trim() || '#e2e8f0';
+  var bg2 = style.getPropertyValue('--bg-secondary').trim() || '#ffffff';
+  var success = '#22c55e';
+  var info = '#3b82f6';
+  var danger = '#ef4444';
+  var purple = '#8b5cf6';
+  var cyan = '#0891b2';
+
+  function initChart(id, option) {
+    var el = document.getElementById(id);
+    if (!el || typeof echarts === 'undefined') return null;
+    var chart = echarts.init(el, null, { renderer: 'svg' });
+    chart.setOption(option);
+    window.addEventListener('resize', function() { chart.resize(); });
+    return chart;
+  }
+
+  // Sales Trend Chart
+  initChart('chart-sales-trend', {
+    animation: false,
+    tooltip: { trigger: 'axis', appendToBody: true },
+    grid: { left: 40, right: 16, top: 20, bottom: 28 },
+    xAxis: {
+      type: 'category',
+      data: ['8/8', '8/9', '8/10', '8/11', '8/12', '8/13', '8/14'],
+      axisLine: { lineStyle: { color: rule } },
+      axisLabel: { color: muted, fontSize: 11 }
+    },
+    yAxis: {
+      type: 'value',
+      axisLine: { show: false },
+      axisTick: { show: false },
+      splitLine: { lineStyle: { color: rule, type: 'dashed' } },
+      axisLabel: { color: muted, fontSize: 11 }
+    },
+    series: [{
+      type: 'line',
+      data: [85, 102, 95, 110, 125, 118, 128],
+      smooth: true,
+      symbol: 'circle',
+      symbolSize: 6,
+      lineStyle: { color: primary, width: 2 },
+      itemStyle: { color: primary },
+      areaStyle: {
+        color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
+          colorStops: [{ offset: 0, color: primary + '33' }, { offset: 1, color: primary + '05' }]
+        }
+      }
+    }]
+  });
+
+  // Inventory Distribution Pie Chart
+  initChart('chart-inv-dist', {
+    animation: false,
+    tooltip: { trigger: 'item', appendToBody: true },
+    legend: { bottom: 0, itemWidth: 10, itemHeight: 10, textStyle: { color: muted, fontSize: 11 } },
+    series: [{
+      type: 'pie',
+      radius: ['38%', '62%'],
+      center: ['50%', '42%'],
+      label: { show: false },
+      data: [
+        { value: 64, name: '门店可用', itemStyle: { color: success } },
+        { value: 20, name: '销售预占', itemStyle: { color: info } },
+        { value: 175, name: '采购在途', itemStyle: { color: purple } },
+        { value: 5, name: '调拨在途', itemStyle: { color: cyan } },
+        { value: 10, name: '异常冻结', itemStyle: { color: accent2 } },
+        { value: 4, name: '残次品', itemStyle: { color: danger } }
+      ]
+    }]
+  });
+
+  // Order Status by Store (Stacked Bar)
+  initChart('chart-order-status', {
+    animation: false,
+    tooltip: { trigger: 'axis', appendToBody: true, axisPointer: { type: 'shadow' } },
+    legend: { bottom: 0, itemWidth: 10, itemHeight: 10, textStyle: { color: muted, fontSize: 11 } },
+    grid: { left: 50, right: 16, top: 20, bottom: 40 },
+    xAxis: {
+      type: 'category',
+      data: ['北京朝阳店', '北京海淀店', '上海浦东店'],
+      axisLine: { lineStyle: { color: rule } },
+      axisLabel: { color: muted, fontSize: 11 }
+    },
+    yAxis: {
+      type: 'value',
+      axisLine: { show: false },
+      axisTick: { show: false },
+      splitLine: { lineStyle: { color: rule, type: 'dashed' } },
+      axisLabel: { color: muted, fontSize: 11 }
+    },
+    series: [
+      { name: '待自提', type: 'bar', stack: 'total', data: [15, 20, 21], itemStyle: { color: success }, barWidth: 28 },
+      { name: '备货中', type: 'bar', stack: 'total', data: [12, 8, 10], itemStyle: { color: info } },
+      { name: '已完成', type: 'bar', stack: 'total', data: [45, 38, 42], itemStyle: { color: primary } },
+      { name: '退款中', type: 'bar', stack: 'total', data: [3, 1, 1], itemStyle: { color: accent2 } }
+    ]
+  });
+})();
+</script>
 <script>
 (function() {
   // ==================== Toast Notification System ====================
@@ -3837,6 +4322,8 @@ body.text-mode .text-mode-doc { display: block; }
     'page-pc-transfer': 'admin.store.com/transfer',
     'page-pc-defective': 'admin.store.com/defective',
     'page-pc-finance': 'admin.store.com/finance',
+    'page-pc-aftersales': 'admin.store.com/aftersales',
+    'page-pc-aftersales-detail': 'admin.store.com/aftersales/detail',
     'page-pc-product-new': 'admin.store.com/products/new',
     'page-pc-purchase-new': 'admin.store.com/purchase/new',
     'page-pc-transfer-new': 'admin.store.com/transfer/new',
@@ -3852,6 +4339,8 @@ body.text-mode .text-mode-doc { display: block; }
     'feature-transfer': '门店调拨',
     'feature-defective': '残次品池',
     'feature-finance': '财务结算',
+    'feature-aftersales': '售后管理',
+    'feature-app-aftersale': 'APP端售后申请',
     'feature-home': 'APP首页',
     'feature-category': 'APP分类页',
     'feature-pickup': '取货码',
@@ -3877,7 +4366,7 @@ body.text-mode .text-mode-doc { display: block; }
     if (addr) addr.textContent = routeMap[pageId] || pageId;
     if (pageId === 'page-pc-products') { productPage = 1; renderPagination(); }
     // E2E: Re-render all data tables when navigating to data pages
-    if (pageId === 'page-pc-dashboard' || pageId === 'page-pc-sales' || pageId === 'page-pc-purchase' || pageId === 'page-pc-inventory' || pageId === 'page-pc-transfer' || pageId === 'page-pc-defective' || pageId === 'page-pc-finance') {
+    if (pageId === 'page-pc-dashboard' || pageId === 'page-pc-sales' || pageId === 'page-pc-purchase' || pageId === 'page-pc-inventory' || pageId === 'page-pc-transfer' || pageId === 'page-pc-defective' || pageId === 'page-pc-finance' || pageId === 'page-pc-aftersales') {
       renderAllPCTables();
     }
   };
@@ -3971,7 +4460,8 @@ body.text-mode .text-mode-doc { display: block; }
       { orderNo:'SO20260814004', icon:'🥛', name:'伊利纯牛奶', spec:'250ml×12盒 ×2', qty:2, price:'99.80', status:'REFUNDING', statusText:'退款中', statusClass:'badge-warning', store:'北京朝阳店', storeCode:'CY001', time:'2026-08-14 12:30', payment:'微信支付', memberName:'赵六', memberId:'M004', pickupCode:null },
       { orderNo:'SO20260813005', icon:'🧴', name:'蓝月亮洗衣液', spec:'3kg装 ×1', qty:1, price:'39.90', status:'COMPLETED', statusText:'已完成', statusClass:'badge-gray', store:'北京海淀店', storeCode:'HD001', time:'2026-08-13 14:00', payment:'微信支付', memberName:'孙七', memberId:'M005', pickupCode:null },
       { orderNo:'SO20260813006', icon:'🫐', name:'新疆和田大枣', spec:'500g ×3', qty:3, price:'77.70', status:'PURCHASING', statusText:'备货中', statusClass:'badge-info', store:'上海浦东店', storeCode:'PD001', time:'2026-08-13 15:20', payment:'支付宝', memberName:'周八', memberId:'M006', pickupCode:null },
-      { orderNo:'SO20260813007', icon:'🧼', name:'舒肤佳香皂', spec:'3块装 ×2', qty:2, price:'39.80', status:'COMPLETED', statusText:'已完成', statusClass:'badge-gray', store:'北京海淀店', storeCode:'HD001', time:'2026-08-13 16:45', payment:'微信支付', memberName:'吴九', memberId:'M007', pickupCode:null }
+      { orderNo:'SO20260813007', icon:'🧼', name:'舒肤佳香皂', spec:'3块装 ×2', qty:2, price:'39.80', status:'COMPLETED', statusText:'已完成', statusClass:'badge-gray', store:'北京海淀店', storeCode:'HD001', time:'2026-08-13 16:45', payment:'微信支付', memberName:'吴九', memberId:'M007', pickupCode:null },
+       { orderNo:'SO20260812008', icon:'🍎', name:'有机红富士苹果', spec:'500g/袋 ×2', qty:2, price:'25.80', status:'TIMEOUT_CANCELLED', statusText:'已超时取消', statusClass:'badge-danger', store:'北京朝阳店', storeCode:'CY001', time:'2026-08-12 09:30', payment:'微信支付', memberName:'郑十', memberId:'M008', pickupCode:null }
     ],
     purchaseOrders: [
       { orderNo:'PO20260814001', supplier:'绿源农业', store:'北京朝阳店', storeCode:'CY001', items:'有机苹果 100件', status:'IN_TRANSIT', statusText:'运输中', statusClass:'badge-purple', eta:'08-15', relatedSO:'SO20260814001' },
@@ -4082,6 +4572,24 @@ body.text-mode .text-mode-doc { display: block; }
 
   window.filterPCSalesTable = function() {
     renderPCSalesTable();
+  };
+
+  window.filterPCAftersalesTable = function(status, btn) {
+    var tbody = document.getElementById('pcAftersalesTableBody');
+    if (!tbody) return;
+    var rows = tbody.querySelectorAll('tr');
+    rows.forEach(function(row) {
+      if (status === 'all' || row.getAttribute('data-status') === status) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+    if (btn) {
+      var tabs = document.querySelectorAll('#pcAftersalesTabs .pc-tab-btn');
+      tabs.forEach(function(t) { t.classList.remove('active'); });
+      btn.classList.add('active');
+    }
   };
 
   function renderPCPurchaseTable() {
@@ -4341,6 +4849,7 @@ body.text-mode .text-mode-doc { display: block; }
       document.getElementById('orderDetailStatus').textContent = order.statusText;
       var storeEl = document.getElementById('orderDetailStore');
       if (storeEl) storeEl.innerHTML = '<div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:4px">自提门店</div><div style="font-size:var(--font-size-sm);color:var(--text-muted)">' + order.store + '</div>';
+      updateOrderDetailActions(orderNo, order.status, order.statusText, order.qty || 1, order.price);
       navigateAPP('page-app-order-detail');
       return;
     }
@@ -4357,7 +4866,38 @@ body.text-mode .text-mode-doc { display: block; }
     document.getElementById('orderDetailStatus').textContent = oldOrder.status;
     var oldStoreEl = document.getElementById('orderDetailStore');
     if (oldStoreEl) oldStoreEl.innerHTML = '<div style="font-size:var(--font-size-sm);font-weight:600;margin-bottom:4px">自提门店</div><div style="font-size:var(--font-size-sm);color:var(--text-muted)">' + oldOrder.store + '</div>';
+    updateOrderDetailActions(orderNo, '', oldOrder.status, 1, oldOrder.price);
     navigateAPP('page-app-order-detail');
+  };
+
+  function updateOrderDetailActions(orderNo, statusCode, statusText, qty, price) {
+    var showAftersale = (statusCode === 'COMPLETED' || statusText === '已完成' || statusCode === 'WAIT_PICKUP' || statusText === '待自提' || statusCode === 'PURCHASING' || statusText === '备货中');
+    var defaultActions = document.getElementById('orderDetailActions');
+    var aftersaleActions = document.getElementById('orderDetailAftersaleAction');
+    if (showAftersale) {
+      if (defaultActions) defaultActions.style.display = 'none';
+      if (aftersaleActions) aftersaleActions.style.display = 'flex';
+    } else {
+      if (defaultActions) defaultActions.style.display = 'flex';
+      if (aftersaleActions) aftersaleActions.style.display = 'none';
+    }
+    window._currentAftersaleOrder = { orderNo: orderNo, qty: qty || 1, price: price || '0', status: statusCode, statusText: statusText };
+  }
+
+  window.applyAftersaleFromList = function(orderNo) {
+    var order = null;
+    for (var i = 0; i < mockSharedData.salesOrders.length; i++) {
+      if (mockSharedData.salesOrders[i].orderNo === orderNo) { order = mockSharedData.salesOrders[i]; break; }
+    }
+    if (!order) {
+      var oldOrder = mockOrders[orderNo];
+      if (oldOrder) {
+        order = { orderNo: orderNo, qty: 1, price: oldOrder.price, status: '', statusText: oldOrder.status };
+      }
+    }
+    if (!order) { showToast('订单数据未找到', 'error'); return; }
+    window._currentAftersaleOrder = { orderNo: orderNo, qty: order.qty || 1, price: order.price, status: order.status || '', statusText: order.statusText || order.status || '' };
+    navigateToAftersaleApply();
   };
 
   window.navigateAPP = function(pageId, skipHistory) {
@@ -4384,6 +4924,267 @@ body.text-mode .text-mode-doc { display: block; }
       navigateAPP('page-app-home', true);
     }
   };
+
+  // ==================== APP Order Tab Filter ====================
+  window.filterAppOrders = function(status, btn) {
+    document.querySelectorAll('.order-tab').forEach(function(t) { t.classList.remove('active'); });
+    btn.classList.add('active');
+    var groups = document.querySelectorAll('#appOrdersContainer .order-group');
+    groups.forEach(function(g) {
+      if (g.getAttribute('data-order-status') === status) {
+        g.style.display = 'block';
+      } else {
+        g.style.display = 'none';
+      }
+    });
+  };
+
+  // ==================== APP After-Sale Apply Logic ====================
+  var appAftersaleRecords = [];
+  var _aftersaleSelectedType = '退货退款';
+  var _aftersalePhotos = [];
+  var _aftersaleInprogressCount = {};
+
+  window.navigateToAftersaleApply = function() {
+    var ctx = window._currentAftersaleOrder;
+    if (!ctx) { showToast('订单信息丢失', 'error'); return; }
+
+    var inProgress = appAftersaleRecords.filter(function(r) {
+      return r.orderNo === ctx.orderNo && r.status !== '已完成' && r.status !== '已关闭' && r.status !== '已拒绝';
+    });
+    if (inProgress.length > 0) {
+      showToast('该订单已有进行中的售后单\n━━━━━━━━━━\n售后单号：' + inProgress[0].asNo + '\n当前状态：' + inProgress[0].status + '\n\n需处理完成后方可再次申请售后', 'warning');
+      return;
+    }
+
+    var orderNo = ctx.orderNo;
+    var order = null;
+    for (var i = 0; i < mockSharedData.salesOrders.length; i++) {
+      if (mockSharedData.salesOrders[i].orderNo === orderNo) { order = mockSharedData.salesOrders[i]; break; }
+    }
+    if (!order) {
+      var oldOrder = mockOrders[orderNo];
+      if (oldOrder) {
+        order = { icon: oldOrder.icon, name: oldOrder.name, spec: oldOrder.spec, price: oldOrder.price, qty: 1 };
+      }
+    }
+    if (!order) { showToast('订单数据未找到', 'error'); return; }
+
+    var qty = order.qty || 1;
+    var price = parseFloat(order.price) || 0;
+    var completed = appAftersaleRecords.filter(function(r) {
+      return r.orderNo === orderNo && (r.status === '已完成' || r.status === '已关闭');
+    });
+    var usedQty = 0;
+    var usedAmount = 0;
+    completed.forEach(function(r) {
+      usedQty += (r.returnQty || 0);
+      usedAmount += (r.refundAmount || 0);
+    });
+    var remainingQty = qty - usedQty;
+    var remainingAmount = price - usedAmount;
+
+    if (remainingQty <= 0 && remainingAmount <= 0) {
+      showToast('该订单的售后额度已用完\n━━━━━━━━━━\n购买数量：' + qty + ' 件\n已退数量：' + usedQty + ' 件\n已退金额：¥' + usedAmount.toFixed(2), 'warning');
+      return;
+    }
+
+    document.getElementById('aftersaleApplyIcon').textContent = order.icon;
+    document.getElementById('aftersaleApplyName').textContent = order.name;
+    document.getElementById('aftersaleApplySpec').textContent = order.spec;
+    document.getElementById('aftersaleApplyPrice').textContent = '¥' + order.price;
+    document.getElementById('aftersaleApplyOrderNo').textContent = orderNo;
+    document.getElementById('aftersaleApplyQty').textContent = '购买数量：' + qty;
+    document.getElementById('aftersaleMaxRefund').textContent = '¥' + price.toFixed(2);
+    document.getElementById('aftersaleMaxQty').textContent = remainingQty > 0 ? remainingQty : 1;
+
+    if (usedQty > 0 || usedAmount > 0) {
+      document.getElementById('aftersaleUsedRefund').style.display = '';
+      document.getElementById('aftersaleUsedAmount').textContent = '¥' + usedAmount.toFixed(2);
+      document.getElementById('aftersaleRemainingAmount').textContent = '¥' + remainingAmount.toFixed(2);
+      if (usedQty > 0) {
+        document.getElementById('aftersaleUsedQty').style.display = '';
+        document.getElementById('aftersaleUsedQtyNum').textContent = usedQty;
+        document.getElementById('aftersaleRemainingQty').textContent = remainingQty;
+      } else {
+        document.getElementById('aftersaleUsedQty').style.display = 'none';
+      }
+    } else {
+      document.getElementById('aftersaleUsedRefund').style.display = 'none';
+      document.getElementById('aftersaleUsedQty').style.display = 'none';
+    }
+
+    document.getElementById('aftersaleRefundAmount').value = remainingAmount > 0 ? remainingAmount.toFixed(2) : '';
+    document.getElementById('aftersaleRefundAmount').max = remainingAmount;
+    document.getElementById('aftersaleReturnQty').value = remainingQty > 0 ? 1 : 0;
+    document.getElementById('aftersaleReturnQty').max = remainingQty;
+    document.getElementById('aftersaleReason').value = '';
+    document.getElementById('reasonCharCount').textContent = '0';
+    _aftersalePhotos = [];
+    document.getElementById('photoPreviewArea').innerHTML = '';
+    document.getElementById('photoCount').textContent = '0';
+
+    var isRefundOnly = (ctx.status === 'WAIT_PICKUP' || ctx.statusText === '待自提' || ctx.status === 'PURCHASING' || ctx.statusText === '备货中');
+    var typeBtns = document.querySelectorAll('.aftersale-type-btn');
+    if (isRefundOnly) {
+      typeBtns.forEach(function(btn) {
+        btn.style.display = 'none';
+      });
+      var refundOnlyBtn = Array.from(typeBtns).find(function(b) { return b.textContent.trim() === '仅退款'; });
+      if (refundOnlyBtn) {
+        refundOnlyBtn.style.display = '';
+        refundOnlyBtn.classList.add('active');
+      }
+      _aftersaleSelectedType = '仅退款';
+      document.getElementById('aftersaleTypeDesc').textContent = '当前订单状态仅支持仅退款，无需寄回商品，平台审核后退款';
+      document.getElementById('refundAmountSection').style.display = '';
+      document.getElementById('returnQtySection').style.display = 'none';
+    } else {
+      typeBtns.forEach(function(btn) {
+        btn.style.display = '';
+        btn.classList.remove('active');
+      });
+      var firstBtn = document.querySelector('.aftersale-type-btn');
+      if (firstBtn) firstBtn.classList.add('active');
+      _aftersaleSelectedType = '退货退款';
+      document.getElementById('aftersaleTypeDesc').textContent = '将商品寄回门店，全额退款到原支付账户';
+      document.getElementById('refundAmountSection').style.display = '';
+      document.getElementById('returnQtySection').style.display = '';
+    }
+
+    navigateAPP('page-app-aftersale-apply');
+  };
+
+  window.selectAftersaleType = function(type, btn) {
+    _aftersaleSelectedType = type;
+    document.querySelectorAll('.aftersale-type-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    var desc = document.getElementById('aftersaleTypeDesc');
+    var refundSection = document.getElementById('refundAmountSection');
+    var qtySection = document.getElementById('returnQtySection');
+    if (type === '退货退款') {
+      desc.textContent = '将商品寄回门店，验收合格后全额退款到原支付账户';
+      refundSection.style.display = '';
+      qtySection.style.display = '';
+    } else if (type === '仅退款') {
+      desc.textContent = '无需寄回商品，平台审核后部分补偿退款';
+      refundSection.style.display = '';
+      qtySection.style.display = 'none';
+    } else if (type === '换货') {
+      desc.textContent = '寄回原商品+门店寄出换货商品，差额多退少补';
+      refundSection.style.display = 'none';
+      qtySection.style.display = '';
+    }
+  };
+
+  window.adjustReturnQty = function(delta) {
+    var input = document.getElementById('aftersaleReturnQty');
+    var maxQty = parseInt(document.getElementById('aftersaleMaxQty').textContent) || 1;
+    var val = parseInt(input.value) || 1;
+    val += delta;
+    if (val < 1) val = 1;
+    if (val > maxQty) val = maxQty;
+    input.value = val;
+  };
+
+  window.addAftersalePhoto = function() {
+    var emojis = ['📷', '🖼️', '🌄', '📸'];
+    var emoji = emojis[_aftersalePhotos.length % emojis.length];
+    _aftersalePhotos.push(emoji);
+    var area = document.getElementById('photoPreviewArea');
+    var div = document.createElement('div');
+    div.style.cssText = 'width:72px;height:72px;border:1px solid var(--border);border-radius:8px;background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;font-size:28px;position:relative;cursor:pointer';
+    div.innerHTML = emoji + '<span onclick="event.stopPropagation();removeAftersalePhoto(' + (_aftersalePhotos.length - 1) + ')" style="position:absolute;top:-4px;right:-4px;width:18px;height:18px;background:var(--danger);color:#fff;border-radius:50%;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer">×</span>';
+    div.onclick = function() { removeAftersalePhoto(_aftersalePhotos.indexOf(emoji)); };
+    area.appendChild(div);
+    document.getElementById('photoCount').textContent = _aftersalePhotos.length;
+  };
+
+  window.removeAftersalePhoto = function(index) {
+    _aftersalePhotos.splice(index, 1);
+    var area = document.getElementById('photoPreviewArea');
+    area.innerHTML = '';
+    _aftersalePhotos.forEach(function(emoji, i) {
+      var div = document.createElement('div');
+      div.style.cssText = 'width:72px;height:72px;border:1px solid var(--border);border-radius:8px;background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;font-size:28px;position:relative;cursor:pointer';
+      div.innerHTML = emoji + '<span onclick="event.stopPropagation();removeAftersalePhoto(' + i + ')" style="position:absolute;top:-4px;right:-4px;width:18px;height:18px;background:var(--danger);color:#fff;border-radius:50%;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer">×</span>';
+      area.appendChild(div);
+    });
+    document.getElementById('photoCount').textContent = _aftersalePhotos.length;
+  };
+
+  window.submitAftersaleApply = function() {
+    var ctx = window._currentAftersaleOrder;
+    if (!ctx) { showToast('订单信息丢失', 'error'); return; }
+
+    var reason = document.getElementById('aftersaleReason').value.trim();
+    var refundReason = document.getElementById('aftersaleRefundReason').value;
+    if (!refundReason) { showToast('请选择退款原因', 'error'); return; }
+    if (reason.length > 200) { showToast('问题描述不能超过200个字', 'error'); return; }
+
+    var refundAmount = 0;
+    var returnQty = 0;
+    if (_aftersaleSelectedType === '退货退款' || _aftersaleSelectedType === '仅退款') {
+      refundAmount = parseFloat(document.getElementById('aftersaleRefundAmount').value) || 0;
+      if (refundAmount <= 0) { showToast('请输入有效的退款金额', 'error'); return; }
+    }
+    if (_aftersaleSelectedType === '退货退款' || _aftersaleSelectedType === '换货') {
+      returnQty = parseInt(document.getElementById('aftersaleReturnQty').value) || 1;
+    }
+
+    var orderNo = ctx.orderNo;
+    var order = null;
+    for (var i = 0; i < mockSharedData.salesOrders.length; i++) {
+      if (mockSharedData.salesOrders[i].orderNo === orderNo) { order = mockSharedData.salesOrders[i]; break; }
+    }
+    var totalQty = order ? (order.qty || 1) : 1;
+    var totalAmount = order ? parseFloat(order.price) : 0;
+
+    var completed = appAftersaleRecords.filter(function(r) {
+      return r.orderNo === orderNo && (r.status === '已完成' || r.status === '已关闭');
+    });
+    var usedQty = 0, usedAmount = 0;
+    completed.forEach(function(r) { usedQty += (r.returnQty || 0); usedAmount += (r.refundAmount || 0); });
+    var remainingQty = totalQty - usedQty;
+    var remainingAmount = totalAmount - usedAmount;
+
+    if ((_aftersaleSelectedType === '退货退款' || _aftersaleSelectedType === '换货') && returnQty > remainingQty) {
+      showToast('退货数量超过剩余可退数量\n━━━━━━━━━━\n剩余可退：' + remainingQty + ' 件', 'error');
+      return;
+    }
+    if (refundAmount > remainingAmount) {
+      showToast('退款金额超过剩余可退金额\n━━━━━━━━━━\n剩余可退：¥' + remainingAmount.toFixed(2), 'error');
+      return;
+    }
+
+    var now = new Date();
+    var asNo = 'AS' + now.getFullYear().toString().slice(2) + ('0' + (now.getMonth() + 1)).slice(-2) + ('0' + now.getDate()).slice(-2) + ('00' + (appAftersaleRecords.length + 1)).slice(-3);
+
+    appAftersaleRecords.push({
+      asNo: asNo,
+      orderNo: orderNo,
+      type: _aftersaleSelectedType,
+      refundReason: refundReason,
+      refundAmount: refundAmount,
+      returnQty: returnQty,
+      reason: reason,
+      photos: _aftersalePhotos.length,
+      status: '待审核',
+      createTime: now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2) + ' ' + ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2)
+    });
+
+    showToast('售后申请提交成功\n━━━━━━━━━━\n售后单号：' + asNo + '\n退款原因：' + refundReason + '\n售后类型：' + _aftersaleSelectedType + '\n退款金额：¥' + refundAmount.toFixed(2) + '\n退货数量：' + returnQty + ' 件\n\n已提交审核，请留意通知', 'success');
+    goBackAPP();
+  };
+
+  // Char count for reason textarea
+  document.addEventListener('input', function(e) {
+    if (e.target && e.target.id === 'aftersaleReason') {
+      var count = e.target.value.length;
+      if (count > 200) { e.target.value = e.target.value.slice(0, 200); count = 200; }
+      document.getElementById('reasonCharCount').textContent = count;
+    }
+  });
 
   window.filterCategoryProducts = function(keyword) {
     var products = document.querySelectorAll('#categoryProductList .cat-product');
@@ -5646,6 +6447,7 @@ body.text-mode .text-mode-doc { display: block; }
       document.getElementById('orderDetailTime').textContent = order.time;
       document.getElementById('orderDetailPaid').textContent = '¥' + order.price;
       document.getElementById('orderDetailStatus').textContent = order.statusText;
+      updateOrderDetailActions(order.orderNo, order.status, order.statusText, order.qty || 1, order.price);
     } else {
       // Fallback to currentSpecData
       document.getElementById('orderDetailIcon').textContent = currentSpecData.icon;
@@ -5656,6 +6458,7 @@ body.text-mode .text-mode-doc { display: block; }
       document.getElementById('orderDetailTime').textContent = currentSpecData.orderTime;
       document.getElementById('orderDetailPaid').textContent = '¥' + currentSpecData.paid;
       document.getElementById('orderDetailStatus').textContent = '备货中';
+      updateOrderDetailActions(currentSpecData.orderNo, 'PURCHASING', '备货中', currentSpecData.qty, currentSpecData.paid);
     }
     navigateAPP('page-app-order-detail');
   };
