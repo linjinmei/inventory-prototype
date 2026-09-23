@@ -1104,14 +1104,36 @@ body.text-mode { overflow: auto; height: auto; background: #fff; }
 body.text-mode .main-layout { display: none; }
 body.text-mode .link-indicator { display: none !important; }
 body.text-mode .text-mode-doc { display: block; }
-.text-mode-doc { display: none; max-width: 960px; margin: 0 auto; padding: 96px 50px 40px; }
+.text-mode-doc { display: none; max-width: 1100px; margin: 0 auto; padding: 96px 50px 40px; }
 .text-mode-doc h1 { font-size: 28px; margin-bottom: 8px; }
 .text-mode-doc h2 { font-size: 22px; margin-top: 40px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #333; }
 .text-mode-doc h3 { font-size: 18px; margin-top: 28px; margin-bottom: 12px; }
 .text-mode-doc p { margin-bottom: 14px; text-align: justify; line-height: 1.7; }
-.text-mode-doc table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
-.text-mode-doc th, .text-mode-doc td { border: 1px solid #ddd; padding: 10px 14px; text-align: left; vertical-align: top; }
-.text-mode-doc th { background: #f5f5f5; font-weight: bold; }
+.text-mode-doc .pc-page { display: block !important; }
+.text-mode-doc .pc-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin: 16px 0; }
+.text-mode-doc .pc-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.text-mode-doc table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; table-layout: auto; }
+.text-mode-doc th, .text-mode-doc td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; vertical-align: top; word-break: break-word; }
+.text-mode-doc th { background: #f5f5f5; font-weight: 600; white-space: nowrap; }
+.text-mode-doc td { min-width: 80px; }
+.text-mode-doc .pc-kpi-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.text-mode-doc .pc-kpi-card { flex: 1 1 200px; }
+.text-mode-doc .pc-tab-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.text-mode-doc .pc-tab-btn { border: 1px solid #ddd; border-radius: 6px; padding: 6px 14px; background: #fff; font-size: 13px; cursor: default; }
+.text-mode-doc .pc-tab-btn.active { background: var(--brand, #00b96b); color: #fff; border-color: var(--brand, #00b96b); }
+.text-mode-doc .pc-status-badge, .text-mode-doc .pc-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+.text-mode-doc .pc-btn { display: inline-block; border: 1px solid #ddd; border-radius: 4px; padding: 4px 10px; font-size: 13px; margin-right: 4px; background: #fff; }
+.text-mode-doc .pc-btn-primary { background: var(--brand, #00b96b); color: #fff; border-color: var(--brand, #00b96b); }
+.text-mode-doc .pc-page-header { border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
+.text-mode-doc .pc-filter-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+.text-mode-doc .pc-pagination { display: flex; gap: 8px; align-items: center; justify-content: flex-end; margin-top: 16px; }
+.text-mode-doc svg { display: none; }
+.text-mode-doc .pc-nav-item { display: none !important; }
+.text-mode-doc .pc-sidebar { display: none !important; }
+.text-mode-doc .pc-header { display: none !important; }
+.text-mode-doc .chart-container { display: none !important; }
+.text-mode-doc .app-mockup { display: none !important; }
+.text-mode-doc .right-panel { display: none !important; }
 
 /* Modal */
 .modal-overlay {
@@ -5879,8 +5901,16 @@ body.text-mode .text-mode-doc { display: block; }
       var html = '<h1>进销存系统产品需求文档</h1><p>版本: V2.0 | 2026年8月14日 | 初稿</p>';
       var panes = document.querySelectorAll('.tab-content-wrapper > .tab-pane');
       panes.forEach(function(pane, i) {
-        if (i > 0) html += '<hr style="border:none;border-top:1px solid #ddd;margin:30px 0">';
-        html += pane.innerHTML;
+        if (i > 0) html += '<hr style="border:none;border-top:2px solid #333;margin:32px 0">';
+        var clone = pane.cloneNode(true);
+        var tables = clone.querySelectorAll('table');
+        tables.forEach(function(t) {
+          var wrap = document.createElement('div');
+          wrap.className = 'pc-table-wrap';
+          t.parentNode.insertBefore(wrap, t);
+          wrap.appendChild(t);
+        });
+        html += clone.innerHTML;
       });
       textDoc.innerHTML = html;
       document.body.classList.add('text-mode');
